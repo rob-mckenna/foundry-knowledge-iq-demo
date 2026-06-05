@@ -16,10 +16,42 @@
 - Key decisions: agent named `healthbridge-assistant`; fictional brand "HealthBridge Insurance" used throughout synthetic content; `<FABRIC_WORKSPACE_ID>` left as placeholder per scope (data infra not in Chunk's boundary)
 - No decisions.md items surfaced; all architectural choices are consistent with existing project conventions
 
+### 2026-06-05 — Test prompts, demo script, system prompt tools, KB config
+
+**Test prompt strategy (30 prompts across 5 workflow files):**
+- Each file follows the pattern: prompt text → expected data sources → expected response characteristics. This makes prompts reproducible as structured test cases, not just example questions.
+- Prompts are anchored to actual synthetic data (real member IDs, claim IDs, provider NPIs, drug names from CP-2026-FRM-001) so the agent has retrievable ground truth for every scenario.
+- Coverage breakdown: 6 prompts each for eligibility/benefits, claims/EOB, prior-auth, pharmacy/formulary, and provider-network.
+- Each prompt explicitly lists MCP tool calls expected (e.g., `lookup_member`, `check_formulary`) alongside KB data source tags — makes it easy to verify tool routing in Foundry tracing.
+
+**Prompt patterns that work well for healthcare payor demos:**
+- "Verification first" prompts (eligibility, PA status) ground the demo in live data — they show real-time retrieval, not static docs.
+- "Explain my EOB" prompts are the highest-value category for payor audiences — this is the #1 call driver in healthcare.
+- Story arc prompts (Act 1→5 in sample-prompts.md) outperform category-by-category demos for executive audiences; narrative creates emotional connection.
+- Always include a member-specific context in claims/eligibility prompts; the agent must demonstrate it's not just returning generic policy text.
+
+**Demo script (sample-prompts.md v2.0):**
+- Rewrote around Sarah Nguyen's post-knee-replacement journey — spans all 4 data sources in 5 acts, ~5 minutes.
+- Each act includes a "Talking point" for the presenter — what to emphasize for a payor audience.
+- Added Quick Reference table mapping each act to data source + MCP tool.
+
+**System prompt update:**
+- Added "## Available Tools" section with a table of all 7 MCP tools, descriptions, and "when to use" guidance.
+- Added a tool-chaining guidance note for multi-step queries (e.g., `lookup_member` → `check_formulary` → `get_clinical_coverage_criteria`).
+
+**Brand discrepancy noted:**
+- System prompt (written in session 1) uses "HealthBridge Insurance" brand. All sample data from Mouth uses "HealthBridge Insurance Plan." Test prompts use HealthBridge (matching actual data). System prompt brand realignment is a separate task — filed in decisions inbox.
+
 ## Cross-Team Updates (2026-06-05)
 
 **From Mikey (Lead):** Demo architecture finalized: four-source Knowledge Base (MCP, AI Search, Fabric, Blob) supporting five payor workflows (eligibility, prior auth, formulary, claims, provider network). Each source must be independently demoable. Your agent fits perfectly; system prompt aligns well with demo goals.
 
-**From Mouth (Domain Content):** Created 14 sample healthcare payor data files (claims, members, providers, policies, benefits) with consistent IDs (MBR-*, NPI-*, CLM-*, PA-*) across all sources. Brand: BluePeak Health Plan. IL HMO focus. Ready for knowledge base population.
+**From Mouth (Domain Content):** Created 14 sample healthcare payor data files (claims, members, providers, policies, benefits) with consistent IDs (MBR-*, NPI-*, CLM-*, PA-*) across all sources. Brand: HealthBridge Insurance Plan. IL HMO focus. Ready for knowledge base population.
+
+**Expansion Phase (2026-06-05):**
+- **Data (MCP Server):** Built 7-tool MCP server with HTTP transport, passed 33 tests. System prompt "Available Tools" section documents all 7 tools. KB config references exact tool names — alignment verified.
+- **Mouth (Sample Data Expansion):** Expanded to 8 members, 8 claims, 7 providers, 10 formulary drugs, 6 benefit summaries. All test prompts (30 total) now reference real synthetic data with ground truth. Member ID format (MBR-2024-XXXXXX) corrected in prompts.
+- **Data (AI Search):** Three-index split finalized. Chunk's KB config uses all three by name; both sides aligned. Embedding model: text-embedding-3-small / 1536 dimensions (corrected from 3072).
+- **Mouth (Brand):** All 48 files standardized to "HealthBridge Insurance Plan." System prompt updated to match brand + contact details (1-800-555-BLUE, HealthBridge.example.com).
 
 **From Data (Data Engineer):** Scaffolded all four data source configs. Your agent's knowledge base config references all sources. Data distribution plan: JSON for MCP/Fabric, documents/markdown for Blob/AI Search. Ready for knowledge base assembly and prompt testing.

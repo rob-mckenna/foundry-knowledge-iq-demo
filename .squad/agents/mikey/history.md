@@ -29,10 +29,32 @@
 - Fabric lakehouse setup and Data Agent configuration
 - Agent definition JSON and system prompt
 
+### 2026-06-05 — Comprehensive documentation written
+
+**Work done:**
+- Created `docs/setup-guide.md` — complete setup guide covering all prerequisites, MCP server install/test steps, AI Search index creation, Blob Storage deploy script, Fabric placeholder, Foundry connections, Knowledge Base configuration, agent deployment, and verification checklist
+- Created `docs/demo-script.md` — presenter-ready script with 3-minute quick-hits version and 10-minute Marcus Hartwell narrative arc; includes talking points for payor audience, screenshot placeholder notes, and common setup issues table
+- Created `docs/architecture.md` — full architecture overview with ASCII component map, Mermaid sequence diagram for query-time data flow, per-source role descriptions, MCP integration detail, and key architectural decisions table
+- Updated `README.md` — polished project README with Mermaid architecture graph, quick start (3 commands), data sources table, Fabric pending callout, sample prompts table, and complete documentation index
+
+**Doc structure decisions made:**
+- `setup-guide.md` is the canonical "how to run it" document; `azure-setup.md` is retained as a lower-level provisioning reference — both coexist
+- `demo-script.md` uses a single named fictional member (Marcus Hartwell / MBR-2024-001234) as the narrative thread for the 10-min version — this makes prompts coherent and memorable
+- Architecture doc includes both ASCII art (for GitHub rendering) and Mermaid diagrams (for richer tooling)
+- README quick start deliberately shows only 3 commands to get MCP running — lowers the barrier for first-time readers
+- Fabric Data Agent is flagged with ⚠️ consistently across all four docs using identical language
+- Screenshot placeholders are numbered and tabulated in demo-script.md to make it easy for a presenter to capture them in sequence
+
 ## Cross-Team Updates (2026-06-05)
 
-**From Mouth (Domain Content):** Created 14 sample data files (claims, members, providers, policies, benefits) with internally consistent IDs (member MBR-*, provider NPI-*, claims CLM-*, prior auths PA-*). BluePeak Health Plan brand, IL HMO focus. Ready for distribution across all four data sources.
+**From Mouth (Domain Content):** Created 14 sample data files (claims, members, providers, policies, benefits) with internally consistent IDs (member MBR-*, provider NPI-*, claims CLM-*, prior auths PA-*). HealthBridge Insurance Plan brand, IL HMO focus. Ready for distribution across all four data sources.
 
 **From Data (Data Engineer):** Scaffolded all four data source configs: MCP server (Node.js ESM with lookup/benefits tools), AI Search (index + skillset with HNSW vectors), Blob Storage (PowerShell deploy), Fabric Data Agent (connection config). All sources have actionable setup READMEs.
 
 **From Chunk (Agent Builder):** Created agent definition (HealthBridge Assistant) with knowledge base config linking all four sources, system prompt, and 18 sample prompts (15 functional + 3 guardrail). Agent ready for Foundry instantiation.
+
+**Expansion Phase (2026-06-05):**
+- **Full buildout completed:** Mouth expanded to 8 members + 8 claims + 7 providers + 6 benefit summaries + 10 formulary drugs. Data completed MCP server (7 tools, HTTP, 33 passing tests) + 3 AI Search index schemas. Chunk completed 30 test prompts + demo narrative + system prompt tools section. All deliverables verified against live data.
+- **Brand standardization:** All 48 files in repo now use "HealthBridge Insurance Plan" unified brand (portal, phone, legal name). Cross-repo consistency achieved.
+- **Orchestration checkpoints logged:** Expansion manifest, full-buildout session log, and decision inbox merged (7 decisions). All squad documentation updated with cross-team impact notes.
+- **Ready for demo deployment:** Four data sources independently demoable. Knowledge Base ready for agent instantiation in Foundry UI.
