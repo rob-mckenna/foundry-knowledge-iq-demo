@@ -1,0 +1,113 @@
+{
+  "npi": "7890123456",
+  "entityType": "ORGANIZATION",
+  "providerStatus": "ACTIVE_IN_NETWORK",
+  "networkTiers": ["PREFERRED_TIER_1", "STANDARD"],
+  "organization": {
+    "legalName": "Midwest Physical & Occupational Therapy LLC",
+    "doingBusinessAs": "Midwest PT & OT",
+    "taxId": "XX-XXXXXXX",
+    "organizationType": "GROUP_PRACTICE"
+  },
+  "taxonomy": [
+    {
+      "code": "225100000X",
+      "description": "Physical Therapist",
+      "primary": true
+    },
+    {
+      "code": "225X00000X",
+      "description": "Occupational Therapist",
+      "primary": false
+    }
+  ],
+  "practitioners": [
+    {
+      "npi": "7890123457",
+      "name": "Dr. Brittany C. Alderman, DPT",
+      "specialty": "Physical Therapy — Orthopedic / Post-Surgical",
+      "credential": "DPT, OCS"
+    },
+    {
+      "npi": "7890123458",
+      "name": "Thomas R. Gaines, MS, OTR/L",
+      "specialty": "Occupational Therapy — Neurological Rehabilitation",
+      "credential": "MS, OTR/L"
+    },
+    {
+      "npi": "7890123459",
+      "name": "Maria L. Espinoza, DPT",
+      "specialty": "Physical Therapy — Sports Rehabilitation",
+      "credential": "DPT"
+    }
+  ],
+  "locations": [
+    {
+      "locationId": "LOC-MWPT-001",
+      "locationName": "Midwest PT & OT — Aurora Main",
+      "type": "PRIMARY_PRACTICE",
+      "address": {
+        "street1": "2220 W. Galena Blvd",
+        "street2": "Suite 110",
+        "city": "Aurora",
+        "state": "IL",
+        "zip": "60506",
+        "county": "Kane"
+      },
+      "phone": "555-0789",
+      "fax": "555-0790",
+      "acceptingNewPatients": true,
+      "accessibilityFeatures": ["WHEELCHAIR_ACCESSIBLE", "BARRIER_FREE_PARKING"],
+      "hours": {
+        "monday": "07:00-19:00",
+        "tuesday": "07:00-19:00",
+        "wednesday": "07:00-19:00",
+        "thursday": "07:00-19:00",
+        "friday": "07:00-17:00",
+        "saturday": "08:00-13:00",
+        "sunday": "CLOSED"
+      }
+    },
+    {
+      "locationId": "LOC-MWPT-002",
+      "locationName": "Midwest PT & OT — Naperville Satellite",
+      "type": "SATELLITE_OFFICE",
+      "address": {
+        "street1": "740 E. Ogden Ave",
+        "street2": null,
+        "city": "Naperville",
+        "state": "IL",
+        "zip": "60563",
+        "county": "DuPage"
+      },
+      "phone": "555-0791",
+      "fax": "555-0792",
+      "acceptingNewPatients": true,
+      "accessibilityFeatures": ["WHEELCHAIR_ACCESSIBLE"],
+      "hours": {
+        "monday": "09:00-18:00",
+        "tuesday": "09:00-18:00",
+        "wednesday": "CLOSED",
+        "thursday": "09:00-18:00",
+        "friday": "09:00-16:00",
+        "saturday": "CLOSED",
+        "sunday": "CLOSED"
+      }
+    }
+  ],
+  "networkEffectiveDates": {
+    "credentialedDate": "2021-03-01",
+    "contractEffectiveDate": "2022-01-01",
+    "contractTerminationDate": null,
+    "lastVerificationDate": "2026-01-20"
+  },
+  "priorAuthorizationRequired": true,
+  "priorAuthProcedureCodes": ["97110", "97530", "97150", "97535"],
+  "priorAuthNotes": "PA required for PT/OT visits exceeding 20 per benefit year per HealthBridge policy CP-2026-PA-003. First 20 visits covered under plan benefit design.",
+  "qualityMetrics": {
+    "hedisCompliance": "HIGH",
+    "starRating": 4.7,
+    "patientSatisfactionScore": 4.9,
+    "functionalOutcomeScore": "EXCELLENT"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "formularyId": "FRM-2026-0007",
+  "drugName": "Adalimumab-bwwd Injection 40 mg/0.8 mL (Hadlima)",
+  "genericName": "adalimumab-bwwd",
+  "brandName": "Hadlima",
+  "isGeneric": false,
+  "isBiosimilar": true,
+  "biosimilarOf": "adalimumab (Humira)",
+  "ndcCode": "66729-0001-XX",
+  "tier": 4,
+  "tierDescription": "Specialty — Preferred",
+  "therapeuticClass": "Immunology — Biologic Biosimilar — TNF-Alpha Inhibitor",
+  "indication": "Rheumatoid arthritis (moderate-to-severe); psoriatic arthritis; ankylosing spondylitis; Crohn's disease (moderate-to-severe); ulcerative colitis (moderate-to-severe); plaque psoriasis (moderate-to-severe)",
+  "requiresPriorAuth": true,
+  "stepTherapyRequired": true,
+  "stepTherapyDetails": {
+    "requiredSteps": [
+      {
+        "step": 1,
+        "description": "For RA: Trial of at least two conventional DMARDs (methotrexate preferred, plus one other: hydroxychloroquine, sulfasalazine, or leflunomide) at maximally tolerated doses, each for a minimum of 3 months, with documented inadequate response or intolerance."
+      }
+    ],
+    "exceptions": "Biosimilar step therapy waived for: (1) rapidly progressive/severe disease per rheumatologist attestation; (2) prior documented DMARD failure within the prior 24 months."
+  },
+  "quantityLimit": "2 prefilled syringes (40 mg each) per 28-day supply for standard RA dosing",
+  "quantityLimitReason": "Standard RA dose is 40 mg every other week. Crohn's induction or weekly RA dosing requires documentation.",
+  "specialtyPharmacy": true,
+  "preferredSpecialtyPharmacy": "HealthBridge Specialty Pharmacy (preferred) | CVS Specialty (preferred tier)",
+  "retailCopay30Day": null,
+  "mailOrderCopay90Day": null,
+  "specialtyPharmacyCopay": 85.00,
+  "deductibleApplies": true,
+  "formularyStatus": "PREFERRED_SPECIALTY",
+  "formularyNotes": "Hadlima (adalimumab-bwwd) is HealthBridge's PREFERRED biologic for new TNF inhibitor starts. It is biosimilar to Humira with equivalent clinical efficacy and safety per FDA interchangeability designation. Members switching from Humira to Hadlima may be subject to a managed transition program. Preferred over Humira (Tier 5) due to significant cost savings.",
+  "clinicalAlerts": [
+    "BOXED WARNING: Risk of serious infections including TB reactivation. Screen for latent TB before initiation.",
+    "BOXED WARNING: Lymphoma and other malignancies — see full prescribing information.",
+    "Live vaccines contraindicated during therapy",
+    "Interchangeable with Humira per FDA designation — substitution at pharmacy level may occur per state law and plan policy",
+    "Refrigerate 2°C–8°C; do not freeze"
+  ],
+  "lastReviewedDate": "2026-01-01",
+  "effectiveDate": "2026-01-01"
+}

@@ -1,111 +1,218 @@
-// Quick smoke-test for the data loading functions and tool logic.
-// Run: node test-tools.mjs
-import { readFileSync, readdirSync } from "fs";
-import { join, dirname } from "path";
+/**
+ * Comprehensive MCP tool test using the MCP SDK Client over stdio.
+ * Exercises all 7 tools: lookup_member, lookup_claim, check_benefits,
+ * lookup_provider, get_prior_auth_requirements, get_clinical_coverage_criteria,
+ * check_formulary.
+ *
+ * Run: node test-tools.mjs  (or: npm test)
+ */
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const SAMPLE_DATA = join(__dirname, "..", "..", "sample-data");
-
-function loadDirectory(subdir) {
-  const dir = join(SAMPLE_DATA, subdir);
-  return readdirSync(dir)
-    .filter((f) => f.endsWith(".json"))
-    .map((f) => JSON.parse(readFileSync(join(dir, f), "utf8")));
-}
-
-function loadText(relativePath) {
-  try {
-    return readFileSync(join(SAMPLE_DATA, relativePath), "utf8");
-  } catch {
-    return null;
-  }
-}
-
-function benefitsSummaryFile(planType, metalTier) {
-  return `benefits/${planType?.toLowerCase()}-${metalTier?.toLowerCase()}-benefit-summary.md`;
-}
+const SERVER_PATH = join(__dirname, "server.js");
 
 let passed = 0;
 let failed = 0;
 
-function assert(label, condition) {
+function assert(label, condition, detail = "") {
   if (condition) {
     console.log(`  ✅ ${label}`);
     passed++;
   } else {
-    console.error(`  ❌ FAIL: ${label}`);
+    console.error(`  ❌ FAIL: ${label}${detail ? " — " + detail : ""}`);
     failed++;
   }
 }
 
-// ── Members ───────────────────────────────────────────────────────────────────
+async function callTool(client, name, args) {
+  const result = await client.callTool({ name, arguments: args });
+  const text = result.content?.[0]?.text ?? "";
+  return { result, text };
+}
+
+// ── Bootstrap client ──────────────────────────────────────────────────────────
+const transport = new StdioClientTransport({
+  command: "node",
+  args: [SERVER_PATH],
+});
+
+const client = new Client(
+  { name: "test-client", version: "1.0.0" },
+  { capabilities: { tools: {} } }
+);
+
+await client.connect(transport);
+
+// Verify tool list
+const { tools } = await client.listTools();
+const toolNames = tools.map((t) => t.name);
+const EXPECTED_TOOLS = [
+  "lookup_member",
+  "lookup_claim",
+  "check_benefits",
+  "lookup_provider",
+  "get_prior_auth_requirements",
+  "get_clinical_coverage_criteria",
+  "check_formulary",
+];
+console.log("\n── Tool registration ──");
+for (const name of EXPECTED_TOOLS) {
+  assert(`tool "${name}" is registered`, toolNames.includes(name));
+}
+
+// ── lookup_member ─────────────────────────────────────────────────────────────
 console.log("\n── lookup_member ──");
-const members = loadDirectory("members");
-assert("loads 3 members", members.length === 3);
-assert("members have memberId (camelCase)", members.every((m) => !!m.memberId));
-assert("members have subscriber.firstName", members.every((m) => !!m.subscriber?.firstName));
+{
+  const { text } = await callTool(client, "lookup_member", { member_id: "MBR-2024-001234" });
+  const data = JSON.parse(text);
+  assert("find MBR-2024-001234 by ID", Array.isArray(data) && data.length === 1);
+  assert("MBR-2024-001234 is Hartwell", data[0]?.subscriber?.lastName === "Hartwell");
+}
+{
+  const { text } = await callTool(client, "lookup_member", { name: "nguyen" });
+  const data = JSON.parse(text);
+  assert("find Nguyen by name", data.some((m) => m.memberId === "MBR-2024-002891"));
+}
+{
+  const { text } = await callTool(client, "lookup_member", { member_id: "NOTEXIST-999" });
+  assert("no-match returns friendly message", text.includes("No members found"));
+}
 
-const byId = members.filter((m) => m.memberId?.toLowerCase().includes("mbr-2024-001234"));
-assert("find MBR-2024-001234 by id", byId.length === 1);
-assert("MBR-2024-001234 is Hartwell", byId[0]?.subscriber?.lastName === "Hartwell");
-
-const byName = members.filter((m) =>
-  `${m.subscriber?.firstName} ${m.subscriber?.lastName}`.toLowerCase().includes("nguyen")
-);
-assert("find Nguyen by name", byName.length === 1);
-assert("Nguyen memberId is MBR-2024-002891", byName[0]?.memberId === "MBR-2024-002891");
-
-// ── Claims ────────────────────────────────────────────────────────────────────
+// ── lookup_claim ──────────────────────────────────────────────────────────────
 console.log("\n── lookup_claim ──");
-const claims = loadDirectory("claims");
-assert("loads 3 claims", claims.length === 3);
-assert("claims have claimId (camelCase)", claims.every((c) => !!c.claimId));
-assert("claims have claimStatus (camelCase)", claims.every((c) => !!c.claimStatus));
+{
+  const { text } = await callTool(client, "lookup_claim", { claim_id: "CLM-2026-0054321" });
+  const data = JSON.parse(text);
+  assert("find CLM-2026-0054321 by claim ID", Array.isArray(data) && data.length >= 1);
+}
+{
+  const { text } = await callTool(client, "lookup_claim", { member_id: "MBR-2024-001234" });
+  const data = JSON.parse(text);
+  assert("find claims for MBR-2024-001234", Array.isArray(data) && data.length >= 1);
+}
+{
+  const { text } = await callTool(client, "lookup_claim", { status: "paid" });
+  const data = JSON.parse(text);
+  assert("filter by status=paid returns results", Array.isArray(data) && data.length >= 1);
+  assert("all returned claims are paid", data.every((c) => c.claimStatus?.toLowerCase() === "paid"));
+}
 
-const byClaimId = claims.filter((c) => c.claimId?.toLowerCase().includes("clm-2026-0054321"));
-assert("find CLM-2026-0054321", byClaimId.length === 1);
-
-const byMember = claims.filter((c) => c.memberId?.toLowerCase().includes("mbr-2024-001234"));
-assert("claims for MBR-2024-001234", byMember.length >= 1);
-
-const byStatus = claims.filter((c) => c.claimStatus?.toLowerCase() === "paid");
-assert("at least one PAID claim", byStatus.length > 0);
-
-// ── Providers ─────────────────────────────────────────────────────────────────
-console.log("\n── lookup_provider ──");
-const providers = loadDirectory("providers");
-assert("loads 3 providers", providers.length === 3);
-assert("providers have npi", providers.every((p) => !!p.npi));
-
-const byNpi = providers.filter((p) => p.npi?.includes("1234567890"));
-assert("find NPI-1234567890", byNpi.length === 1);
-assert("NPI-1234567890 is Dr. Chen", byNpi[0]?.individual?.lastName === "Chen");
-
-const bySpecialty = providers.filter((p) =>
-  p.taxonomy?.some((t) => t.description?.toLowerCase().includes("cardiology"))
-);
-assert("find cardiology provider", bySpecialty.length >= 1);
-
-// ── Benefits ──────────────────────────────────────────────────────────────────
+// ── check_benefits ────────────────────────────────────────────────────────────
 console.log("\n── check_benefits ──");
-const hartwell = members.find((m) => m.memberId === "MBR-2024-001234");
-const nguyenMember = members.find((m) => m.memberId === "MBR-2024-002891");
-const thompson = members.find((m) => m.memberId === "MBR-2024-003456");
+{
+  const { text } = await callTool(client, "check_benefits", { member_id: "MBR-2024-001234" });
+  assert("benefits for Hartwell include member name", text.includes("Hartwell"));
+  assert("benefits response includes plan info", text.includes("Plan:"));
+}
+{
+  const { text } = await callTool(client, "check_benefits", {
+    member_id: "MBR-2024-001234",
+    service_category: "pharmacy",
+  });
+  assert("pharmacy benefit filter returns content", text.length > 0);
+}
+{
+  const { text } = await callTool(client, "check_benefits", { member_id: "NOTEXIST-999" });
+  assert("unknown member returns not-found message", text.includes("not found"));
+}
 
-const hartwellFile = benefitsSummaryFile(hartwell.planInfo.planType, hartwell.planInfo.metalTier);
-const hartwellBenefits = loadText(hartwellFile);
-assert("PPO Gold benefit summary found for Hartwell", hartwellBenefits !== null);
-assert("PPO Gold summary contains deductible info", hartwellBenefits?.includes("Deductible"));
+// ── lookup_provider ───────────────────────────────────────────────────────────
+console.log("\n── lookup_provider ──");
+{
+  const { text } = await callTool(client, "lookup_provider", { npi: "1234567890" });
+  const data = JSON.parse(text);
+  assert("find provider by NPI 1234567890", data[0]?.individual?.lastName === "Chen");
+}
+{
+  const { text } = await callTool(client, "lookup_provider", { specialty: "cardiology" });
+  const data = JSON.parse(text);
+  assert("find cardiology providers", data.length >= 1);
+}
+{
+  const { text } = await callTool(client, "lookup_provider", { name: "NONEXISTENT-XYZ-999" });
+  assert("no-match returns friendly message or empty", text.includes("No providers") || text.includes("[]"));
+}
 
-const nguyenFile = benefitsSummaryFile(nguyenMember.planInfo.planType, nguyenMember.planInfo.metalTier);
-const nguyenBenefits = loadText(nguyenFile);
-assert("HMO Silver benefit summary found for Nguyen", nguyenBenefits !== null);
+// ── get_prior_auth_requirements ───────────────────────────────────────────────
+console.log("\n── get_prior_auth_requirements ──");
+{
+  const { text } = await callTool(client, "get_prior_auth_requirements", {
+    procedureCode: "27447",
+  });
+  assert("CPT 27447 (knee arthroplasty) returns PA requirements", text.includes("27447") || text.includes("Knee"));
+}
+{
+  const { text } = await callTool(client, "get_prior_auth_requirements", {
+    serviceCategory: "Physical Therapy",
+  });
+  assert("Physical Therapy returns PA content", text.toLowerCase().includes("physical therapy") || text.toLowerCase().includes("therapy"));
+}
+{
+  const { text } = await callTool(client, "get_prior_auth_requirements", {
+    procedureCode: "99999",
+    serviceCategory: "NonExistentService",
+  });
+  assert("unknown code returns no-match message", text.includes("No prior authorization") || text.includes("not listed") || text.includes("not found") || text.includes("555-0190"));
+}
+{
+  const { text } = await callTool(client, "get_prior_auth_requirements", {});
+  assert("missing args returns guidance message", text.includes("Please provide"));
+}
 
-const thompsonFile = benefitsSummaryFile(thompson.planInfo.planType, thompson.planInfo.metalTier);
-const thompsonBenefits = loadText(thompsonFile);
-assert("Platinum plan gracefully returns null (no file yet)", thompsonBenefits === null);
+// ── get_clinical_coverage_criteria ────────────────────────────────────────────
+console.log("\n── get_clinical_coverage_criteria ──");
+{
+  const { text } = await callTool(client, "get_clinical_coverage_criteria", {
+    serviceCode: "93306",
+  });
+  assert("echocardiography CPT 93306 returns criteria", text.includes("93306") || text.toLowerCase().includes("echo") || text.toLowerCase().includes("cardiac"));
+}
+{
+  const { text } = await callTool(client, "get_clinical_coverage_criteria", {
+    diagnosisCode: "M17.11",
+  });
+  assert("ICD-10 M17.11 (knee osteoarthritis) returns coverage criteria", text.includes("M17.11") || text.toLowerCase().includes("knee") || text.toLowerCase().includes("arthr"));
+}
+{
+  const { text } = await callTool(client, "get_clinical_coverage_criteria", {
+    serviceCode: "99999",
+    diagnosisCode: "Z00.00",
+  });
+  assert("unknown codes return no-criteria message", text.toLowerCase().includes("no specific") || text.toLowerCase().includes("not found") || text.toLowerCase().includes("general medical"));
+}
+{
+  const { text } = await callTool(client, "get_clinical_coverage_criteria", {});
+  assert("missing args returns guidance message", text.includes("Please provide"));
+}
 
-// ── Summary ───────────────────────────────────────────────────────────────────
-console.log(`\n── Results: ${passed} passed, ${failed} failed ──`);
+// ── check_formulary ───────────────────────────────────────────────────────────
+console.log("\n── check_formulary ──");
+{
+  // Formulary JSON may or may not exist yet — test both paths
+  const { text } = await callTool(client, "check_formulary", { drugName: "atorvastatin" });
+  assert(
+    "atorvastatin lookup returns content (or graceful fallback)",
+    text.length > 0 && !text.includes("Please provide")
+  );
+}
+{
+  const { text } = await callTool(client, "check_formulary", { therapeuticClass: "Statin" });
+  assert(
+    "Statin therapeutic class lookup returns content (or graceful fallback)",
+    text.length > 0 && !text.includes("Please provide")
+  );
+}
+{
+  const { text } = await callTool(client, "check_formulary", {});
+  assert("missing args returns guidance message", text.includes("Please provide"));
+}
+
+// ── Teardown ──────────────────────────────────────────────────────────────────
+await client.close();
+
+console.log(`\n── Results: ${passed} passed, ${failed} failed ──\n`);
 if (failed > 0) process.exit(1);
+

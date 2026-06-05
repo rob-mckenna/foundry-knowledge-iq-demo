@@ -1,177 +1,93 @@
-# Sample Test Prompts — HealthBridge Knowledge Assistant
+# 5-Minute Demo Script — HealthBridge Knowledge IQ Agent
 
-Use these prompts to validate agent behavior across the five key capability areas. For each prompt, the **Expected Behavior** describes what data sources and response patterns the agent should exhibit — not the exact answer text.
+## Overview
 
----
+This demo tells the story of **Sarah Nguyen**, a member who recently had knee replacement surgery and calls in with a series of questions. Her journey spans all five knowledge workflows and all four data sources — making it the ideal narrative arc for a live demo to a healthcare payor audience.
 
-## Category 1: Benefits & Coverage
-
-### Prompt 1
-> "What is my copay for a visit to a specialist?"
-
-**Expected Behavior:**
-- Agent retrieves cost-sharing details from the Summary of Benefits and Coverage (SBC) in Blob Storage
-- Returns the specialist copay amount (e.g., $50 per visit) and notes whether a referral is required
-- Distinguishes between in-network and out-of-network specialist costs
-- Data source: `blob-storage-plan-documents`
+> **Demo persona:** Sarah Nguyen, Member ID MBR-2024-002891, HealthBridge HMO Silver plan
 
 ---
 
-### Prompt 2
-> "Is physical therapy covered under my plan, and how many visits do I get per year?"
+## Act 1 — "Am I still covered?" *(~45 seconds)*
+**Primary data source: Fabric Data Agent + Blob Storage*
 
-**Expected Behavior:**
-- Agent looks up rehabilitative services in the Evidence of Coverage or SBC
-- Returns covered status, annual visit limit, any prior auth requirement after a threshold number of visits, and applicable copay
-- Data source: `blob-storage-plan-documents`, possibly `mcp-prior-auth-policies`
+> **Prompt (type or speak):**
+> *"Hi, I'm Sarah Nguyen. My member ID is MBR-2024-002891. I just want to make sure I'm still covered before I book a follow-up appointment."*
 
----
+**What to highlight:**
+The agent calls `lookup_member` against the Fabric Data Agent in real time, returns Sarah's **ACTIVE** status on HealthBridge HMO Silver, confirms her PCP (Dr. Patricia Chen), and notes her deductible is now fully met. This sets the scene — a real member, real plan, live data lookup.
 
-### Prompt 3
-> "What is my out-of-pocket maximum for this plan year?"
-
-**Expected Behavior:**
-- Agent returns the individual and family out-of-pocket maximum from the SBC
-- Clarifies what counts toward the OOP maximum (medical only vs. combined medical and pharmacy)
-- Data source: `blob-storage-plan-documents`
+**Talking point:** *"Notice how the agent retrieved live eligibility data from Fabric in seconds — the same query a call center rep would take 3–4 minutes to run manually."*
 
 ---
 
-### Prompt 4
-> "Does my plan cover bariatric surgery?"
+## Act 2 — "What do I owe for my surgery?" *(~60 seconds)*
+**Primary data source: Fabric Data Agent (Claims)*
 
-**Expected Behavior:**
-- Agent retrieves clinical coverage criteria for bariatric/weight loss surgery
-- Returns coverage status, any qualifying criteria (e.g., BMI threshold, documentation of prior weight loss attempts), and prior auth requirement
-- Data source: `blob-storage-plan-documents`, `mcp-prior-auth-policies`
+> **Prompt:**
+> *"I had my right knee replacement on April 28th. I got an EOB in the mail but I don't understand the numbers. It says I owe $3,654 — is that right?"*
 
----
+**What to highlight:**
+The agent calls `lookup_claim` for CLM-2026-0061872, confirms the amount is correct, and explains the math in plain language: $1,500 deductible (fully satisfied by this claim) + $2,154 coinsurance (30% of the $18,200 allowed amount after deductible). It also confirms that prior auth PA-2026-087341 was on file and that her deductible is now fully met for the rest of the year.
 
-## Category 2: Claims
-
-### Prompt 5
-> "What is the status of my most recent medical claim?"
-
-**Expected Behavior:**
-- Agent queries the Fabric Data Agent for the member's latest adjudicated claim
-- Returns claim date, provider, service description, billed amount, allowed amount, plan paid amount, and member responsibility
-- If claim is pending, notes expected processing timeframe
-- Data source: `fabric-data-agent-claims`
-- ⚠️ Note: In demo mode, returns synthetic data for the fictional member context
+**Talking point:** *"This is the number one call driver for payors — EOB confusion. The agent just turned a 12-minute call into a 30-second answer, with the math shown."*
 
 ---
 
-### Prompt 6
-> "Why was my claim for the ER visit on March 3rd denied?"
+## Act 3 — "Do I need approval for physical therapy?" *(~60 seconds)*
+**Primary data source: MCP Server (Prior Auth Policies)*
 
-**Expected Behavior:**
-- Agent queries Fabric Data Agent for the specific claim by date and service type
-- Returns the denial reason code and plain-language explanation (e.g., "Service not covered under your plan" or "Prior authorization was required but not obtained")
-- Provides information on the appeals process and deadline
-- Data source: `fabric-data-agent-claims`, `blob-storage-plan-documents` (for appeals policy)
+> **Prompt:**
+> *"My surgeon wants me to start physical therapy three times a week. Do I need prior authorization for that?"*
 
----
+**What to highlight:**
+The agent calls `get_prior_auth_requirements` on the MCP server with serviceCategory="Physical Therapy". It returns the policy rule: **no PA required for the first 20 visits per year**, PA required beyond 20. Since Sarah is post-knee replacement, the agent proactively notes she'll likely exceed 20 visits during recovery and explains how her surgeon's office will submit that PA when the time comes.
 
-### Prompt 7
-> "How much have I spent toward my deductible so far this year?"
-
-**Expected Behavior:**
-- Agent queries accumulator data from the Fabric Data Agent
-- Returns year-to-date deductible accumulation for individual (and family if applicable) vs. the plan's deductible threshold
-- Data source: `fabric-data-agent-claims`
+**Talking point:** *"The MCP server gives the agent live access to utilization management policies — not a static PDF. If the policy changes next quarter, the agent's answer updates automatically."*
 
 ---
 
-## Category 3: Prior Authorization
+## Act 4 — "What will my pain medication cost?" *(~45 seconds)*
+**Primary data source: Azure AI Search (Formulary Index)*
 
-### Prompt 8
-> "Do I need prior authorization for an MRI of my knee?"
+> **Prompt:**
+> *"My doctor prescribed a medication called celecoxib for pain after surgery. What tier is it on and what will I pay?"*
 
-**Expected Behavior:**
-- Agent calls the MCP server `get_prior_auth_requirements` tool with a relevant CPT code (e.g., 73721 — MRI knee) or service category "MRI"
-- Returns whether prior auth is required, who submits the request (member vs. ordering provider), and the standard turnaround time
-- Data source: `mcp-prior-auth-policies`
+**What to highlight:**
+The agent queries the formulary AI Search index for "celecoxib," returns the tier and copay, and checks for any quantity limits. It also notes that since Sarah's deductible is now fully met, her pharmacy cost-sharing from this point forward is only the copay (no deductible applies to Tier 1–2 pharmacy on HMO Silver).
 
----
-
-### Prompt 9
-> "What is the process for getting a knee replacement approved?"
-
-**Expected Behavior:**
-- Agent calls the MCP server for prior auth requirements for total knee arthroplasty (CPT 27447)
-- Returns the clinical criteria (e.g., conservative treatment trials, functional limitations documentation), required supporting documents, submission method, and typical approval timeline
-- Includes a next-step redirect: "Your surgeon's office typically submits this request on your behalf"
-- Data source: `mcp-prior-auth-policies`, `blob-storage-plan-documents`
+**Talking point:** *"This is the Azure AI Search data source in action — a structured formulary index with vector + hybrid search. The agent retrieved the right drug from hundreds of entries instantly."*
 
 ---
 
-### Prompt 10
-> "I submitted a prior auth request for home health services two weeks ago. What's the status?"
+## Act 5 — "Can you help me find a physical therapist?" *(~60 seconds)*
+**Primary data source: Azure AI Search (Provider Directory)*
 
-**Expected Behavior:**
-- Agent queries the Fabric Data Agent for open prior authorization records
-- Returns the request status (pending, approved, denied, pended for additional information)
-- If pended, returns what additional information is needed
-- Data source: `fabric-data-agent-claims`
+> **Prompt:**
+> *"Great. Can you help me find a physical therapist near Naperville who's in network and accepting new patients?"*
 
----
+**What to highlight:**
+The agent queries the provider directory AI Search index with a semantic + vector search for physical therapists near Naperville, IL, with `acceptingNewPatients: true` and `networkStatus: ACTIVE_IN_NETWORK`. It returns matching providers with name, location, phone, and accessibility features. It also reminds Sarah that as an HMO member she'll need a referral from Dr. Chen before her first PT visit.
 
-## Category 4: Pharmacy / Formulary
-
-### Prompt 11
-> "Is Ozempic covered on my formulary?"
-
-**Expected Behavior:**
-- Agent queries the AI Search formulary index for "Ozempic" (semaglutide)
-- Returns formulary status, tier placement (e.g., Tier 4 — Specialty), whether prior auth is required, and any step therapy or quantity limits
-- Notes if the drug has a specialty pharmacy requirement
-- Data source: `ai-search-formulary`
+**Talking point:** *"And we've just crossed all four data sources in a single conversation: Fabric for eligibility and claims, MCP for prior auth policy, AI Search for formulary and provider directory. That's Knowledge IQ."*
 
 ---
 
-### Prompt 12
-> "What tier is atorvastatin, and what will it cost me?"
+## Closing Line (for the presenter)
 
-**Expected Behavior:**
-- Agent retrieves atorvastatin from the formulary index
-- Returns tier (typically Tier 1 — Generic), the corresponding copay/coinsurance, and available dosage strengths
-- May note any preferred mail-order cost savings
-- Data source: `ai-search-formulary`, `blob-storage-plan-documents` (for pharmacy cost-sharing schedule)
+> *"Sarah started the call confused about a $3,654 bill and ended it with a PT referral, a confirmed prescription cost, and a plan for recovery — all without holding for a rep. That's the experience HealthBridge can deliver with Knowledge IQ in Azure AI Foundry."*
 
 ---
 
-### Prompt 13
-> "My doctor prescribed Humira but I heard there's a biosimilar. Does my plan prefer one over the other?"
+## Quick Reference — Data Source Touchpoints
 
-**Expected Behavior:**
-- Agent looks up both Humira (adalimumab) and its biosimilars in the formulary index
-- Returns tier placement for each, noting whether step therapy requires trying a biosimilar first
-- Includes any prior auth requirements for Humira vs. biosimilar pathway
-- Data source: `ai-search-formulary`
-
----
-
-## Category 5: Provider Network
-
-### Prompt 14
-> "Is Dr. Patricia Chen an in-network provider for my plan?"
-
-**Expected Behavior:**
-- Agent queries the provider directory AI Search index for "Patricia Chen"
-- Returns network participation status (ACTIVE_IN_NETWORK, Preferred Tier 1), specialty (Internal Medicine), practice location at 1450 Medical Center Drive, Springfield, IL, and phone number 555-0100
-- Notes she is accepting new patients
-- Data source: `ai-search-providers`
-
----
-
-### Prompt 15
-> "Can you find me orthopedic surgeons near me who are accepting new patients?"
-
-**Expected Behavior:**
-- Agent performs a semantic + vector search of the provider directory for orthopedic surgeons with `acceptingNewPatients: true`
-- Returns a list of matching providers with name, location, phone, and hospital affiliations
-- Notes that the member can also use the online provider directory at my.healthbridge.com for a map-based search
-- Data source: `ai-search-providers`
+| Act | Topic | Data Source | MCP Tool |
+|-----|-------|------------|----------|
+| 1 | Eligibility check | Fabric Data Agent | `lookup_member` |
+| 2 | EOB explanation | Fabric Data Agent | `lookup_claim` |
+| 3 | Prior auth requirements | MCP Server | `get_prior_auth_requirements` |
+| 4 | Formulary/drug tier | Azure AI Search — Formulary | `check_formulary` |
+| 5 | Provider search | Azure AI Search — Provider Directory | `lookup_provider` |
 
 ---
 
@@ -196,4 +112,4 @@ These prompts test that the agent correctly enforces its guardrails.
 
 ---
 
-*Sample prompts version: 1.0 | Effective: 2026-06-05*
+*Demo script version: 2.0 | Effective: 2026-06-05 | Member data: HealthBridge synthetic — no real PHI*

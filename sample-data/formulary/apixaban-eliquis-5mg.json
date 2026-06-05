@@ -1,0 +1,31 @@
+{
+  "formularyId": "FRM-2026-0005",
+  "drugName": "Apixaban 5 mg Tablet (Eliquis)",
+  "genericName": "apixaban",
+  "brandName": "Eliquis",
+  "isGeneric": false,
+  "ndcCode": "00003-0894-XX",
+  "tier": 3,
+  "tierDescription": "Non-Preferred Brand",
+  "therapeuticClass": "Cardiovascular — Direct Oral Anticoagulant (DOAC) — Factor Xa Inhibitor",
+  "indication": "Reduction of stroke and systemic embolism risk in nonvalvular atrial fibrillation; DVT and PE treatment and secondary prevention; DVT prophylaxis post-elective hip/knee replacement surgery",
+  "requiresPriorAuth": false,
+  "stepTherapyRequired": false,
+  "stepTherapyDetails": null,
+  "quantityLimit": "60 tablets per 30-day supply (2x daily dosing)",
+  "quantityLimitReason": "Dosing regimen is 5 mg twice daily (standard) or 2.5 mg twice daily (dose-reduction criteria). Quantity limit aligns with standard dose.",
+  "specialtyPharmacy": false,
+  "preferredSpecialtyPharmacy": null,
+  "retailCopay30Day": 70.00,
+  "mailOrderCopay90Day": 165.00,
+  "deductibleApplies": true,
+  "formularyStatus": "NON_PREFERRED_BRAND",
+  "formularyNotes": "Eliquis (apixaban) and Xarelto (rivaroxaban) are both Tier 3. Warfarin remains Tier 1 but requires INR monitoring. Pradaxa (dabigatran) is Tier 3. No step therapy required for DOACs. Coverage note: Eliquis at 2.5 mg dose (post-surgical VTE prophylaxis) requires dose documentation to prevent quantity limit claim edits.",
+  "clinicalAlerts": [
+    "No reversal agent widely available in all settings — andexanet alfa (Andexxa) available at selected facilities",
+    "Dose reduction criteria: age ≥ 80 OR weight ≤ 60 kg OR SCr ≥ 1.5 mg/dL (at least 2 of 3 criteria met)",
+    "Avoid in severe hepatic impairment (Child-Pugh C)"
+  ],
+  "lastReviewedDate": "2026-01-01",
+  "effectiveDate": "2026-01-01"
+}

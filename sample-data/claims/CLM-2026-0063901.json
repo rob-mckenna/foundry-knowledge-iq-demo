@@ -1,0 +1,62 @@
+{
+  "claimId": "CLM-2026-0063901",
+  "claimType": "PROFESSIONAL",
+  "claimStatus": "PENDING",
+  "receivedDate": "2026-06-02",
+  "processedDate": null,
+  "serviceDate": "2026-05-30",
+  "memberId": "MBR-2024-005789",
+  "memberName": "Gregory T. Odom",
+  "planId": "EPO-GOLD-2026",
+  "groupId": "GRP-CITYWIDE-REALTY-055",
+  "renderingProvider": {
+    "npi": "5678901234",
+    "name": "Prairie Radiology & Imaging Associates",
+    "taxonomy": "2085R0202X",
+    "specialty": "Diagnostic Radiology"
+  },
+  "billingProvider": {
+    "npi": "5678901234",
+    "name": "Prairie Radiology & Imaging Associates LLC",
+    "taxId": "XX-XXXXXXX"
+  },
+  "placeOfService": "22",
+  "diagnosisCodes": [
+    { "sequence": 1, "code": "M51.16", "system": "ICD-10-CM", "description": "Intervertebral disc degeneration, lumbar region" },
+    { "sequence": 2, "code": "M54.5",  "system": "ICD-10-CM", "description": "Low back pain" },
+    { "sequence": 3, "code": "M54.4",  "system": "ICD-10-CM", "description": "Lumbago with sciatica, right side" }
+  ],
+  "serviceLines": [
+    {
+      "lineNumber": 1,
+      "procedureCode": "72148",
+      "procedureDescription": "Magnetic resonance imaging, spinal canal and contents, lumbar; without contrast material",
+      "modifiers": [],
+      "diagnosisPointers": [1, 2, 3],
+      "units": 1,
+      "billedAmount": 1875.00,
+      "allowedAmount": null,
+      "planPaidAmount": null,
+      "memberCopay": null,
+      "memberDeductible": null,
+      "memberCoinsurance": null,
+      "memberResponsibility": null,
+      "adjustmentReasonCode": null,
+      "adjustmentReasonDescription": null
+    }
+  ],
+  "claimTotals": {
+    "totalBilled": 1875.00,
+    "totalAllowed": null,
+    "totalPlanPaid": null,
+    "totalMemberResponsibility": null
+  },
+  "pendingInfo": {
+    "pendingReasonCode": "PENDING-PA",
+    "pendingReason": "Prior authorization pending. Claim received and queued for adjudication. Processing will complete upon resolution of PA request PA-2026-091204. No action required from member at this time.",
+    "expectedResolutionDate": "2026-06-10"
+  },
+  "priorAuthorizationNumber": "PA-2026-091204",
+  "referralNumber": null,
+  "notes": "Lumbar MRI for lumbar degenerative disc disease with radiculopathy. PA pending as of claim receipt. EPO Gold plan requires PA for all advanced imaging. Deductible fully met for subscriber."
+}

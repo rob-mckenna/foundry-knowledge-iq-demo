@@ -1,6 +1,6 @@
-# Summary of Benefits — BluePeak HMO Silver
+# Summary of Benefits — HealthBridge HMO Silver
 ## Plan Year 2026 | Plan ID: HMO-SILVER-2026
-**BluePeak Health Plan** | Member Services: 1-800-555-BLUE (2583) | bluepeak.example.com
+**HealthBridge Insurance Plan** | Member Services: 1-800-555-BLUE (2583) | HealthBridge.example.com
 
 ---
 
@@ -33,7 +33,7 @@
 | **Telehealth (Specialist)** | $45 copay |
 | **OB/GYN** (direct access — no referral) | $60 copay |
 
-> ⚠️ **HMO Referral Requirement:** You must obtain a referral from your Primary Care Provider (PCP) before seeing a specialist, except for OB/GYN, emergency care, and mental health/substance use disorder services. Referrals are issued through the BluePeak Member Portal.
+> ⚠️ **HMO Referral Requirement:** You must obtain a referral from your Primary Care Provider (PCP) before seeing a specialist, except for OB/GYN, emergency care, and mental health/substance use disorder services. Referrals are issued through the HealthBridge Member Portal.
 
 ### Outpatient Services
 
@@ -93,13 +93,13 @@
 
 ## Choosing Your PCP
 
-As an HMO member, you must select a Primary Care Provider (PCP) from the BluePeak HMO network. You may change your PCP once per month.
+As an HMO member, you must select a Primary Care Provider (PCP) from the HealthBridge HMO network. You may change your PCP once per month.
 
-**BluePeak HMO PCP Network includes:**
+**HealthBridge HMO PCP Network includes:**
 - General Practice, Family Medicine, Internal Medicine, and Pediatrics providers
 - Over 1,200 PCPs across Illinois
 
-To find or change your PCP: **bluepeak.example.com/find-a-doctor** or call Member Services.
+To find or change your PCP: **HealthBridge.example.com/find-a-doctor** or call Member Services.
 
 ---
 
@@ -110,7 +110,7 @@ To find or change your PCP: **bluepeak.example.com/find-a-doctor** or call Membe
 | **Vision** | 1 routine exam/year ($0); frames/contacts up to $100 allowance |
 | **Dental (Preventive)** | 2 cleanings/year — $0 |
 | **Dental (Basic Restorative)** | Not included (dental discount program available) |
-| **Telehealth (Unlimited)** | $15 copay — 24/7 access via BluePeak App |
+| **Telehealth (Unlimited)** | $15 copay — 24/7 access via HealthBridge App |
 | **Nurse Line** | 24/7 registered nurse available — no charge |
 | **Disease Management** | $0 — programs for diabetes, asthma, hypertension, pregnancy |
 
@@ -118,10 +118,10 @@ To find or change your PCP: **bluepeak.example.com/find-a-doctor** or call Membe
 
 ## Out-of-Network Coverage
 
-This is an **HMO plan.** Services obtained outside the BluePeak HMO network are generally **not covered** except:
+This is an **HMO plan.** Services obtained outside the HealthBridge HMO network are generally **not covered** except:
 - True medical emergencies (ER and post-stabilization)
 - Urgent care when traveling outside the plan's service area
-- Services authorized in advance by BluePeak in writing
+- Services authorized in advance by HealthBridge in writing
 
 **No Surprises Act:** For emergency services, you will not pay more than in-network cost sharing regardless of provider network status.
 
@@ -129,12 +129,12 @@ This is an **HMO plan.** Services obtained outside the BluePeak HMO network are 
 
 ## Important Plan Information
 
-- **Service Area:** BluePeak HMO covers members residing or working in Illinois
-- **Network:** BluePeak HMO network — use in-network providers only
+- **Service Area:** HealthBridge HMO covers members residing or working in Illinois
+- **Network:** HealthBridge HMO network — use in-network providers only
 - **Referrals:** Required for specialists (except OB/GYN, behavioral health, emergency)
 - **Prior Authorization:** Required for inpatient admissions, advanced imaging, specialty drugs, extended PT/OT/ST, home health, and DME ≥ $500 (see CP-2026-PA-001)
-- **Appeals:** bluepeak.example.com/appeals | Member Services: 1-800-555-BLUE
+- **Appeals:** HealthBridge.example.com/appeals | Member Services: 1-800-555-BLUE
 
 ---
 
-*This Summary of Benefits is for illustrative purposes. BluePeak Health Plan is a fictional entity. All plan data is synthetic and does not represent actual insurance coverage.*
+*This Summary of Benefits is for illustrative purposes. HealthBridge Insurance Plan is a fictional entity. All plan data is synthetic and does not represent actual insurance coverage.*

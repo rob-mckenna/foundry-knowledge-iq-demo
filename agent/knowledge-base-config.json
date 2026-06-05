@@ -188,6 +188,7 @@
 
   "notes": [
     "Replace <FABRIC_WORKSPACE_ID> with the actual Fabric workspace GUID before deploying.",
+    "FABRIC PLACEHOLDER: The 'fabric-data-agent-claims' source requires a Microsoft Fabric workspace with a configured Data Agent named 'healthbridge-claims-agent'. This source is a placeholder pending user configuration — the Knowledge Base will function with the remaining three sources (Blob Storage, AI Search x2, MCP) until the Fabric workspace is provisioned. See data-sources/fabric-data-agent/README.md for setup instructions.",
     "Connection name references must match the connection names registered in your Foundry project.",
     "The MCP server URL assumes local dev mode; update to production endpoint for live demo.",
     "topK values can be tuned per data source override; the root retrieval block sets the default."

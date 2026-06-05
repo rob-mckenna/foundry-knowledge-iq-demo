@@ -1,0 +1,105 @@
+{
+  "npi": "5678901234",
+  "entityType": "ORGANIZATION",
+  "providerStatus": "ACTIVE_IN_NETWORK",
+  "networkTiers": ["PREFERRED_TIER_1"],
+  "organization": {
+    "legalName": "Prairie Radiology & Imaging Associates LLC",
+    "doingBusinessAs": "Prairie Radiology & Imaging Associates",
+    "taxId": "XX-XXXXXXX",
+    "organizationType": "GROUP_PRACTICE"
+  },
+  "taxonomy": [
+    {
+      "code": "2085R0202X",
+      "description": "Diagnostic Radiology",
+      "primary": true
+    },
+    {
+      "code": "2085R0204X",
+      "description": "Diagnostic Radiology — Body Imaging",
+      "primary": false
+    }
+  ],
+  "practitioners": [
+    {
+      "npi": "5678901235",
+      "name": "Dr. Yolanda K. Batista, MD",
+      "specialty": "Diagnostic Radiology — Neuroradiology",
+      "credential": "MD, FACR"
+    },
+    {
+      "npi": "5678901236",
+      "name": "Dr. James P. Lenhart, MD",
+      "specialty": "Diagnostic Radiology — Musculoskeletal",
+      "credential": "MD"
+    }
+  ],
+  "locations": [
+    {
+      "locationId": "LOC-PRIA-001",
+      "locationName": "Prairie Radiology — Springfield Outpatient",
+      "type": "PRIMARY_PRACTICE",
+      "address": {
+        "street1": "900 E. Carpenter Street",
+        "street2": "Suite 100",
+        "city": "Springfield",
+        "state": "IL",
+        "zip": "62702",
+        "county": "Sangamon"
+      },
+      "phone": "555-0567",
+      "fax": "555-0568",
+      "acceptingNewPatients": true,
+      "accessibilityFeatures": ["WHEELCHAIR_ACCESSIBLE", "ELEVATOR_ACCESS"],
+      "hours": {
+        "monday": "07:00-18:00",
+        "tuesday": "07:00-18:00",
+        "wednesday": "07:00-18:00",
+        "thursday": "07:00-18:00",
+        "friday": "07:00-17:00",
+        "saturday": "08:00-13:00",
+        "sunday": "CLOSED"
+      }
+    },
+    {
+      "locationId": "LOC-PRIA-002",
+      "locationName": "Prairie Radiology — Naperville Outpatient",
+      "type": "SATELLITE_OFFICE",
+      "address": {
+        "street1": "1888 W. Jefferson Ave",
+        "street2": "Suite 205",
+        "city": "Naperville",
+        "state": "IL",
+        "zip": "60540",
+        "county": "DuPage"
+      },
+      "phone": "555-0569",
+      "fax": "555-0570",
+      "acceptingNewPatients": true,
+      "accessibilityFeatures": ["WHEELCHAIR_ACCESSIBLE"],
+      "hours": {
+        "monday": "08:00-17:00",
+        "tuesday": "08:00-17:00",
+        "wednesday": "08:00-17:00",
+        "thursday": "08:00-17:00",
+        "friday": "08:00-15:00",
+        "saturday": "CLOSED",
+        "sunday": "CLOSED"
+      }
+    }
+  ],
+  "networkEffectiveDates": {
+    "credentialedDate": "2019-06-01",
+    "contractEffectiveDate": "2020-01-01",
+    "contractTerminationDate": null,
+    "lastVerificationDate": "2026-02-01"
+  },
+  "priorAuthorizationRequired": true,
+  "priorAuthProcedureCodes": ["70553", "72148", "74178", "78816", "71250", "73721"],
+  "qualityMetrics": {
+    "hedisCompliance": "MEDIUM",
+    "starRating": 4.3,
+    "patientSatisfactionScore": 4.5
+  }
+}

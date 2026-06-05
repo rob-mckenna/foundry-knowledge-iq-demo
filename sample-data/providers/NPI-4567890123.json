@@ -1,0 +1,95 @@
+{
+  "npi": "4567890123",
+  "entityType": "INDIVIDUAL",
+  "providerStatus": "ACTIVE_IN_NETWORK",
+  "networkTiers": ["PREFERRED_TIER_1", "STANDARD"],
+  "individual": {
+    "firstName": "Marcus",
+    "middleInitial": "J",
+    "lastName": "Obi",
+    "credential": "MD",
+    "gender": "M",
+    "languages": ["English", "Igbo"]
+  },
+  "practice": {
+    "name": "Northside Behavioral Health Associates LLC",
+    "groupNpi": "9005678901",
+    "taxId": "XX-XXXXXXX"
+  },
+  "taxonomy": [
+    {
+      "code": "2084P0800X",
+      "description": "Psychiatry",
+      "primary": true
+    },
+    {
+      "code": "2084P0804X",
+      "description": "Psychiatry — Psychosomatic Medicine",
+      "primary": false
+    }
+  ],
+  "boardCertifications": [
+    {
+      "board": "American Board of Psychiatry and Neurology",
+      "specialty": "Psychiatry",
+      "certifiedDate": "2014-07-01",
+      "expirationDate": "2024-07-01"
+    }
+  ],
+  "licenseInfo": [
+    {
+      "state": "IL",
+      "licenseNumber": "036-YYYYYY",
+      "issueDate": "2012-09-15",
+      "expirationDate": "2027-09-30",
+      "status": "ACTIVE"
+    }
+  ],
+  "locations": [
+    {
+      "locationId": "LOC-OBI-001",
+      "locationName": "Northside Behavioral Health — Chicago",
+      "type": "PRIMARY_PRACTICE",
+      "address": {
+        "street1": "3300 N. Broadway",
+        "street2": "Suite 415",
+        "city": "Chicago",
+        "state": "IL",
+        "zip": "60657",
+        "county": "Cook"
+      },
+      "phone": "555-0456",
+      "fax": "555-0457",
+      "acceptingNewPatients": true,
+      "accessibilityFeatures": ["WHEELCHAIR_ACCESSIBLE"],
+      "hours": {
+        "monday": "09:00-17:00",
+        "tuesday": "09:00-17:00",
+        "wednesday": "09:00-17:00",
+        "thursday": "09:00-19:00",
+        "friday": "09:00-15:00",
+        "saturday": "CLOSED",
+        "sunday": "CLOSED"
+      }
+    }
+  ],
+  "networkEffectiveDates": {
+    "credentialedDate": "2017-04-15",
+    "contractEffectiveDate": "2022-01-01",
+    "contractTerminationDate": null,
+    "lastVerificationDate": "2026-01-10"
+  },
+  "hospitalAffiliations": [
+    {
+      "facilityName": "Northwestern Lake Forest Hospital",
+      "npi": "8005678901",
+      "admittingPrivileges": false
+    }
+  ],
+  "priorAuthorizationRequired": false,
+  "qualityMetrics": {
+    "hedisCompliance": "HIGH",
+    "starRating": 4.6,
+    "patientSatisfactionScore": 4.8
+  }
+}

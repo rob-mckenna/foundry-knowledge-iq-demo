@@ -1,0 +1,81 @@
+{
+  "memberId": "MBR-2024-008173",
+  "membershipStatus": "TERMED",
+  "subscriber": {
+    "firstName": "Carlos",
+    "middleInitial": "E",
+    "lastName": "Reyes",
+    "dateOfBirth": "1983-09-11",
+    "gender": "M",
+    "ssn_last4": "XXXX",
+    "address": {
+      "street1": "334 Hickory Lane",
+      "street2": "Apt 2",
+      "city": "Joliet",
+      "state": "IL",
+      "zip": "60432",
+      "county": "Will"
+    },
+    "phone": "555-0817",
+    "email": "c.reyes.83@example-email.com",
+    "relationship": "SELF"
+  },
+  "groupInfo": {
+    "groupId": "GRP-PRAIRIE-LOGISTICS-029",
+    "groupName": "Prairie Logistics Group Inc.",
+    "divisionCode": "DIV-WAREHOUSE"
+  },
+  "planInfo": {
+    "planId": "HMO-SILVER-2026",
+    "planName": "HealthBridge HMO Silver",
+    "planType": "HMO",
+    "metalTier": "SILVER",
+    "effectiveDate": "2026-01-01",
+    "terminationDate": "2026-03-31",
+    "terminationReason": "EMPLOYMENT_TERMINATED",
+    "openEnrollmentDate": "2025-11-01"
+  },
+  "pcpInfo": {
+    "npi": "1234567890",
+    "name": "Dr. Patricia M. Chen",
+    "practice": "HealthBridge Primary Care Associates",
+    "assignedDate": "2026-01-01"
+  },
+  "accumulators": {
+    "benefitYear": "2026",
+    "asOfDate": "2026-03-31",
+    "individualDeductible": {
+      "limit": 1500.00,
+      "met": 325.00,
+      "remaining": 1175.00
+    },
+    "familyDeductible": {
+      "limit": 3000.00,
+      "met": 325.00,
+      "remaining": 2675.00
+    },
+    "individualOutOfPocketMax": {
+      "limit": 5000.00,
+      "met": 355.00,
+      "remaining": 4645.00
+    },
+    "familyOutOfPocketMax": {
+      "limit": 10000.00,
+      "met": 355.00,
+      "remaining": 9645.00
+    }
+  },
+  "dependents": [],
+  "eligibilityVerifiedDate": "2026-03-31",
+  "cobInfo": {
+    "isCoordinating": false,
+    "otherCoverage": null
+  },
+  "terminationInfo": {
+    "terminationDate": "2026-03-31",
+    "reason": "EMPLOYMENT_TERMINATED",
+    "cobraEligible": true,
+    "cobraNoticeDate": "2026-04-05",
+    "cobraElectionDeadline": "2026-06-04"
+  }
+}

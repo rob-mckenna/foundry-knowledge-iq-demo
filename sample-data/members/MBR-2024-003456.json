@@ -22,12 +22,12 @@
   },
   "groupInfo": {
     "groupId": "GRP-RETIREE-MAPD-007",
-    "groupName": "BluePeak Medicare Advantage — Retiree Group",
+    "groupName": "HealthBridge Medicare Advantage — Retiree Group",
     "divisionCode": "DIV-MAPD-CENTRAL"
   },
   "planInfo": {
     "planId": "PPO-PLATINUM-2026",
-    "planName": "BluePeak Platinum PPO (Medicare Advantage)",
+    "planName": "HealthBridge Platinum PPO (Medicare Advantage)",
     "planType": "PPO",
     "metalTier": "PLATINUM",
     "effectiveDate": "2024-01-01",

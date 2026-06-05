@@ -1,14 +1,14 @@
 # Prior Authorization Policy
-## BluePeak Health Plan — Clinical Policy CP-2026-PA-001
+## HealthBridge Insurance Plan — Clinical Policy CP-2026-PA-001
 **Effective Date:** January 1, 2026 | **Review Date:** January 1, 2027
 **Policy Owner:** Medical Management & Clinical Affairs
-**Applies To:** All BluePeak commercial and Medicare Advantage plans unless otherwise noted
+**Applies To:** All HealthBridge commercial and Medicare Advantage plans unless otherwise noted
 
 ---
 
 ## 1. Purpose and Scope
 
-Prior Authorization (PA) is a utilization management program requiring advance approval from BluePeak Health Plan before certain services are rendered. This policy defines the services requiring PA, the submission process, review criteria, and timelines applicable to BluePeak network and out-of-network providers.
+Prior Authorization (PA) is a utilization management program requiring advance approval from HealthBridge Insurance Plan before certain services are rendered. This policy defines the services requiring PA, the submission process, review criteria, and timelines applicable to HealthBridge network and out-of-network providers.
 
 PA does **not** imply that a service is medically necessary, nor does it guarantee payment. Final claim adjudication is subject to eligibility, benefit design, and applicable exclusions.
 
@@ -60,7 +60,7 @@ All specialty medications (see Formulary Tier 4 — Specialty) require PA. See *
 ### 3.1 How to Submit
 
 Requests may be submitted via:
-- **Provider Portal:** bluepeak-provider.example.com → "Auth Request"
+- **Provider Portal:** HealthBridge-provider.example.com → "Auth Request"
 - **Fax:** 555-0199 (secure)
 - **Phone:** 555-0190 (Provider Services) — for urgent requests only
 
@@ -89,7 +89,7 @@ Timeframes reflect regulatory requirements under Illinois Insurance Code 215 ILC
 
 ### 4.1 Total Knee Arthroplasty (CPT 27447)
 
-BluePeak will approve Total Knee Arthroplasty (TKA) when **ALL** of the following criteria are met:
+HealthBridge will approve Total Knee Arthroplasty (TKA) when **ALL** of the following criteria are met:
 
 **Clinical Criteria:**
 1. Diagnosis of severe knee osteoarthritis (ICD-10: M17.11, M17.12, M17.31, M17.32) confirmed by X-ray (weight-bearing AP, lateral, and Merchant views) showing joint space narrowing, osteophyte formation, or subchondral sclerosis
@@ -110,7 +110,7 @@ BluePeak will approve Total Knee Arthroplasty (TKA) when **ALL** of the followin
 
 ## 5. Denial and Appeals
 
-If a PA request is denied, BluePeak will provide:
+If a PA request is denied, HealthBridge will provide:
 - Written denial notice within the applicable timeframe
 - Specific clinical reason for denial
 - Information on the appeals process
@@ -129,8 +129,8 @@ Providers may request a clinical exception for services not meeting criteria if:
 - Published clinical literature supports the requested approach
 - The treating physician attests that the standard criteria create an undue risk
 
-Exceptions are reviewed by the BluePeak Medical Director and are not guaranteed.
+Exceptions are reviewed by the HealthBridge Medical Director and are not guaranteed.
 
 ---
 
-*BluePeak Health Plan is a fictional entity created for demonstration purposes. All member, provider, and clinical data are synthetic.*
+*HealthBridge Insurance Plan is a fictional entity created for demonstration purposes. All member, provider, and clinical data are synthetic.*

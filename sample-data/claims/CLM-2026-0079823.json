@@ -1,0 +1,82 @@
+{
+  "claimId": "CLM-2026-0079823",
+  "claimType": "PROFESSIONAL",
+  "claimStatus": "UNDER_REVIEW",
+  "receivedDate": "2026-06-01",
+  "processedDate": null,
+  "serviceDate": "2026-04-07",
+  "serviceToDate": "2026-05-26",
+  "memberId": "MBR-2024-002891",
+  "memberName": "Sarah L. Nguyen",
+  "planId": "HMO-SILVER-2026",
+  "groupId": "GRP-MERIDIAN-TECH-042",
+  "renderingProvider": {
+    "npi": "7890123456",
+    "name": "Midwest Physical & Occupational Therapy LLC",
+    "taxonomy": "225100000X",
+    "specialty": "Physical Therapy"
+  },
+  "billingProvider": {
+    "npi": "7890123456",
+    "name": "Midwest Physical & Occupational Therapy LLC",
+    "taxId": "XX-XXXXXXX"
+  },
+  "placeOfService": "11",
+  "diagnosisCodes": [
+    { "sequence": 1, "code": "M17.11", "system": "ICD-10-CM", "description": "Primary osteoarthritis, right knee" },
+    { "sequence": 2, "code": "Z96.651","system": "ICD-10-CM", "description": "Presence of right artificial knee joint" },
+    { "sequence": 3, "code": "Z87.39", "system": "ICD-10-CM", "description": "Personal history of other musculoskeletal disorders" }
+  ],
+  "serviceLines": [
+    {
+      "lineNumber": 1,
+      "procedureCode": "97110",
+      "procedureDescription": "Therapeutic procedure, 1 or more areas, each 15 minutes; therapeutic exercises to develop strength, endurance, range of motion and flexibility",
+      "modifiers": [],
+      "diagnosisPointers": [1, 2],
+      "units": 25,
+      "billedAmount": 3750.00,
+      "allowedAmount": null,
+      "planPaidAmount": null,
+      "memberCopay": null,
+      "memberDeductible": null,
+      "memberCoinsurance": null,
+      "memberResponsibility": null,
+      "adjustmentReasonCode": null,
+      "adjustmentReasonDescription": null
+    },
+    {
+      "lineNumber": 2,
+      "procedureCode": "97530",
+      "procedureDescription": "Therapeutic activities, direct (one-on-one) patient contact by the provider, each 15 minutes",
+      "modifiers": [],
+      "diagnosisPointers": [1, 2, 3],
+      "units": 25,
+      "billedAmount": 3000.00,
+      "allowedAmount": null,
+      "planPaidAmount": null,
+      "memberCopay": null,
+      "memberDeductible": null,
+      "memberCoinsurance": null,
+      "memberResponsibility": null,
+      "adjustmentReasonCode": null,
+      "adjustmentReasonDescription": null
+    }
+  ],
+  "claimTotals": {
+    "totalBilled": 6750.00,
+    "totalAllowed": null,
+    "totalPlanPaid": null,
+    "totalMemberResponsibility": null
+  },
+  "reviewInfo": {
+    "reviewReasonCode": "UTIL-REVIEW-PT",
+    "reviewReason": "Claim submitted for 25 physical therapy sessions (post-TKA rehabilitation). HMO Silver plan allows up to 20 PT visits per benefit year without prior authorization. This claim exceeds the 20-visit threshold; PA required for visits 21 through 25. Clinical review has been initiated. Member and provider will be notified of determination within 5 business days.",
+    "reviewInitiatedDate": "2026-06-03",
+    "reviewType": "CONCURRENT_UTILIZATION_REVIEW",
+    "expectedResolutionDate": "2026-06-10"
+  },
+  "priorAuthorizationNumber": null,
+  "referralNumber": "REF-2026-004412",
+  "notes": "Post-TKA physical therapy (PA-2026-087341 covers surgical procedure only, not subsequent PT). First 20 visits covered under plan benefit; visits 21-25 pend for PA. Clinical notes from treating PT requested."
+}

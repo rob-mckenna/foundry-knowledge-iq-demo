@@ -1,0 +1,31 @@
+{
+  "formularyId": "FRM-2026-0003",
+  "drugName": "Lisinopril 10 mg Tablet",
+  "genericName": "lisinopril",
+  "brandName": "Prinivil / Zestril (reference brands; generic preferred)",
+  "isGeneric": true,
+  "ndcCode": "00116-0321-XX",
+  "tier": 1,
+  "tierDescription": "Preferred Generic",
+  "therapeuticClass": "Cardiovascular — ACE Inhibitor",
+  "indication": "Hypertension; heart failure with reduced ejection fraction (HFrEF); diabetic nephropathy; post-MI cardioprotection",
+  "requiresPriorAuth": false,
+  "stepTherapyRequired": false,
+  "stepTherapyDetails": null,
+  "quantityLimit": "30 tablets per 30-day supply",
+  "quantityLimitReason": null,
+  "specialtyPharmacy": false,
+  "preferredSpecialtyPharmacy": null,
+  "retailCopay30Day": 8.00,
+  "mailOrderCopay90Day": 20.00,
+  "deductibleApplies": false,
+  "formularyStatus": "PREFERRED",
+  "formularyNotes": "Preferred ACE inhibitor for hypertension and HFrEF. Lisinopril and enalapril are both Tier 1. ARBs (losartan, valsartan) are Tier 1–2 alternatives for ACE-intolerant patients (typically cough). ARNI (sacubitril/valsartan — Entresto) is Tier 4 Specialty with PA.",
+  "clinicalAlerts": [
+    "Risk of angioedema — educate patient; contraindicated with sacubitril/valsartan within 36 hours",
+    "Monitor potassium and renal function at initiation and dose changes",
+    "Avoid in pregnancy — fetal toxicity"
+  ],
+  "lastReviewedDate": "2026-01-01",
+  "effectiveDate": "2026-01-01"
+}

@@ -41,7 +41,7 @@ az storage container create `
     --output none
 
 # Upload all sample document subdirectories as virtual folders
-$folders = @("policies", "benefits", "members", "claims")
+$folders = @("policies", "benefits", "members", "claims", "providers", "formulary")
 foreach ($folder in $folders) {
     $folderPath = Join-Path $SampleDataPath $folder
     if (Test-Path $folderPath) {

@@ -1,0 +1,161 @@
+{
+  "name": "healthbridge-formulary-index",
+  "description": "Formulary drug coverage index — tier assignments, PA requirements, step therapy, quantity limits, specialty pharmacy",
+  "fields": [
+    {
+      "name": "id",
+      "type": "Edm.String",
+      "key": true,
+      "filterable": true,
+      "sortable": true,
+      "retrievable": true
+    },
+    {
+      "name": "drugName",
+      "type": "Edm.String",
+      "searchable": true,
+      "filterable": true,
+      "sortable": true,
+      "retrievable": true,
+      "analyzerName": "en.microsoft"
+    },
+    {
+      "name": "genericName",
+      "type": "Edm.String",
+      "searchable": true,
+      "filterable": true,
+      "sortable": true,
+      "retrievable": true,
+      "analyzerName": "en.microsoft"
+    },
+    {
+      "name": "tier",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "retrievable": true
+    },
+    {
+      "name": "requiresPriorAuth",
+      "type": "Edm.Boolean",
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "facetable": true,
+      "retrievable": true
+    },
+    {
+      "name": "stepTherapyRequired",
+      "type": "Edm.Boolean",
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "facetable": true,
+      "retrievable": true
+    },
+    {
+      "name": "quantityLimit",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": false,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "specialtyPharmacy",
+      "type": "Edm.Boolean",
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "facetable": true,
+      "retrievable": true
+    },
+    {
+      "name": "formularyNotes",
+      "type": "Edm.String",
+      "searchable": true,
+      "filterable": false,
+      "sortable": false,
+      "retrievable": true,
+      "analyzerName": "en.microsoft"
+    },
+    {
+      "name": "therapeuticClass",
+      "type": "Edm.String",
+      "searchable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "retrievable": true
+    },
+    {
+      "name": "NDC",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "contentVector",
+      "type": "Collection(Edm.Single)",
+      "searchable": true,
+      "retrievable": false,
+      "dimensions": 1536,
+      "vectorSearchProfile": "hnsw-profile"
+    }
+  ],
+  "vectorSearch": {
+    "algorithms": [
+      {
+        "name": "hnsw-algorithm",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500,
+          "metric": "cosine"
+        }
+      }
+    ],
+    "profiles": [
+      {
+        "name": "hnsw-profile",
+        "algorithm": "hnsw-algorithm",
+        "vectorizer": "azure-openai-vectorizer"
+      }
+    ],
+    "vectorizers": [
+      {
+        "name": "azure-openai-vectorizer",
+        "kind": "azureOpenAI",
+        "azureOpenAIParameters": {
+          "resourceUri": "${AZURE_OPENAI_ENDPOINT}",
+          "deploymentId": "text-embedding-3-small",
+          "modelName": "text-embedding-3-small"
+        }
+      }
+    ]
+  },
+  "semantic": {
+    "defaultConfiguration": "formulary-semantic-config",
+    "configurations": [
+      {
+        "name": "formulary-semantic-config",
+        "prioritizedFields": {
+          "titleField": { "fieldName": "drugName" },
+          "contentFields": [
+            { "fieldName": "genericName" },
+            { "fieldName": "formularyNotes" }
+          ],
+          "keywordsFields": [
+            { "fieldName": "therapeuticClass" },
+            { "fieldName": "tier" }
+          ]
+        }
+      }
+    ]
+  }
+}

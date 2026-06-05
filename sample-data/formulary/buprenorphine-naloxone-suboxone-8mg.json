@@ -1,0 +1,40 @@
+{
+  "formularyId": "FRM-2026-0010",
+  "drugName": "Buprenorphine/Naloxone 8 mg/2 mg Sublingual Film (Suboxone)",
+  "genericName": "buprenorphine and naloxone",
+  "brandName": "Suboxone (reference brand; generic preferred)",
+  "isGeneric": true,
+  "ndcCode": "12496-1283-XX",
+  "tier": 2,
+  "tierDescription": "Non-Preferred Generic / Preferred Brand",
+  "therapeuticClass": "Addiction Medicine — Opioid Partial Agonist — Schedule III Controlled Substance — Medication-Assisted Treatment (MAT)",
+  "indication": "Opioid use disorder (OUD) — induction, stabilization, and maintenance treatment as part of a comprehensive Medication-Assisted Treatment (MAT) program; opioid dependence",
+  "requiresPriorAuth": true,
+  "stepTherapyRequired": false,
+  "stepTherapyDetails": null,
+  "quantityLimit": "60 films per 30-day supply (2 films/day maximum for maintenance dosing)",
+  "quantityLimitReason": "Standard maintenance dose range is 4–24 mg/day. 60-film limit per 30 days supports doses up to 16 mg twice daily. Higher doses require QL exception with documentation of patient response and prescriber clinical justification.",
+  "specialtyPharmacy": false,
+  "preferredSpecialtyPharmacy": null,
+  "retailCopay30Day": 35.00,
+  "mailOrderCopay90Day": 80.00,
+  "mailOrderAvailable": true,
+  "deductibleApplies": true,
+  "formularyStatus": "COVERED_WITH_PA",
+  "formularyNotes": "HealthBridge covers buprenorphine/naloxone (Suboxone film and generic equivalent) for OUD treatment as part of a Medication-Assisted Treatment (MAT) plan. Per Illinois Mental Health Parity law and federal ACA requirements, SUD treatment benefits must be comparable to medical/surgical benefits. PA required to ensure appropriate MAT program enrollment (prescriber must have DEA X-waiver or DATA 2000 waiver). Brand Suboxone is Tier 3; generic sublingual film is Tier 2. Tablet formulation (Zubsolv) is Tier 2.",
+  "priorAuthCriteria": [
+    "Diagnosis of Opioid Use Disorder (ICD-10: F11.20, F11.21, F11.22) documented",
+    "Prescriber holds valid DEA Schedule III license and applicable buprenorphine prescribing waiver",
+    "Enrollment in or referral to comprehensive MAT program including counseling component",
+    "Initial authorization: 90 days; renewal: 12 months with documented compliance and treatment response"
+  ],
+  "clinicalAlerts": [
+    "Schedule III — prescribers must hold DEA Schedule III license and applicable DATA 2000 waiver for OUD treatment",
+    "Risk of diversion — monitor for signs of misuse; urine drug screening recommended",
+    "Buprenorphine causes partial mu-opioid agonism — precipitated withdrawal if administered too soon after full agonist opioid",
+    "Naloxone component deters injection misuse",
+    "Mail-order available for stable maintenance patients"
+  ],
+  "lastReviewedDate": "2026-01-01",
+  "effectiveDate": "2026-01-01"
+}

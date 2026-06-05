@@ -1,0 +1,198 @@
+{
+  "name": "healthbridge-provider-index",
+  "description": "Provider directory index — physicians, specialties, NPI, network status, locations, accepting new patients",
+  "fields": [
+    {
+      "name": "id",
+      "type": "Edm.String",
+      "key": true,
+      "filterable": true,
+      "sortable": true,
+      "retrievable": true
+    },
+    {
+      "name": "providerName",
+      "type": "Edm.String",
+      "searchable": true,
+      "filterable": true,
+      "sortable": true,
+      "retrievable": true,
+      "analyzerName": "en.microsoft"
+    },
+    {
+      "name": "npi",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": true,
+      "sortable": true,
+      "retrievable": true
+    },
+    {
+      "name": "specialty",
+      "type": "Edm.String",
+      "searchable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "retrievable": true,
+      "analyzerName": "en.microsoft"
+    },
+    {
+      "name": "networkStatus",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "retrievable": true
+    },
+    {
+      "name": "acceptingNewPatients",
+      "type": "Edm.Boolean",
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "facetable": true,
+      "retrievable": true
+    },
+    {
+      "name": "locations",
+      "type": "Collection(Edm.ComplexType)",
+      "fields": [
+        {
+          "name": "addressLine1",
+          "type": "Edm.String",
+          "searchable": true,
+          "retrievable": true
+        },
+        {
+          "name": "city",
+          "type": "Edm.String",
+          "searchable": true,
+          "filterable": true,
+          "facetable": true,
+          "retrievable": true
+        },
+        {
+          "name": "state",
+          "type": "Edm.String",
+          "searchable": false,
+          "filterable": true,
+          "facetable": true,
+          "retrievable": true
+        },
+        {
+          "name": "zip",
+          "type": "Edm.String",
+          "searchable": false,
+          "filterable": true,
+          "retrievable": true
+        },
+        {
+          "name": "phone",
+          "type": "Edm.String",
+          "searchable": false,
+          "filterable": false,
+          "retrievable": true
+        }
+      ]
+    },
+    {
+      "name": "phoneNumber",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": false,
+      "retrievable": true
+    },
+    {
+      "name": "hospitalAffiliations",
+      "type": "Collection(Edm.String)",
+      "searchable": true,
+      "filterable": true,
+      "retrievable": true
+    },
+    {
+      "name": "languages",
+      "type": "Collection(Edm.String)",
+      "searchable": false,
+      "filterable": true,
+      "facetable": true,
+      "retrievable": true
+    },
+    {
+      "name": "boardCertifications",
+      "type": "Collection(Edm.String)",
+      "searchable": true,
+      "filterable": false,
+      "retrievable": true
+    },
+    {
+      "name": "qualityTier",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "retrievable": true
+    },
+    {
+      "name": "contentVector",
+      "type": "Collection(Edm.Single)",
+      "searchable": true,
+      "retrievable": false,
+      "dimensions": 1536,
+      "vectorSearchProfile": "hnsw-profile"
+    }
+  ],
+  "vectorSearch": {
+    "algorithms": [
+      {
+        "name": "hnsw-algorithm",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500,
+          "metric": "cosine"
+        }
+      }
+    ],
+    "profiles": [
+      {
+        "name": "hnsw-profile",
+        "algorithm": "hnsw-algorithm",
+        "vectorizer": "azure-openai-vectorizer"
+      }
+    ],
+    "vectorizers": [
+      {
+        "name": "azure-openai-vectorizer",
+        "kind": "azureOpenAI",
+        "azureOpenAIParameters": {
+          "resourceUri": "${AZURE_OPENAI_ENDPOINT}",
+          "deploymentId": "text-embedding-3-small",
+          "modelName": "text-embedding-3-small"
+        }
+      }
+    ]
+  },
+  "semantic": {
+    "defaultConfiguration": "provider-semantic-config",
+    "configurations": [
+      {
+        "name": "provider-semantic-config",
+        "prioritizedFields": {
+          "titleField": { "fieldName": "providerName" },
+          "contentFields": [
+            { "fieldName": "specialty" }
+          ],
+          "keywordsFields": [
+            { "fieldName": "networkStatus" },
+            { "fieldName": "hospitalAffiliations" },
+            { "fieldName": "boardCertifications" }
+          ]
+        }
+      }
+    ]
+  }
+}

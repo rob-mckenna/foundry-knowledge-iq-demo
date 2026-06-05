@@ -1,0 +1,30 @@
+{
+  "formularyId": "FRM-2026-0002",
+  "drugName": "Atorvastatin Calcium 40 mg Tablet",
+  "genericName": "atorvastatin calcium",
+  "brandName": "Lipitor (reference brand; generic preferred)",
+  "isGeneric": true,
+  "ndcCode": "00071-0156-XX",
+  "tier": 1,
+  "tierDescription": "Preferred Generic",
+  "therapeuticClass": "Cardiovascular — HMG-CoA Reductase Inhibitor (Statin)",
+  "indication": "Primary and secondary prevention of cardiovascular disease; hyperlipidemia; mixed dyslipidemia",
+  "requiresPriorAuth": false,
+  "stepTherapyRequired": false,
+  "stepTherapyDetails": null,
+  "quantityLimit": "30 tablets per 30-day supply",
+  "quantityLimitReason": null,
+  "specialtyPharmacy": false,
+  "preferredSpecialtyPharmacy": null,
+  "retailCopay30Day": 8.00,
+  "mailOrderCopay90Day": 20.00,
+  "deductibleApplies": false,
+  "formularyStatus": "PREFERRED",
+  "formularyNotes": "Preferred high-intensity statin. Atorvastatin 40 mg and 80 mg are Tier 1. Rosuvastatin (Crestor) is Tier 2. Brand Lipitor is Tier 3. Generic atorvastatin is strongly preferred per HealthBridge formulary guidance and ACC/AHA cardiovascular risk guidelines.",
+  "clinicalAlerts": [
+    "Monitor LFTs and CK if myopathy symptoms present",
+    "Avoid grapefruit juice in large quantities — minor interaction"
+  ],
+  "lastReviewedDate": "2026-01-01",
+  "effectiveDate": "2026-01-01"
+}

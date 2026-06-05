@@ -1,0 +1,30 @@
+{
+  "formularyId": "FRM-2026-0001",
+  "drugName": "Metformin HCl 500 mg Tablet",
+  "genericName": "metformin hydrochloride",
+  "brandName": null,
+  "isGeneric": true,
+  "ndcCode": "00093-1048-XX",
+  "tier": 1,
+  "tierDescription": "Preferred Generic",
+  "therapeuticClass": "Antidiabetic — Biguanide",
+  "indication": "Type 2 diabetes mellitus management; first-line pharmacotherapy per ADA guidelines",
+  "requiresPriorAuth": false,
+  "stepTherapyRequired": false,
+  "stepTherapyDetails": null,
+  "quantityLimit": "180 tablets per 30-day supply",
+  "quantityLimitReason": null,
+  "specialtyPharmacy": false,
+  "preferredSpecialtyPharmacy": null,
+  "retailCopay30Day": 8.00,
+  "mailOrderCopay90Day": 20.00,
+  "deductibleApplies": false,
+  "formularyStatus": "PREFERRED",
+  "formularyNotes": "Preferred first-line agent for Type 2 diabetes. Available as immediate-release and extended-release (ER) formulations. Both covered at Tier 1. Preferred over branded agents (Glucophage) per HealthBridge formulary.",
+  "clinicalAlerts": [
+    "Contraindicated with eGFR < 30 mL/min/1.73m²",
+    "Hold for 48 hours before and after iodinated contrast procedures"
+  ],
+  "lastReviewedDate": "2026-01-01",
+  "effectiveDate": "2026-01-01"
+}

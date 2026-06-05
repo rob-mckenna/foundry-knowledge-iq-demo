@@ -1,0 +1,41 @@
+{
+  "formularyId": "FRM-2026-0009",
+  "drugName": "Oxycodone HCl 10 mg Tablet (Immediate-Release)",
+  "genericName": "oxycodone hydrochloride",
+  "brandName": "Roxicodone (reference brand; generic preferred)",
+  "isGeneric": true,
+  "ndcCode": "00406-0512-XX",
+  "tier": 2,
+  "tierDescription": "Non-Preferred Generic / Preferred Brand",
+  "therapeuticClass": "Analgesic — Opioid Agonist — Schedule II Controlled Substance",
+  "indication": "Moderate-to-severe pain requiring opioid analgesia; acute pain (post-surgical, trauma); cancer-related pain; palliative/hospice pain management",
+  "requiresPriorAuth": false,
+  "stepTherapyRequired": true,
+  "stepTherapyDetails": {
+    "requiredSteps": [
+      {
+        "step": 1,
+        "description": "Non-opioid analgesia trial: acetaminophen and/or NSAIDs (unless contraindicated) for non-cancer, non-surgical acute pain. Documentation of inadequate pain control or contraindication required before opioid initiation in non-cancer settings."
+      }
+    ],
+    "exceptions": "Step therapy waived for: (1) post-surgical pain prescribed by the operating surgeon within 7 days of procedure; (2) active malignancy or hospice/palliative care diagnosis on file; (3) emergency department or acute inpatient discharge prescription."
+  },
+  "quantityLimit": "120 tablets per 30-day supply (4 tablets/day maximum)",
+  "quantityLimitReason": "Quantity limit consistent with CDC Clinical Practice Guideline for Prescribing Opioids (2022). Quantities exceeding limit require QL exception with documentation of pain management plan, opioid risk assessment, and prescriber attestation. Concurrent benzodiazepine use flags for pharmacist safety review.",
+  "specialtyPharmacy": false,
+  "preferredSpecialtyPharmacy": null,
+  "retailCopay30Day": 35.00,
+  "mailOrderCopay90Day": null,
+  "mailOrderAvailable": false,
+  "deductibleApplies": true,
+  "formularyStatus": "COVERED_WITH_RESTRICTIONS",
+  "formularyNotes": "Oxycodone IR is a Schedule II controlled substance. HealthBridge applies quantity limits and safety edits consistent with CDC 2022 opioid prescribing guidelines. Mail-order dispensing is NOT available for Schedule II substances. Opioid Risk Tool (ORT) documentation encouraged. Concurrent opioid and benzodiazepine prescriptions trigger pharmacy safety alert and member outreach. Opioid extended-release (ER) formulations require separate PA.",
+  "clinicalAlerts": [
+    "BOXED WARNING: Addiction, abuse, and misuse risk; respiratory depression risk; accidental ingestion risk; neonatal opioid withdrawal syndrome; risks from concomitant CNS depressants (benzodiazepines)",
+    "REMS program required for extended-release/long-acting opioids (not applicable to IR formulation)",
+    "Schedule II — no telephone or fax refills; original prescription required per DEA and state law",
+    "Illinois PDMP (Prescription Drug Monitoring Program) query required at each dispensing"
+  ],
+  "lastReviewedDate": "2026-01-01",
+  "effectiveDate": "2026-01-01"
+}

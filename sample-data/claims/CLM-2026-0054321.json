@@ -17,7 +17,7 @@
   },
   "billingProvider": {
     "npi": "1234567890",
-    "name": "BluePeak Primary Care Associates",
+    "name": "HealthBridge Primary Care Associates",
     "taxId": "XX-XXXXXXX"
   },
   "placeOfService": "11",

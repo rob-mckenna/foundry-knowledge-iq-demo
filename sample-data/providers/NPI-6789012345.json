@@ -1,0 +1,95 @@
+{
+  "npi": "6789012345",
+  "entityType": "INDIVIDUAL",
+  "providerStatus": "OUT_OF_NETWORK",
+  "networkTiers": [],
+  "outOfNetworkInfo": {
+    "reason": "CONTRACT_TERMINATED",
+    "terminationDate": "2025-12-31",
+    "terminationReason": "Provider elected not to renew HealthBridge network contract effective 2025-12-31. Provider remains licensed and in practice but is no longer a participating provider for HealthBridge plans.",
+    "patientTransitionNoticeDate": "2025-11-01"
+  },
+  "individual": {
+    "firstName": "Susan",
+    "middleInitial": "M",
+    "lastName": "Okafor",
+    "credential": "MD",
+    "gender": "F",
+    "languages": ["English", "Yoruba"]
+  },
+  "practice": {
+    "name": "Rockford Family Health Center",
+    "groupNpi": "9006789012",
+    "taxId": "XX-XXXXXXX"
+  },
+  "taxonomy": [
+    {
+      "code": "207Q00000X",
+      "description": "Family Medicine",
+      "primary": true
+    }
+  ],
+  "boardCertifications": [
+    {
+      "board": "American Board of Family Medicine",
+      "specialty": "Family Medicine",
+      "certifiedDate": "2010-05-01",
+      "expirationDate": "2026-05-01"
+    }
+  ],
+  "licenseInfo": [
+    {
+      "state": "IL",
+      "licenseNumber": "036-ZZZZZZ",
+      "issueDate": "2008-03-01",
+      "expirationDate": "2027-03-31",
+      "status": "ACTIVE"
+    }
+  ],
+  "locations": [
+    {
+      "locationId": "LOC-OKAFOR-001",
+      "locationName": "Rockford Family Health Center — Main",
+      "type": "PRIMARY_PRACTICE",
+      "address": {
+        "street1": "1105 N. Mulford Road",
+        "street2": "Suite 3",
+        "city": "Rockford",
+        "state": "IL",
+        "zip": "61107",
+        "county": "Winnebago"
+      },
+      "phone": "555-0678",
+      "fax": "555-0679",
+      "acceptingNewPatients": true,
+      "accessibilityFeatures": ["WHEELCHAIR_ACCESSIBLE"],
+      "hours": {
+        "monday": "08:00-17:00",
+        "tuesday": "08:00-17:00",
+        "wednesday": "08:00-17:00",
+        "thursday": "08:00-17:00",
+        "friday": "08:00-16:00",
+        "saturday": "09:00-12:00",
+        "sunday": "CLOSED"
+      }
+    }
+  ],
+  "networkEffectiveDates": {
+    "credentialedDate": "2011-01-01",
+    "contractEffectiveDate": "2015-01-01",
+    "contractTerminationDate": "2025-12-31",
+    "lastVerificationDate": "2025-12-31"
+  },
+  "hospitalAffiliations": [
+    {
+      "facilityName": "OSF Saint Anthony Medical Center",
+      "npi": "8006789012",
+      "admittingPrivileges": true
+    }
+  ],
+  "qualityMetrics": {
+    "hedisCompliance": "HIGH",
+    "starRating": 4.4,
+    "patientSatisfactionScore": 4.7
+  }
+}

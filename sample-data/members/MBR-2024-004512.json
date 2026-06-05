@@ -1,0 +1,73 @@
+{
+  "memberId": "MBR-2024-004512",
+  "membershipStatus": "ACTIVE",
+  "subscriber": {
+    "firstName": "Denise",
+    "middleInitial": "R",
+    "lastName": "Kowalski",
+    "dateOfBirth": "1991-11-04",
+    "gender": "F",
+    "ssn_last4": "XXXX",
+    "address": {
+      "street1": "209 Elm Street",
+      "street2": null,
+      "city": "Rockford",
+      "state": "IL",
+      "zip": "61101",
+      "county": "Winnebago"
+    },
+    "phone": "555-0413",
+    "email": "d.kowalski@example-email.com",
+    "relationship": "SELF"
+  },
+  "groupInfo": {
+    "groupId": "GRP-NORTHERN-STAR-FOODS-019",
+    "groupName": "Northern Star Foods Inc.",
+    "divisionCode": "DIV-OPERATIONS"
+  },
+  "planInfo": {
+    "planId": "PPO-SILVER-2026",
+    "planName": "HealthBridge PPO Silver",
+    "planType": "PPO",
+    "metalTier": "SILVER",
+    "effectiveDate": "2026-01-01",
+    "terminationDate": null,
+    "openEnrollmentDate": "2025-11-01"
+  },
+  "pcpInfo": {
+    "npi": "6789012345",
+    "name": "Dr. Susan M. Okafor",
+    "practice": "Rockford Family Health Center",
+    "assignedDate": "2026-01-01"
+  },
+  "accumulators": {
+    "benefitYear": "2026",
+    "asOfDate": "2026-06-05",
+    "individualDeductible": {
+      "limit": 1200.00,
+      "met": 450.00,
+      "remaining": 750.00
+    },
+    "familyDeductible": {
+      "limit": 2400.00,
+      "met": 450.00,
+      "remaining": 1950.00
+    },
+    "individualOutOfPocketMax": {
+      "limit": 4500.00,
+      "met": 450.00,
+      "remaining": 4050.00
+    },
+    "familyOutOfPocketMax": {
+      "limit": 9000.00,
+      "met": 450.00,
+      "remaining": 8550.00
+    }
+  },
+  "dependents": [],
+  "eligibilityVerifiedDate": "2026-06-05",
+  "cobInfo": {
+    "isCoordinating": false,
+    "otherCoverage": null
+  }
+}

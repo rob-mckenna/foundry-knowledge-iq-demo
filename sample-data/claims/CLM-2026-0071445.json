@@ -1,0 +1,80 @@
+{
+  "claimId": "CLM-2026-0071445",
+  "claimType": "INSTITUTIONAL",
+  "claimStatus": "PAID",
+  "receivedDate": "2026-05-20",
+  "processedDate": "2026-05-28",
+  "serviceDate": "2026-05-14",
+  "serviceToDate": "2026-05-14",
+  "memberId": "MBR-2024-006301",
+  "memberName": "Amara J. Osei",
+  "planId": "HMO-BRONZE-2026",
+  "groupId": "GRP-AURORA-METRO-HOSP-008",
+  "renderingProvider": {
+    "npi": "2345678901",
+    "name": "Lakeside Orthopedic Group LLC",
+    "taxonomy": "2086S0122X",
+    "specialty": "Surgery — General Surgery"
+  },
+  "billingProvider": {
+    "npi": "9876543210",
+    "name": "Lakeside Surgical Center",
+    "taxId": "XX-XXXXXXX"
+  },
+  "attendingProvider": {
+    "npi": "2345678902",
+    "name": "Dr. Kevin L. Okoye",
+    "taxonomy": "207XS0117X"
+  },
+  "placeOfService": "24",
+  "typeOfBill": "0831",
+  "diagnosisCodes": [
+    { "sequence": 1, "code": "K80.20", "system": "ICD-10-CM", "description": "Calculus of gallbladder without cholecystitis, without obstruction" },
+    { "sequence": 2, "code": "K80.00", "system": "ICD-10-CM", "description": "Calculus of gallbladder with acute cholecystitis, without obstruction" }
+  ],
+  "serviceLines": [
+    {
+      "lineNumber": 1,
+      "procedureCode": "47562",
+      "procedureDescription": "Laparoscopic cholecystectomy",
+      "modifiers": ["SG"],
+      "diagnosisPointers": [1, 2],
+      "units": 1,
+      "billedAmount": 8400.00,
+      "allowedAmount": 4210.00,
+      "planPaidAmount": 2526.00,
+      "memberCopay": 0.00,
+      "memberDeductible": 0.00,
+      "memberCoinsurance": 1684.00,
+      "memberResponsibility": 1684.00,
+      "adjustmentReasonCode": "CO-45",
+      "adjustmentReasonDescription": "Charges exceed your contracted/legislated fee arrangement"
+    },
+    {
+      "lineNumber": 2,
+      "procedureCode": "00840",
+      "procedureDescription": "Anesthesia for intraperitoneal procedures in lower abdomen including laparoscopy",
+      "modifiers": [],
+      "diagnosisPointers": [1],
+      "units": 1,
+      "billedAmount": 1200.00,
+      "allowedAmount": 615.00,
+      "planPaidAmount": 369.00,
+      "memberCopay": 0.00,
+      "memberDeductible": 0.00,
+      "memberCoinsurance": 246.00,
+      "memberResponsibility": 246.00,
+      "adjustmentReasonCode": "CO-45",
+      "adjustmentReasonDescription": "Charges exceed your contracted/legislated fee arrangement"
+    }
+  ],
+  "claimTotals": {
+    "totalBilled": 9600.00,
+    "totalAllowed": 4825.00,
+    "totalPlanPaid": 2895.00,
+    "totalMemberResponsibility": 1930.00
+  },
+  "priorAuthorizationNumber": "PA-2026-078855",
+  "referralNumber": null,
+  "notes": "Outpatient laparoscopic cholecystectomy for symptomatic cholelithiasis. HMO Bronze — individual deductible fully satisfied pre-service. Member responsible for 40% coinsurance after deductible. PA approved PA-2026-078855."
+}

@@ -1,14 +1,14 @@
 # Coverage Criteria — Medical Necessity
-## BluePeak Health Plan — Clinical Policy CP-2026-MED-001
+## HealthBridge Insurance Plan — Clinical Policy CP-2026-MED-001
 **Effective Date:** January 1, 2026 | **Review Date:** January 1, 2027
 **Policy Owner:** Medical Management & Clinical Affairs
-**Applies To:** All BluePeak commercial and Medicare Advantage plans unless otherwise noted
+**Applies To:** All HealthBridge commercial and Medicare Advantage plans unless otherwise noted
 
 ---
 
 ## 1. Purpose
 
-This document defines medical necessity criteria for selected procedures and services. BluePeak Health Plan uses evidence-based clinical criteria to determine whether a requested service is medically necessary. These criteria are based on nationally recognized clinical guidelines including those from:
+This document defines medical necessity criteria for selected procedures and services. HealthBridge Insurance Plan uses evidence-based clinical criteria to determine whether a requested service is medically necessary. These criteria are based on nationally recognized clinical guidelines including those from:
 
 - American College of Cardiology / American Heart Association (ACC/AHA)
 - American Academy of Orthopaedic Surgeons (AAOS)
@@ -102,11 +102,11 @@ Indicated when patient unable to exercise adequately (e.g., significant peripher
 
 ### 4.1 Inpatient Behavioral Health
 
-BluePeak covers inpatient psychiatric admissions when:
+HealthBridge covers inpatient psychiatric admissions when:
 - Member presents with an acute psychiatric crisis (active suicidal ideation with plan, psychotic break, acute mania)
 - Outpatient or intensive outpatient treatment has been tried and failed, or is clinically inappropriate given severity
 - Treatment requires 24-hour nursing supervision and psychiatric management
-- Admission is to a BluePeak in-network behavioral health facility (out-of-network requires emergency circumstances or prior approval)
+- Admission is to a HealthBridge in-network behavioral health facility (out-of-network requires emergency circumstances or prior approval)
 
 **Continued Stay Criteria (reviewed every 3–7 days):**
 - Continued imminent risk that cannot be managed in less restrictive setting
@@ -145,13 +145,13 @@ The following preventive services are covered at $0 cost sharing for in-network 
 
 ## 6. Experimental and Investigational Services
 
-Services that are experimental, investigational, or unproven are **not covered** under any BluePeak plan. A service is considered experimental/investigational when:
+Services that are experimental, investigational, or unproven are **not covered** under any HealthBridge plan. A service is considered experimental/investigational when:
 - It is the subject of ongoing Phase I, II, or III clinical trials as the intervention arm
 - It is not approved by the FDA for the requested indication
 - There is insufficient peer-reviewed clinical evidence establishing its safety and efficacy
 
-**Exception — Clinical Trial Coverage:** BluePeak covers routine patient costs associated with participation in qualifying clinical trials for life-threatening conditions per ACA Section 2709 and CMS requirements for MAPD.
+**Exception — Clinical Trial Coverage:** HealthBridge covers routine patient costs associated with participation in qualifying clinical trials for life-threatening conditions per ACA Section 2709 and CMS requirements for MAPD.
 
 ---
 
-*BluePeak Health Plan is a fictional entity created for demonstration purposes. Clinical criteria are illustrative and based on published guidelines; they do not constitute actual medical advice or coverage determinations.*
+*HealthBridge Insurance Plan is a fictional entity created for demonstration purposes. Clinical criteria are illustrative and based on published guidelines; they do not constitute actual medical advice or coverage determinations.*

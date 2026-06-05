@@ -1,0 +1,62 @@
+{
+  "claimId": "CLM-2026-0082156",
+  "claimType": "PROFESSIONAL",
+  "claimStatus": "DENIED",
+  "receivedDate": "2026-06-03",
+  "processedDate": "2026-06-05",
+  "serviceDate": "2026-05-29",
+  "memberId": "MBR-2024-007045",
+  "memberName": "Linda F. Wentworth",
+  "planId": "PPO-PLATINUM-2026",
+  "groupId": "GRP-LAKEVIEW-UNIV-HEALTH-014",
+  "renderingProvider": {
+    "npi": "4567890123",
+    "name": "Dr. Marcus J. Obi",
+    "taxonomy": "2084P0800X",
+    "specialty": "Psychiatry"
+  },
+  "billingProvider": {
+    "npi": "4567890123",
+    "name": "Northside Behavioral Health Associates LLC",
+    "taxId": "XX-XXXXXXX"
+  },
+  "placeOfService": "11",
+  "diagnosisCodes": [
+    { "sequence": 1, "code": "F33.1",  "system": "ICD-10-CM", "description": "Major depressive disorder, recurrent, moderate" },
+    { "sequence": 2, "code": "F41.1",  "system": "ICD-10-CM", "description": "Generalized anxiety disorder" }
+  ],
+  "serviceLines": [
+    {
+      "lineNumber": 1,
+      "procedureCode": "J0135",
+      "procedureDescription": "Injection, adalimumab, 20 mg (Humira)",
+      "modifiers": [],
+      "diagnosisPointers": [1],
+      "units": 2,
+      "billedAmount": 7400.00,
+      "allowedAmount": 0.00,
+      "planPaidAmount": 0.00,
+      "memberCopay": 0.00,
+      "memberDeductible": 0.00,
+      "memberCoinsurance": 0.00,
+      "memberResponsibility": 0.00,
+      "adjustmentReasonCode": "CO-197",
+      "adjustmentReasonDescription": "Precertification/authorization/notification absent"
+    }
+  ],
+  "claimTotals": {
+    "totalBilled": 7400.00,
+    "totalAllowed": 0.00,
+    "totalPlanPaid": 0.00,
+    "totalMemberResponsibility": 0.00
+  },
+  "denialInfo": {
+    "denialCode": "PA-ABSENT-SPEC-DRUG",
+    "denialReason": "Prior authorization is required for all specialty medications including adalimumab (Humira/J0135) under HealthBridge Insurance Plan policy CP-2026-PA-004. No prior authorization was obtained before the service date of 2026-05-29. Additionally, clinical documentation does not support adalimumab as first-line treatment for the billed diagnoses (MDD, GAD); step therapy requirements mandate trial of at least two non-specialty psychotropic agents before biologic consideration for psychiatric indications. Claim denied — services not authorized.",
+    "appealDeadline": "2026-09-05",
+    "appealInstructions": "To appeal, submit: (1) completed PA request retroactively via Provider Portal, (2) clinical notes supporting medical necessity, (3) step therapy documentation or exception request. Appeals must be received within 90 days of denial date. Urgent peer-to-peer review available within 72 hours — call Provider Services 555-0190."
+  },
+  "priorAuthorizationNumber": null,
+  "referralNumber": null,
+  "notes": "Adalimumab (Humira) specialty injection denied — no PA on file and step therapy requirements not met for listed psychiatric diagnoses. Member should contact provider to initiate retroactive PA or appeal with step therapy documentation."
+}

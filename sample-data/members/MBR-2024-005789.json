@@ -1,0 +1,119 @@
+{
+  "memberId": "MBR-2024-005789",
+  "membershipStatus": "ACTIVE",
+  "subscriber": {
+    "firstName": "Gregory",
+    "middleInitial": "T",
+    "lastName": "Odom",
+    "dateOfBirth": "1975-02-18",
+    "gender": "M",
+    "ssn_last4": "XXXX",
+    "address": {
+      "street1": "4422 N. Lake Shore Drive",
+      "street2": "Unit 12C",
+      "city": "Chicago",
+      "state": "IL",
+      "zip": "60640",
+      "county": "Cook"
+    },
+    "phone": "555-0578",
+    "email": "g.odom.family@example-email.com",
+    "relationship": "SELF"
+  },
+  "groupInfo": {
+    "groupId": "GRP-CITYWIDE-REALTY-055",
+    "groupName": "Citywide Realty Partners LLC",
+    "divisionCode": "DIV-BROKERAGE"
+  },
+  "planInfo": {
+    "planId": "EPO-GOLD-2026",
+    "planName": "HealthBridge EPO Gold",
+    "planType": "EPO",
+    "metalTier": "GOLD",
+    "effectiveDate": "2026-01-01",
+    "terminationDate": null,
+    "openEnrollmentDate": "2025-11-01"
+  },
+  "pcpInfo": {
+    "npi": "1234567890",
+    "name": "Dr. Patricia M. Chen",
+    "practice": "HealthBridge Primary Care Associates",
+    "assignedDate": "2026-01-01"
+  },
+  "accumulators": {
+    "benefitYear": "2026",
+    "asOfDate": "2026-06-05",
+    "individualDeductible": {
+      "limit": 750.00,
+      "met": 750.00,
+      "remaining": 0.00
+    },
+    "familyDeductible": {
+      "limit": 1500.00,
+      "met": 750.00,
+      "remaining": 750.00
+    },
+    "individualOutOfPocketMax": {
+      "limit": 4000.00,
+      "met": 1840.00,
+      "remaining": 2160.00
+    },
+    "familyOutOfPocketMax": {
+      "limit": 8000.00,
+      "met": 1840.00,
+      "remaining": 6160.00
+    }
+  },
+  "dependents": [
+    {
+      "memberId": "MBR-2024-005790",
+      "firstName": "Angela",
+      "middleInitial": "R",
+      "lastName": "Odom",
+      "dateOfBirth": "1977-09-14",
+      "gender": "F",
+      "relationship": "SPOUSE",
+      "membershipStatus": "ACTIVE"
+    },
+    {
+      "memberId": "MBR-2024-005791",
+      "firstName": "Tyler",
+      "middleInitial": "G",
+      "lastName": "Odom",
+      "dateOfBirth": "2008-03-22",
+      "gender": "M",
+      "relationship": "CHILD",
+      "membershipStatus": "ACTIVE"
+    },
+    {
+      "memberId": "MBR-2024-005792",
+      "firstName": "Natalie",
+      "middleInitial": "G",
+      "lastName": "Odom",
+      "dateOfBirth": "2011-11-07",
+      "gender": "F",
+      "relationship": "CHILD",
+      "membershipStatus": "ACTIVE"
+    }
+  ],
+  "eligibilityVerifiedDate": "2026-06-05",
+  "cobInfo": {
+    "isCoordinating": false,
+    "otherCoverage": null
+  },
+  "priorAuthorizations": [
+    {
+      "authNumber": "PA-2026-091204",
+      "procedureCode": "72148",
+      "procedureDescription": "MRI Lumbar Spine without Contrast",
+      "status": "PENDING",
+      "requestedDate": "2026-05-28",
+      "approvedDate": null,
+      "effectiveStartDate": null,
+      "effectiveEndDate": null,
+      "approvedUnits": null,
+      "requestingProvider": "5678901234",
+      "approvingClinician": null
+    }
+  ]
+}

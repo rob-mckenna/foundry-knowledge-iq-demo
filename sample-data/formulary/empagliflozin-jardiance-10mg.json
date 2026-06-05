@@ -1,0 +1,43 @@
+{
+  "formularyId": "FRM-2026-0004",
+  "drugName": "Empagliflozin 10 mg Tablet (Jardiance)",
+  "genericName": "empagliflozin",
+  "brandName": "Jardiance",
+  "isGeneric": false,
+  "ndcCode": "00597-0136-XX",
+  "tier": 3,
+  "tierDescription": "Non-Preferred Brand",
+  "therapeuticClass": "Antidiabetic — SGLT-2 Inhibitor",
+  "indication": "Type 2 diabetes mellitus; cardiovascular risk reduction in T2DM with established CVD; heart failure with reduced ejection fraction (HFrEF) — regardless of diabetes status",
+  "requiresPriorAuth": false,
+  "stepTherapyRequired": true,
+  "stepTherapyDetails": {
+    "requiredSteps": [
+      {
+        "step": 1,
+        "description": "Metformin (Tier 1) at maximally tolerated dose for minimum 90 days, unless contraindicated (eGFR < 30, contrast allergy history)"
+      },
+      {
+        "step": 2,
+        "description": "A Tier 1 or Tier 2 diabetes agent (glipizide, glimepiride, sitagliptin) for minimum 90 days, unless contraindicated"
+      }
+    ],
+    "exceptions": "Step therapy waived for members with established atherosclerotic cardiovascular disease (ASCVD), HFrEF (EF ≤ 40%), or CKD with eGFR 25–60 — per ACC/ADA guideline recommendation for SGLT-2 use in high-risk populations. Prescriber must document applicable exception."
+  },
+  "quantityLimit": "30 tablets per 30-day supply",
+  "quantityLimitReason": null,
+  "specialtyPharmacy": false,
+  "preferredSpecialtyPharmacy": null,
+  "retailCopay30Day": 70.00,
+  "mailOrderCopay90Day": 165.00,
+  "deductibleApplies": true,
+  "formularyStatus": "NON_PREFERRED_BRAND",
+  "formularyNotes": "Jardiance (empagliflozin) and Farxiga (dapagliflozin) are both Tier 3. Dapagliflozin preferred slightly for HFrEF by some clinical reviewers but both are covered. Canagliflozin (Invokana) is also Tier 3. Step therapy required for non-cardiovascular indications; automatic exception for ASCVD/HFrEF/CKD.",
+  "clinicalAlerts": [
+    "Risk of diabetic ketoacidosis (DKA) — hold before major surgery or prolonged fasting",
+    "Genital mycotic infections more common; counsel patient",
+    "Monitor eGFR; contraindicated if eGFR < 30 for diabetes indication"
+  ],
+  "lastReviewedDate": "2026-01-01",
+  "effectiveDate": "2026-01-01"
+}

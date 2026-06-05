@@ -12,7 +12,7 @@
     "languages": ["English", "Mandarin"]
   },
   "practice": {
-    "name": "BluePeak Primary Care Associates",
+    "name": "HealthBridge Primary Care Associates",
     "groupNpi": "9001234567",
     "taxId": "XX-XXXXXXX"
   },
@@ -43,7 +43,7 @@
   "locations": [
     {
       "locationId": "LOC-CHEN-001",
-      "locationName": "BluePeak Primary Care — Springfield Main",
+      "locationName": "HealthBridge Primary Care — Springfield Main",
       "type": "PRIMARY_PRACTICE",
       "address": {
         "street1": "1450 Medical Center Drive",

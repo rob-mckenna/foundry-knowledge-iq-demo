@@ -1,6 +1,6 @@
-# Azure AI Search — Healthcare Payor Index
+# Azure AI Search — Healthcare Payor Indexes
 
-Configures an AI Search index for healthcare payor documents (policies, clinical guidelines, prior auth criteria, formulary) with vector search and semantic ranking.
+Configures Azure AI Search indexes for the HealthBridge Knowledge Base. Three indexes are defined: a general documents index (policies, clinical guidelines, prior auth) plus dedicated indexes for formulary and provider directory that match the Foundry Knowledge Base config.
 
 ## Prerequisites
 
@@ -10,10 +10,12 @@ Configures an AI Search index for healthcare payor documents (policies, clinical
 
 ## Files
 
-| File | Purpose |
-|------|---------|
-| `index-schema.json` | Index definition with fields, vector profile, and semantic config |
-| `skillset.json` | Cognitive skillset for document cracking, enrichment, and embedding |
+| File | Index Name | Purpose |
+|------|-----------|---------|
+| `index-schema.json` | `healthcare-payor-docs` | General docs: policies, guidelines, prior auth, SBCs |
+| `formulary-index-schema.json` | `healthbridge-formulary-index` | Formulary drugs: tiers, PA flags, step therapy, QLL |
+| `provider-index-schema.json` | `healthbridge-provider-index` | Provider directory: NPI, specialty, network, locations |
+| `skillset.json` | — | Cognitive skillset: split → key phrases → entities → embed |
 
 ## Setup
 
@@ -27,13 +29,26 @@ export AZURE_OPENAI_KEY="<your-openai-key>"
 export COGNITIVE_SERVICES_KEY="<your-cognitive-services-key>"
 ```
 
-### 2 — Create the index
+### 2 — Create all three indexes
 
 ```bash
+# General documents index (policies, guidelines, prior auth)
 curl -X PUT "$AZURE_SEARCH_ENDPOINT/indexes/healthcare-payor-docs?api-version=2024-07-01" \
   -H "Content-Type: application/json" \
   -H "api-key: $AZURE_SEARCH_ADMIN_KEY" \
   -d @index-schema.json
+
+# Formulary index
+curl -X PUT "$AZURE_SEARCH_ENDPOINT/indexes/healthbridge-formulary-index?api-version=2024-07-01" \
+  -H "Content-Type: application/json" \
+  -H "api-key: $AZURE_SEARCH_ADMIN_KEY" \
+  -d @formulary-index-schema.json
+
+# Provider directory index
+curl -X PUT "$AZURE_SEARCH_ENDPOINT/indexes/healthbridge-provider-index?api-version=2024-07-01" \
+  -H "Content-Type: application/json" \
+  -H "api-key: $AZURE_SEARCH_ADMIN_KEY" \
+  -d @provider-index-schema.json
 ```
 
 ### 3 — Create the skillset
@@ -47,7 +62,7 @@ curl -X PUT "$AZURE_SEARCH_ENDPOINT/skillsets/healthcare-payor-skillset?api-vers
   -d @skillset.json
 ```
 
-### 4 — Create an indexer pointing to your Blob Storage
+### 4 — Create an indexer for the documents index (Blob Storage source)
 
 ```bash
 curl -X POST "$AZURE_SEARCH_ENDPOINT/indexers?api-version=2024-07-01" \
@@ -62,15 +77,28 @@ curl -X POST "$AZURE_SEARCH_ENDPOINT/indexers?api-version=2024-07-01" \
   }'
 ```
 
-### 5 — Connect to Foundry Knowledge Base
+### 5 — Upload formulary and provider data (push API)
+
+The formulary and provider indexes are populated via the push API from `sample-data/formulary/` and `sample-data/providers/`. See `data-sources/blob-storage/deploy.ps1` — it uploads a batch document to AI Search using the Upload Documents API after the index is created.
+
+```bash
+# Example: push formulary documents
+curl -X POST "$AZURE_SEARCH_ENDPOINT/indexes/healthbridge-formulary-index/docs/index?api-version=2024-07-01" \
+  -H "Content-Type: application/json" \
+  -H "api-key: $AZURE_SEARCH_ADMIN_KEY" \
+  -d '{ "value": [ ... ] }'
+```
+
+### 6 — Connect to Foundry Knowledge Base
 
 1. Open **Azure AI Foundry** → your project → **Knowledge bases**
 2. Click **+ Add data source** → **Azure AI Search**
-3. Select your search service and choose the `healthcare-payor-docs` index
-4. Set the **content field** to `content` and **title field** to `title`
-5. Enable **Semantic ranking** and select the `healthcare-semantic` configuration
+3. For formulary: select `healthbridge-formulary-index`, set the semantic config to `formulary-semantic-config`
+4. For providers: select `healthbridge-provider-index`, set the semantic config to `provider-semantic-config`
 
 ## Index Fields Quick Reference
+
+### `healthcare-payor-docs` (documents)
 
 | Field | Type | Notes |
 |-------|------|-------|
@@ -82,3 +110,39 @@ curl -X POST "$AZURE_SEARCH_ENDPOINT/indexers?api-version=2024-07-01" \
 | `date` | DateTimeOffset | Document date, sortable |
 | `metadata/*` | Complex | Source system, doc type, plan code, ICD codes |
 | `content_vector` | Collection(Single) | 1536-dim embeddings (text-embedding-3-small) |
+
+### `healthbridge-formulary-index`
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | String (key) | Drug identifier |
+| `drugName` | String | Brand name, searchable |
+| `genericName` | String | Generic name, searchable |
+| `tier` | String | Formulary tier (1–4, Specialty) |
+| `requiresPriorAuth` | Boolean | Filterable PA flag |
+| `stepTherapyRequired` | Boolean | Step therapy flag |
+| `quantityLimit` | String | QLL description |
+| `specialtyPharmacy` | Boolean | Specialty pharmacy required |
+| `formularyNotes` | String | Free-text notes |
+| `therapeuticClass` | String | Drug class, facetable |
+| `NDC` | String | National Drug Code |
+| `contentVector` | Collection(Single) | 1536-dim embeddings |
+
+### `healthbridge-provider-index`
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | String (key) | Provider identifier |
+| `providerName` | String | Full name, searchable |
+| `npi` | String | NPI number, filterable |
+| `specialty` | String | Primary specialty, facetable |
+| `networkStatus` | String | in-network / out-of-network |
+| `acceptingNewPatients` | Boolean | Filterable flag |
+| `locations` | Complex[] | Address, city, state, zip, phone |
+| `phoneNumber` | String | Direct contact |
+| `hospitalAffiliations` | String[] | Hospital names |
+| `languages` | String[] | Languages spoken |
+| `boardCertifications` | String[] | Board cert details |
+| `qualityTier` | String | Quality performance tier |
+| `contentVector` | Collection(Single) | 1536-dim embeddings |
+

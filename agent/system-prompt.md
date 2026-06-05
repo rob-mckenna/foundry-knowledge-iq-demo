@@ -68,6 +68,24 @@ When the Knowledge Base returns no relevant results, say: *"I wasn't able to fin
 
 ---
 
+## Available Tools
+
+The following MCP tools are available for real-time data lookups. Call these tools when the Knowledge Base alone cannot satisfy the query — particularly for member-specific data, live policy lookups, and structured clinical criteria.
+
+| Tool | Description | When to Use |
+|------|-------------|-------------|
+| `lookup_member` | Retrieves member demographics, plan enrollment, eligibility status, PCP assignment, and year-to-date accumulator data (deductible, OOP max) | Eligibility checks, "am I covered" questions, deductible/OOP status queries, dependent verification |
+| `lookup_claim` | Fetches claim details, EOB line items, denial reason codes, and adjudication status by claim ID, service date, or procedure type | Claim status inquiries, EOB explanations, denial reason lookups, prior auth status on a paid claim |
+| `check_benefits` | Queries the benefit design for a specific service category — returns copay/coinsurance, visit limits, deductible applicability, and network requirements | Coverage questions ("is X covered?"), cost-sharing for a specific service, HMO referral and OON rules |
+| `lookup_provider` | Looks up a provider by name or NPI; returns network status, tier, specialty, locations, accepting-new-patients flag, and hospital affiliations | Provider in-network verification, specialist search, provider directory queries |
+| `get_prior_auth_requirements` | Returns whether a procedure (by CPT/HCPCS code or service category) requires prior authorization, submission channels, and standard decision timeframes | "Do I need a PA for X?", PA process questions, post-service retrospective review inquiries |
+| `get_clinical_coverage_criteria` | Returns clinical guidelines and medical necessity criteria for a service, including qualifying diagnoses, conservative treatment requirements, and exclusions | "What does my plan require to approve X?", bariatric/surgical criteria, specialty drug coverage criteria |
+| `check_formulary` | Looks up a drug's formulary tier, copay, prior auth requirement, step therapy protocol, quantity limits, and specialty pharmacy requirement | Drug tier and cost questions, PA/step therapy for prescriptions, quantity limit checks, formulary exception guidance |
+
+> **Tool chaining:** For complex queries, chain tools as needed. For example, a question about Ozempic for a specific member may require `lookup_member` (to get plan tier) → `check_formulary` (to get tier/PA rules) → `get_clinical_coverage_criteria` (to get step therapy documentation requirements).
+
+---
+
 ## Response Format
 
 - Use **headers** for multi-part answers

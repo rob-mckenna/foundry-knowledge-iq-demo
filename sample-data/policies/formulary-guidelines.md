@@ -1,14 +1,14 @@
 # Formulary Guidelines — Pharmacy Benefit
-## BluePeak Health Plan — Clinical Policy CP-2026-FRM-001
+## HealthBridge Insurance Plan — Clinical Policy CP-2026-FRM-001
 **Effective Date:** January 1, 2026 | **Review Date:** January 1, 2027
 **Policy Owner:** Pharmacy & Therapeutics Committee
-**Applies To:** BluePeak commercial plans and Medicare Advantage (MAPD); exceptions noted
+**Applies To:** HealthBridge commercial plans and Medicare Advantage (MAPD); exceptions noted
 
 ---
 
 ## 1. Overview
 
-The BluePeak Formulary is a list of covered prescription drugs organized into cost-sharing tiers. The Pharmacy & Therapeutics (P&T) Committee reviews and updates the formulary quarterly. Members and providers can access the complete drug list at **bluepeak-rx.example.com**.
+The HealthBridge Formulary is a list of covered prescription drugs organized into cost-sharing tiers. The Pharmacy & Therapeutics (P&T) Committee reviews and updates the formulary quarterly. Members and providers can access the complete drug list at **HealthBridge-rx.example.com**.
 
 This document summarizes formulary tier structure, step therapy requirements, quantity limits, and specialty drug criteria.
 
@@ -116,14 +116,14 @@ Quantity limits (QL) apply to specific drugs to align with FDA-approved dosing a
 
 ### 5.1 Non-Formulary Drugs
 
-Drugs not on the BluePeak Formulary are generally **not covered** except via exception. A formulary exception may be approved when:
+Drugs not on the HealthBridge Formulary are generally **not covered** except via exception. A formulary exception may be approved when:
 1. All formulary alternatives in the therapeutic class are contraindicated
 2. The member has tried and failed all covered alternatives
 3. A covered alternative would cause adverse effects based on documented clinical history
 
 ### 5.2 How to Request a Formulary Exception
 
-1. Prescriber submits PA request via bluepeak-rx.example.com/pa-request
+1. Prescriber submits PA request via HealthBridge-rx.example.com/pa-request
 2. Include: member ID, drug name/dose, NDC code, diagnosis, step therapy documentation, clinical rationale
 3. Decision within 72 hours (standard) or 24 hours (urgent)
 
@@ -131,7 +131,7 @@ Drugs not on the BluePeak Formulary are generally **not covered** except via exc
 
 ## 6. Specialty Pharmacy
 
-All Tier 4 and Tier 5 medications must be dispensed through **BluePeak Preferred Specialty Pharmacy network**. Members who obtain specialty drugs at a retail pharmacy will incur a non-preferred penalty unless an exception is granted.
+All Tier 4 and Tier 5 medications must be dispensed through **HealthBridge Preferred Specialty Pharmacy network**. Members who obtain specialty drugs at a retail pharmacy will incur a non-preferred penalty unless an exception is granted.
 
 **Preferred Specialty Pharmacy Partners:**
 - CenterRx Specialty (mail — nationwide)
@@ -140,4 +140,4 @@ All Tier 4 and Tier 5 medications must be dispensed through **BluePeak Preferred
 
 ---
 
-*BluePeak Health Plan is a fictional entity created for demonstration purposes. All drug names are real medications used for illustrative realism; all plan and benefit data are entirely synthetic.*
+*HealthBridge Insurance Plan is a fictional entity created for demonstration purposes. All drug names are real medications used for illustrative realism; all plan and benefit data are entirely synthetic.*

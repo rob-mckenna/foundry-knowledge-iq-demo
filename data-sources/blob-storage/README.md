@@ -11,12 +11,32 @@ Uploads synthetic healthcare payor documents to Azure Blob Storage for use as an
 ## Directory Layout Uploaded
 
 ```
-healthcare-docs/           ← blob container
-  policies/                ← coverage and utilization management policies
-  benefits/                ← member benefit summaries and SBCs
-  members/                 ← member eligibility documents
-  claims/                  ← claim adjudication reference docs
+healthcare-docs/                  ← blob container root
+  policies/                       ← coverage policies, PA criteria, formulary guidelines (Markdown)
+    prior-auth-policy.md
+    coverage-criteria.md
+    formulary-guidelines.md
+  benefits/                       ← member benefit summaries and SBCs (Markdown / PDF)
+    ppo-gold-benefit-summary.md
+    hmo-silver-benefit-summary.md
+  members/                        ← member eligibility records (JSON)
+    member-001.json
+    member-002.json
+    member-003.json
+  claims/                         ← claim adjudication records (JSON)
+    claim-001.json
+    claim-002.json
+    claim-003.json
+  providers/                      ← provider directory records (JSON)
+    provider-001.json
+    provider-002.json
+    provider-003.json
+  formulary/                      ← drug formulary entries (JSON)
+    formulary-001.json
+    ...
 ```
+
+> **Note:** JSON files in `members/`, `claims/`, `providers/`, and `formulary/` are also the source of truth for the MCP server tools. Markdown and PDF files in `policies/` and `benefits/` are indexed by Azure AI Search for semantic search.
 
 ## Deploy
 
@@ -34,7 +54,7 @@ The script will:
 1. Create the resource group (if it doesn't exist)
 2. Create a StorageV2 account with public blob access disabled
 3. Create the `healthcare-docs` container
-4. Upload all documents from `sample-data/policies/`, `benefits/`, `members/`, and `claims/`
+4. Upload all documents from `sample-data/policies/`, `benefits/`, `members/`, `claims/`, `providers/`, and `formulary/`
 
 ## Connect to Foundry Knowledge Base
 

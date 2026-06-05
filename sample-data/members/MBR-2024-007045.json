@@ -1,0 +1,85 @@
+{
+  "memberId": "MBR-2024-007045",
+  "membershipStatus": "ACTIVE",
+  "subscriber": {
+    "firstName": "Linda",
+    "middleInitial": "F",
+    "lastName": "Wentworth",
+    "dateOfBirth": "1968-04-30",
+    "gender": "F",
+    "ssn_last4": "XXXX",
+    "address": {
+      "street1": "2105 Orrington Avenue",
+      "street2": null,
+      "city": "Evanston",
+      "state": "IL",
+      "zip": "60201",
+      "county": "Cook"
+    },
+    "phone": "555-0709",
+    "email": "l.wentworth@example-email.com",
+    "relationship": "SELF"
+  },
+  "groupInfo": {
+    "groupId": "GRP-LAKEVIEW-UNIV-HEALTH-014",
+    "groupName": "Lakeview University Health System",
+    "divisionCode": "DIV-FACULTY"
+  },
+  "planInfo": {
+    "planId": "PPO-PLATINUM-2026",
+    "planName": "HealthBridge PPO Platinum",
+    "planType": "PPO",
+    "metalTier": "PLATINUM",
+    "effectiveDate": "2026-01-01",
+    "terminationDate": null,
+    "openEnrollmentDate": "2025-11-01"
+  },
+  "pcpInfo": {
+    "npi": "1234567890",
+    "name": "Dr. Patricia M. Chen",
+    "practice": "HealthBridge Primary Care Associates",
+    "assignedDate": "2026-01-01"
+  },
+  "accumulators": {
+    "benefitYear": "2026",
+    "asOfDate": "2026-06-05",
+    "individualDeductible": {
+      "limit": 250.00,
+      "met": 250.00,
+      "remaining": 0.00
+    },
+    "familyDeductible": {
+      "limit": 500.00,
+      "met": 250.00,
+      "remaining": 250.00
+    },
+    "individualOutOfPocketMax": {
+      "limit": 2000.00,
+      "met": 1290.00,
+      "remaining": 710.00
+    },
+    "familyOutOfPocketMax": {
+      "limit": 4000.00,
+      "met": 1290.00,
+      "remaining": 2710.00
+    }
+  },
+  "dependents": [
+    {
+      "memberId": "MBR-2024-007046",
+      "firstName": "Harold",
+      "middleInitial": "B",
+      "lastName": "Wentworth",
+      "dateOfBirth": "1965-12-09",
+      "gender": "M",
+      "relationship": "SPOUSE",
+      "membershipStatus": "ACTIVE"
+    }
+  ],
+  "eligibilityVerifiedDate": "2026-06-05",
+  "cobInfo": {
+    "isCoordinating": false,
+    "otherCoverage": null
+  },
+  "priorAuthorizations": []
+}

@@ -27,7 +27,7 @@
   },
   "planInfo": {
     "planId": "HMO-SILVER-2026",
-    "planName": "BluePeak HMO Silver",
+    "planName": "HealthBridge HMO Silver",
     "planType": "HMO",
     "metalTier": "SILVER",
     "effectiveDate": "2026-01-01",
@@ -37,7 +37,7 @@
   "pcpInfo": {
     "npi": "1234567890",
     "name": "Dr. Patricia M. Chen",
-    "practice": "BluePeak Primary Care Associates",
+    "practice": "HealthBridge Primary Care Associates",
     "assignedDate": "2026-01-01"
   },
   "accumulators": {

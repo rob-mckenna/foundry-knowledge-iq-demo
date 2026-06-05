@@ -1,6 +1,6 @@
-# Summary of Benefits — BluePeak PPO Gold
+# Summary of Benefits — HealthBridge PPO Gold
 ## Plan Year 2026 | Plan ID: PPO-GOLD-2026
-**BluePeak Health Plan** | Member Services: 1-800-555-BLUE (2583) | bluepeak.example.com
+**HealthBridge Insurance Plan** | Member Services: 1-800-555-BLUE (2583) | HealthBridge.example.com
 
 ---
 
@@ -88,7 +88,7 @@
 | **Tier 4** | Specialty — Preferred | $75 | Not available |
 | **Tier 5** | Specialty — Non-Preferred | $150 | Not available |
 
-- Mail order available through **BluePeak Rx by Mail** (bluepeak-rx.example.com)
+- Mail order available through **HealthBridge Rx by Mail** (HealthBridge-rx.example.com)
 - Specialty drugs require PA and must be dispensed through a preferred specialty pharmacy
 - Pharmacy deductible: **$0** (pharmacy benefits are separate from medical deductible)
 
@@ -102,7 +102,7 @@
 | **Dental (Preventive)** | 2 cleanings/year, X-rays — $0 |
 | **Dental (Basic Restorative)** | 50% after dental deductible ($50) |
 | **Hearing** | 1 hearing exam/year; hearing aids up to $500 per ear every 3 years |
-| **Gym / Fitness** | $30/month BluePeak FitRewards reimbursement |
+| **Gym / Fitness** | $30/month HealthBridge FitRewards reimbursement |
 | **Nurse Line** | 24/7 registered nurse available — no charge |
 | **Chronic Care Management** | $0 — CCM program for members with 2+ chronic conditions |
 
@@ -110,12 +110,12 @@
 
 ## Important Plan Information
 
-- **Network:** BluePeak Preferred PPO — out-of-network providers may be used at higher cost sharing
+- **Network:** HealthBridge Preferred PPO — out-of-network providers may be used at higher cost sharing
 - **Referrals Required:** No referrals required for specialist visits (PPO)
 - **Prior Authorization:** Required for select services (see PA Policy CP-2026-PA-001)
-- **Formulary:** BluePeak Standard Drug List — see formulary-guidelines.md
-- **Appeals:** Call Member Services or visit bluepeak.example.com/appeals
+- **Formulary:** HealthBridge Standard Drug List — see formulary-guidelines.md
+- **Appeals:** Call Member Services or visit HealthBridge.example.com/appeals
 
 ---
 
-*This Summary of Benefits is for illustrative purposes. BluePeak Health Plan is a fictional entity. All plan data is synthetic and does not represent actual insurance coverage.*
+*This Summary of Benefits is for illustrative purposes. HealthBridge Insurance Plan is a fictional entity. All plan data is synthetic and does not represent actual insurance coverage.*

@@ -1,0 +1,79 @@
+{
+  "claimId": "CLM-2026-0058234",
+  "claimType": "PROFESSIONAL",
+  "claimStatus": "DENIED",
+  "receivedDate": "2026-05-12",
+  "processedDate": "2026-05-16",
+  "serviceDate": "2026-05-09",
+  "memberId": "MBR-2024-004512",
+  "memberName": "Denise R. Kowalski",
+  "planId": "PPO-SILVER-2026",
+  "groupId": "GRP-NORTHERN-STAR-FOODS-019",
+  "renderingProvider": {
+    "npi": "6789012345",
+    "name": "Dr. Susan M. Okafor",
+    "taxonomy": "207Q00000X",
+    "specialty": "Family Medicine"
+  },
+  "billingProvider": {
+    "npi": "6789012345",
+    "name": "Rockford Family Health Center",
+    "taxId": "XX-XXXXXXX"
+  },
+  "placeOfService": "11",
+  "diagnosisCodes": [
+    { "sequence": 1, "code": "Z00.00",  "system": "ICD-10-CM", "description": "Encounter for general adult medical examination without abnormal findings" },
+    { "sequence": 2, "code": "Z13.6",   "system": "ICD-10-CM", "description": "Encounter for screening for cardiovascular disorders" }
+  ],
+  "serviceLines": [
+    {
+      "lineNumber": 1,
+      "procedureCode": "85025",
+      "procedureDescription": "Blood count; complete (CBC), automated and automated differential WBC count",
+      "modifiers": [],
+      "diagnosisPointers": [1],
+      "units": 1,
+      "billedAmount": 95.00,
+      "allowedAmount": 0.00,
+      "planPaidAmount": 0.00,
+      "memberCopay": 0.00,
+      "memberDeductible": 0.00,
+      "memberCoinsurance": 0.00,
+      "memberResponsibility": 0.00,
+      "adjustmentReasonCode": "CO-50",
+      "adjustmentReasonDescription": "These are non-covered services because this is not deemed a 'medical necessity' by the payer"
+    },
+    {
+      "lineNumber": 2,
+      "procedureCode": "80053",
+      "procedureDescription": "Comprehensive metabolic panel",
+      "modifiers": [],
+      "diagnosisPointers": [1, 2],
+      "units": 1,
+      "billedAmount": 145.00,
+      "allowedAmount": 0.00,
+      "planPaidAmount": 0.00,
+      "memberCopay": 0.00,
+      "memberDeductible": 0.00,
+      "memberCoinsurance": 0.00,
+      "memberResponsibility": 0.00,
+      "adjustmentReasonCode": "CO-50",
+      "adjustmentReasonDescription": "These are non-covered services because this is not deemed a 'medical necessity' by the payer"
+    }
+  ],
+  "claimTotals": {
+    "totalBilled": 240.00,
+    "totalAllowed": 0.00,
+    "totalPlanPaid": 0.00,
+    "totalMemberResponsibility": 0.00
+  },
+  "denialInfo": {
+    "denialCode": "MED-NECES-001",
+    "denialReason": "Services not medically necessary as billed. Routine screening labs (CBC, CMP) are covered under the preventive benefit only when ordered as part of an Annual Wellness Visit (AWV) or USPSTF-aligned screening. Documentation submitted does not support a medically necessary diagnostic indication. Claim billed under non-preventive diagnosis codes (Z00.00, Z13.6) but services not linked to a documented clinical condition.",
+    "appealDeadline": "2026-08-16",
+    "appealInstructions": "Submit appeal with supporting clinical documentation (physician notes, clinical indication, prior results) to HealthBridge Appeals — PO Box 5500, Springfield IL 62708, or via Member Portal at HealthBridge.example.com/appeals within 90 days of denial date."
+  },
+  "priorAuthorizationNumber": null,
+  "referralNumber": null,
+  "notes": "Claim denied — routine labs billed under non-preventive codes without documented clinical indication. Member may appeal with clinical notes or resubmit under AWV encounter if applicable."
+}
