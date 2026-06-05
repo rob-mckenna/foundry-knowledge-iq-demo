@@ -1,0 +1,111 @@
+{
+  "name": "healthcare-payor-skillset",
+  "description": "Cognitive skillset for cracking and enriching healthcare payor documents",
+  "cognitiveServices": {
+    "@odata.type": "#Microsoft.Azure.Search.CognitiveServicesByKey",
+    "key": "${COGNITIVE_SERVICES_KEY}"
+  },
+  "knowledgeStore": null,
+  "skills": [
+    {
+      "@odata.type": "#Microsoft.Skills.Text.SplitSkill",
+      "name": "document-splitter",
+      "description": "Split large documents into overlapping pages for vectorization",
+      "context": "/document",
+      "defaultLanguageCode": "en",
+      "textSplitMode": "pages",
+      "maximumPageLength": 2000,
+      "pageOverlapLength": 200,
+      "maximumPagesToTake": 0,
+      "inputs": [
+        { "name": "text", "source": "/document/content" }
+      ],
+      "outputs": [
+        { "name": "textItems", "targetName": "pages" }
+      ]
+    },
+    {
+      "@odata.type": "#Microsoft.Skills.Text.KeyPhraseExtractionSkill",
+      "name": "key-phrase-extractor",
+      "description": "Extract key medical and insurance terms",
+      "context": "/document/pages/*",
+      "defaultLanguageCode": "en",
+      "maxKeyPhraseCount": 10,
+      "inputs": [
+        { "name": "text", "source": "/document/pages/*" }
+      ],
+      "outputs": [
+        { "name": "keyPhrases", "targetName": "keyPhrases" }
+      ]
+    },
+    {
+      "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+      "name": "entity-recognizer",
+      "description": "Recognize healthcare entities: organizations, dates, conditions",
+      "context": "/document/pages/*",
+      "categories": ["Organization", "DateTime", "Quantity"],
+      "defaultLanguageCode": "en",
+      "minimumPrecision": 0.75,
+      "inputs": [
+        { "name": "text", "source": "/document/pages/*" }
+      ],
+      "outputs": [
+        { "name": "organizations", "targetName": "organizations" },
+        { "name": "dateTimes", "targetName": "dateTimes" },
+        { "name": "quantities", "targetName": "quantities" }
+      ]
+    },
+    {
+      "@odata.type": "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill",
+      "name": "openai-embedder",
+      "description": "Generate vector embeddings for semantic search",
+      "context": "/document/pages/*",
+      "resourceUri": "${AZURE_OPENAI_ENDPOINT}",
+      "apiKey": "${AZURE_OPENAI_KEY}",
+      "deploymentId": "text-embedding-3-small",
+      "modelName": "text-embedding-3-small",
+      "dimensions": 1536,
+      "inputs": [
+        { "name": "text", "source": "/document/pages/*" }
+      ],
+      "outputs": [
+        { "name": "embedding", "targetName": "content_vector" }
+      ]
+    },
+    {
+      "@odata.type": "#Microsoft.Skills.Util.MergeSkill",
+      "name": "page-merger",
+      "description": "Merge enriched page content back for indexing",
+      "context": "/document",
+      "insertPreTag": " ",
+      "insertPostTag": " ",
+      "inputs": [
+        { "name": "text", "source": "/document/content" },
+        { "name": "itemsToInsert", "source": "/document/pages/*/keyPhrases" },
+        { "name": "offsets", "source": "/document/pages/*/keyPhrases" }
+      ],
+      "outputs": [
+        { "name": "mergedText", "targetName": "merged_content" }
+      ]
+    }
+  ],
+  "indexProjections": {
+    "selectors": [
+      {
+        "targetIndexName": "healthcare-payor-docs",
+        "parentKeyFieldName": "parent_id",
+        "sourceContext": "/document/pages/*",
+        "mappings": [
+          { "name": "content", "source": "/document/pages/*" },
+          { "name": "content_vector", "source": "/document/pages/*/content_vector" },
+          { "name": "title", "source": "/document/metadata_storage_name" },
+          { "name": "category", "source": "/document/category" },
+          { "name": "date", "source": "/document/date" }
+        ]
+      }
+    ],
+    "parameters": {
+      "projectionMode": "generatedKeyAsId"
+    }
+  }
+}

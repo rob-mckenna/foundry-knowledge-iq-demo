@@ -1,0 +1,97 @@
+{
+  "memberId": "MBR-2024-003456",
+  "membershipStatus": "ACTIVE",
+  "subscriber": {
+    "firstName": "Marcus",
+    "middleInitial": "D",
+    "lastName": "Thompson",
+    "dateOfBirth": "1962-11-08",
+    "gender": "M",
+    "ssn_last4": "XXXX",
+    "address": {
+      "street1": "225 Oakridge Lane",
+      "street2": null,
+      "city": "Peoria",
+      "state": "IL",
+      "zip": "61602",
+      "county": "Peoria"
+    },
+    "phone": "555-0374",
+    "email": "m.thompson.62@example-email.com",
+    "relationship": "SELF"
+  },
+  "groupInfo": {
+    "groupId": "GRP-RETIREE-MAPD-007",
+    "groupName": "BluePeak Medicare Advantage — Retiree Group",
+    "divisionCode": "DIV-MAPD-CENTRAL"
+  },
+  "planInfo": {
+    "planId": "PPO-PLATINUM-2026",
+    "planName": "BluePeak Platinum PPO (Medicare Advantage)",
+    "planType": "PPO",
+    "metalTier": "PLATINUM",
+    "effectiveDate": "2024-01-01",
+    "terminationDate": null,
+    "openEnrollmentDate": "2023-10-15"
+  },
+  "medicareInfo": {
+    "medicarePartAEffective": "2027-11-01",
+    "medicarePartBEffective": "2027-11-01",
+    "medicareClaimNumber": "1EG4-TE5-MK72",
+    "lowIncomeSubsidyLevel": null
+  },
+  "pcpInfo": {
+    "npi": "3456789012",
+    "name": "Dr. Robert J. Vasquez",
+    "practice": "Heartland Cardiovascular Specialists LLC",
+    "assignedDate": "2024-01-01"
+  },
+  "accumulators": {
+    "benefitYear": "2026",
+    "asOfDate": "2026-06-05",
+    "individualDeductible": {
+      "limit": 250.00,
+      "met": 250.00,
+      "remaining": 0.00
+    },
+    "familyDeductible": {
+      "limit": 250.00,
+      "met": 250.00,
+      "remaining": 0.00
+    },
+    "individualOutOfPocketMax": {
+      "limit": 2000.00,
+      "met": 540.00,
+      "remaining": 1460.00
+    },
+    "familyOutOfPocketMax": {
+      "limit": 2000.00,
+      "met": 540.00,
+      "remaining": 1460.00
+    }
+  },
+  "dependents": [
+    {
+      "memberId": "MBR-2024-003457",
+      "firstName": "Diane",
+      "middleInitial": "R",
+      "lastName": "Thompson",
+      "dateOfBirth": "1964-04-17",
+      "gender": "F",
+      "relationship": "SPOUSE",
+      "membershipStatus": "ACTIVE"
+    }
+  ],
+  "eligibilityVerifiedDate": "2026-06-05",
+  "cobInfo": {
+    "isCoordinating": true,
+    "otherCoverage": {
+      "carrierId": "MEDICARE-PART-B",
+      "carrierName": "Medicare Part B",
+      "payerOrder": "PRIMARY",
+      "groupId": "MEDICARE"
+    }
+  },
+  "chronicConditionFlags": ["DIABETES_TYPE2", "ATRIAL_FIBRILLATION", "HYPERTENSION"],
+  "careManagementPrograms": ["CHRONIC_CARE_MANAGEMENT", "CARDIAC_CARE_COORDINATION"]
+}

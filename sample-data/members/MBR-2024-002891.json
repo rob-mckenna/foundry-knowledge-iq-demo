@@ -1,0 +1,88 @@
+{
+  "memberId": "MBR-2024-002891",
+  "membershipStatus": "ACTIVE",
+  "subscriber": {
+    "firstName": "Sarah",
+    "middleInitial": "L",
+    "lastName": "Nguyen",
+    "dateOfBirth": "1985-07-22",
+    "gender": "F",
+    "ssn_last4": "XXXX",
+    "address": {
+      "street1": "1803 Willowbrook Drive",
+      "street2": "Apt 4B",
+      "city": "Naperville",
+      "state": "IL",
+      "zip": "60540",
+      "county": "DuPage"
+    },
+    "phone": "555-0287",
+    "email": "sarah.nguyen.hx@example-email.com",
+    "relationship": "SELF"
+  },
+  "groupInfo": {
+    "groupId": "GRP-MERIDIAN-TECH-042",
+    "groupName": "Meridian Technology Solutions LLC",
+    "divisionCode": "DIV-ENG-WEST"
+  },
+  "planInfo": {
+    "planId": "HMO-SILVER-2026",
+    "planName": "BluePeak HMO Silver",
+    "planType": "HMO",
+    "metalTier": "SILVER",
+    "effectiveDate": "2026-01-01",
+    "terminationDate": null,
+    "openEnrollmentDate": "2025-11-01"
+  },
+  "pcpInfo": {
+    "npi": "1234567890",
+    "name": "Dr. Patricia M. Chen",
+    "practice": "BluePeak Primary Care Associates",
+    "assignedDate": "2026-01-01"
+  },
+  "accumulators": {
+    "benefitYear": "2026",
+    "asOfDate": "2026-06-05",
+    "individualDeductible": {
+      "limit": 1500.00,
+      "met": 1500.00,
+      "remaining": 0.00
+    },
+    "familyDeductible": {
+      "limit": 3000.00,
+      "met": 1500.00,
+      "remaining": 1500.00
+    },
+    "individualOutOfPocketMax": {
+      "limit": 5000.00,
+      "met": 3654.00,
+      "remaining": 1346.00
+    },
+    "familyOutOfPocketMax": {
+      "limit": 10000.00,
+      "met": 3654.00,
+      "remaining": 6346.00
+    }
+  },
+  "dependents": [],
+  "eligibilityVerifiedDate": "2026-06-05",
+  "cobInfo": {
+    "isCoordinating": false,
+    "otherCoverage": null
+  },
+  "priorAuthorizations": [
+    {
+      "authNumber": "PA-2026-087341",
+      "procedureCode": "27447",
+      "procedureDescription": "Total Knee Arthroplasty — Right",
+      "status": "APPROVED",
+      "requestedDate": "2026-04-10",
+      "approvedDate": "2026-04-14",
+      "effectiveStartDate": "2026-04-14",
+      "effectiveEndDate": "2026-10-14",
+      "approvedUnits": 1,
+      "requestingProvider": "2345678901",
+      "approvingClinician": "Dr. A. Mercer, MD — Clinical Review"
+    }
+  ]
+}

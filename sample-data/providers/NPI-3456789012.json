@@ -1,0 +1,132 @@
+{
+  "npi": "3456789012",
+  "entityType": "INDIVIDUAL",
+  "providerStatus": "ACTIVE_IN_NETWORK",
+  "networkTiers": ["PREFERRED_TIER_1", "STANDARD"],
+  "individual": {
+    "firstName": "Robert",
+    "middleInitial": "J",
+    "lastName": "Vasquez",
+    "credential": "MD, FACC",
+    "gender": "M",
+    "languages": ["English", "Spanish"]
+  },
+  "practice": {
+    "name": "Heartland Cardiovascular Specialists LLC",
+    "groupNpi": "9003456789",
+    "taxId": "XX-XXXXXXX"
+  },
+  "taxonomy": [
+    {
+      "code": "207RI0011X",
+      "description": "Cardiovascular Disease",
+      "primary": true
+    },
+    {
+      "code": "207RE0101X",
+      "description": "Cardiology — Electrophysiology",
+      "primary": false
+    }
+  ],
+  "boardCertifications": [
+    {
+      "board": "American Board of Internal Medicine",
+      "specialty": "Cardiovascular Disease",
+      "certifiedDate": "2003-11-01",
+      "expirationDate": "2033-11-01"
+    },
+    {
+      "board": "American Board of Internal Medicine",
+      "specialty": "Clinical Cardiac Electrophysiology",
+      "certifiedDate": "2006-04-15",
+      "expirationDate": "2026-04-15"
+    }
+  ],
+  "licenseInfo": [
+    {
+      "state": "IL",
+      "licenseNumber": "036-YYYYYY",
+      "issueDate": "2001-09-01",
+      "expirationDate": "2027-09-30",
+      "status": "ACTIVE"
+    }
+  ],
+  "locations": [
+    {
+      "locationId": "LOC-VASQ-001",
+      "locationName": "Heartland Cardiovascular — Peoria Main",
+      "type": "PRIMARY_PRACTICE",
+      "address": {
+        "street1": "3300 Heart Center Way",
+        "street2": "Floor 2",
+        "city": "Peoria",
+        "state": "IL",
+        "zip": "61602",
+        "county": "Peoria"
+      },
+      "phone": "555-0340",
+      "fax": "555-0341",
+      "acceptingNewPatients": true,
+      "accessibilityFeatures": ["WHEELCHAIR_ACCESSIBLE", "VISION_IMPAIRED_SUPPORT"],
+      "hours": {
+        "monday": "08:00-17:00",
+        "tuesday": "08:00-17:00",
+        "wednesday": "08:00-12:00",
+        "thursday": "08:00-17:00",
+        "friday": "08:00-16:00",
+        "saturday": "CLOSED",
+        "sunday": "CLOSED"
+      }
+    },
+    {
+      "locationId": "LOC-VASQ-002",
+      "locationName": "Heartland Cardiovascular — Springfield Satellite",
+      "type": "SATELLITE_OFFICE",
+      "address": {
+        "street1": "900 Capitol Medical Plaza",
+        "street2": "Suite 150",
+        "city": "Springfield",
+        "state": "IL",
+        "zip": "62701",
+        "county": "Sangamon"
+      },
+      "phone": "555-0342",
+      "fax": "555-0341",
+      "acceptingNewPatients": false,
+      "hours": {
+        "monday": "CLOSED",
+        "tuesday": "CLOSED",
+        "wednesday": "13:00-17:00",
+        "thursday": "CLOSED",
+        "friday": "CLOSED",
+        "saturday": "CLOSED",
+        "sunday": "CLOSED"
+      }
+    }
+  ],
+  "networkEffectiveDates": {
+    "credentialedDate": "2008-02-01",
+    "contractEffectiveDate": "2016-01-01",
+    "contractTerminationDate": null,
+    "lastVerificationDate": "2026-02-10"
+  },
+  "hospitalAffiliations": [
+    {
+      "facilityName": "Peoria Heart & Vascular Center",
+      "npi": "8002345678",
+      "admittingPrivileges": true
+    },
+    {
+      "facilityName": "Springfield General Hospital",
+      "npi": "8001234567",
+      "admittingPrivileges": true
+    }
+  ],
+  "priorAuthorizationRequired": false,
+  "qualityMetrics": {
+    "hedisCompliance": "HIGH",
+    "starRating": 4.9,
+    "patientSatisfactionScore": 4.8,
+    "cardiacReadmissionRate": "BELOW_BENCHMARK"
+  }
+}

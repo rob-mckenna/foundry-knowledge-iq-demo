@@ -1,0 +1,89 @@
+{
+  "npi": "1234567890",
+  "entityType": "INDIVIDUAL",
+  "providerStatus": "ACTIVE_IN_NETWORK",
+  "networkTiers": ["PREFERRED_TIER_1", "STANDARD"],
+  "individual": {
+    "firstName": "Patricia",
+    "middleInitial": "M",
+    "lastName": "Chen",
+    "credential": "MD",
+    "gender": "F",
+    "languages": ["English", "Mandarin"]
+  },
+  "practice": {
+    "name": "BluePeak Primary Care Associates",
+    "groupNpi": "9001234567",
+    "taxId": "XX-XXXXXXX"
+  },
+  "taxonomy": [
+    {
+      "code": "207R00000X",
+      "description": "Internal Medicine",
+      "primary": true
+    }
+  ],
+  "boardCertifications": [
+    {
+      "board": "American Board of Internal Medicine",
+      "specialty": "Internal Medicine",
+      "certifiedDate": "2008-10-15",
+      "expirationDate": "2028-10-15"
+    }
+  ],
+  "licenseInfo": [
+    {
+      "state": "IL",
+      "licenseNumber": "036-XXXXXX",
+      "issueDate": "2005-07-01",
+      "expirationDate": "2027-07-31",
+      "status": "ACTIVE"
+    }
+  ],
+  "locations": [
+    {
+      "locationId": "LOC-CHEN-001",
+      "locationName": "BluePeak Primary Care — Springfield Main",
+      "type": "PRIMARY_PRACTICE",
+      "address": {
+        "street1": "1450 Medical Center Drive",
+        "street2": "Suite 210",
+        "city": "Springfield",
+        "state": "IL",
+        "zip": "62704",
+        "county": "Sangamon"
+      },
+      "phone": "555-0100",
+      "fax": "555-0101",
+      "acceptingNewPatients": true,
+      "accessibilityFeatures": ["WHEELCHAIR_ACCESSIBLE", "HEARING_LOOP"],
+      "hours": {
+        "monday": "08:00-17:00",
+        "tuesday": "08:00-17:00",
+        "wednesday": "08:00-17:00",
+        "thursday": "08:00-17:00",
+        "friday": "08:00-16:00",
+        "saturday": "09:00-12:00",
+        "sunday": "CLOSED"
+      }
+    }
+  ],
+  "networkEffectiveDates": {
+    "credentialedDate": "2015-03-01",
+    "contractEffectiveDate": "2020-01-01",
+    "contractTerminationDate": null,
+    "lastVerificationDate": "2026-01-15"
+  },
+  "hospitalAffiliations": [
+    {
+      "facilityName": "Springfield General Hospital",
+      "npi": "8001234567",
+      "admittingPrivileges": true
+    }
+  ],
+  "qualityMetrics": {
+    "hedisCompliance": "HIGH",
+    "starRating": 4.5,
+    "patientSatisfactionScore": 4.7
+  }
+}

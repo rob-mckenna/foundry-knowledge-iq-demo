@@ -1,0 +1,94 @@
+{
+  "memberId": "MBR-2024-001234",
+  "membershipStatus": "ACTIVE",
+  "subscriber": {
+    "firstName": "John",
+    "middleInitial": "A",
+    "lastName": "Hartwell",
+    "dateOfBirth": "1978-03-15",
+    "gender": "M",
+    "ssn_last4": "XXXX",
+    "address": {
+      "street1": "742 Evergreen Terrace",
+      "street2": null,
+      "city": "Springfield",
+      "state": "IL",
+      "zip": "62704",
+      "county": "Sangamon"
+    },
+    "phone": "555-0142",
+    "email": "j.hartwell@example-email.com",
+    "relationship": "SELF"
+  },
+  "groupInfo": {
+    "groupId": "GRP-HARTWELL-INDUSTRIES-001",
+    "groupName": "Hartwell Industries Inc.",
+    "divisionCode": "DIV-CORP-HQ"
+  },
+  "planInfo": {
+    "planId": "PPO-GOLD-2026",
+    "planName": "BluePeak PPO Gold",
+    "planType": "PPO",
+    "metalTier": "GOLD",
+    "effectiveDate": "2026-01-01",
+    "terminationDate": null,
+    "openEnrollmentDate": "2025-11-01"
+  },
+  "pcpInfo": {
+    "npi": "1234567890",
+    "name": "Dr. Patricia M. Chen",
+    "practice": "BluePeak Primary Care Associates",
+    "assignedDate": "2026-01-01"
+  },
+  "accumulators": {
+    "benefitYear": "2026",
+    "asOfDate": "2026-06-05",
+    "individualDeductible": {
+      "limit": 500.00,
+      "met": 500.00,
+      "remaining": 0.00
+    },
+    "familyDeductible": {
+      "limit": 1000.00,
+      "met": 500.00,
+      "remaining": 500.00
+    },
+    "individualOutOfPocketMax": {
+      "limit": 3000.00,
+      "met": 520.00,
+      "remaining": 2480.00
+    },
+    "familyOutOfPocketMax": {
+      "limit": 6000.00,
+      "met": 520.00,
+      "remaining": 5480.00
+    }
+  },
+  "dependents": [
+    {
+      "memberId": "MBR-2024-001235",
+      "firstName": "Claire",
+      "middleInitial": "E",
+      "lastName": "Hartwell",
+      "dateOfBirth": "1980-08-29",
+      "gender": "F",
+      "relationship": "SPOUSE",
+      "membershipStatus": "ACTIVE"
+    },
+    {
+      "memberId": "MBR-2024-001236",
+      "firstName": "Owen",
+      "middleInitial": "J",
+      "lastName": "Hartwell",
+      "dateOfBirth": "2010-05-03",
+      "gender": "M",
+      "relationship": "CHILD",
+      "membershipStatus": "ACTIVE"
+    }
+  ],
+  "eligibilityVerifiedDate": "2026-06-05",
+  "cobInfo": {
+    "isCoordinating": false,
+    "otherCoverage": null
+  }
+}

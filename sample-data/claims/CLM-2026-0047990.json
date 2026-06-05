@@ -1,0 +1,74 @@
+{
+  "claimId": "CLM-2026-0047990",
+  "claimType": "PROFESSIONAL",
+  "claimStatus": "PAID",
+  "receivedDate": "2026-05-22",
+  "processedDate": "2026-05-27",
+  "serviceDate": "2026-05-20",
+  "memberId": "MBR-2024-003456",
+  "memberName": "Marcus D. Thompson",
+  "planId": "PPO-PLATINUM-2026",
+  "groupId": "GRP-RETIREE-MAPD-007",
+  "renderingProvider": {
+    "npi": "3456789012",
+    "name": "Dr. Robert J. Vasquez",
+    "taxonomy": "207RI0011X",
+    "specialty": "Cardiovascular Disease (Cardiology)"
+  },
+  "billingProvider": {
+    "npi": "3456789012",
+    "name": "Heartland Cardiovascular Specialists LLC",
+    "taxId": "XX-XXXXXXX"
+  },
+  "placeOfService": "11",
+  "diagnosisCodes": [
+    { "sequence": 1, "code": "I48.0",  "system": "ICD-10-CM", "description": "Paroxysmal atrial fibrillation" },
+    { "sequence": 2, "code": "I10",    "system": "ICD-10-CM", "description": "Essential (primary) hypertension" },
+    { "sequence": 3, "code": "E11.9",  "system": "ICD-10-CM", "description": "Type 2 diabetes mellitus without complications" }
+  ],
+  "serviceLines": [
+    {
+      "lineNumber": 1,
+      "procedureCode": "99214",
+      "procedureDescription": "Office/outpatient visit, established patient, moderate medical decision making",
+      "modifiers": [],
+      "diagnosisPointers": [1, 2, 3],
+      "units": 1,
+      "billedAmount": 310.00,
+      "allowedAmount": 198.00,
+      "planPaidAmount": 158.00,
+      "memberCopay": 40.00,
+      "memberDeductible": 0.00,
+      "memberCoinsurance": 0.00,
+      "memberResponsibility": 40.00,
+      "adjustmentReasonCode": "CO-45",
+      "adjustmentReasonDescription": "Charges exceed your contracted/legislated fee arrangement"
+    },
+    {
+      "lineNumber": 2,
+      "procedureCode": "93306",
+      "procedureDescription": "Echocardiography, transthoracic, real-time with image documentation; complete, with spectral Doppler echocardiography, and with color flow Doppler echocardiography",
+      "modifiers": [],
+      "diagnosisPointers": [1, 2],
+      "units": 1,
+      "billedAmount": 1540.00,
+      "allowedAmount": 724.00,
+      "planPaidAmount": 724.00,
+      "memberCopay": 0.00,
+      "memberDeductible": 0.00,
+      "memberCoinsurance": 0.00,
+      "memberResponsibility": 0.00,
+      "adjustmentReasonCode": "CO-45",
+      "adjustmentReasonDescription": "Charges exceed your contracted/legislated fee arrangement"
+    }
+  ],
+  "claimTotals": {
+    "totalBilled": 1850.00,
+    "totalAllowed": 922.00,
+    "totalPlanPaid": 882.00,
+    "totalMemberResponsibility": 40.00
+  },
+  "priorAuthorizationNumber": null,
+  "referralNumber": null,
+  "notes": "Cardiology follow-up for paroxysmal AFib with echocardiogram. Platinum plan — deductible previously satisfied. Member copay applies to office visit only; echo covered at 100% post-deductible."
+}

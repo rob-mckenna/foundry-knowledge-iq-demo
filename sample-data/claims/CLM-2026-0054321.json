@@ -1,0 +1,73 @@
+{
+  "claimId": "CLM-2026-0054321",
+  "claimType": "PROFESSIONAL",
+  "claimStatus": "PAID",
+  "receivedDate": "2026-05-14",
+  "processedDate": "2026-05-19",
+  "serviceDate": "2026-05-12",
+  "memberId": "MBR-2024-001234",
+  "memberName": "John A. Hartwell",
+  "planId": "PPO-GOLD-2026",
+  "groupId": "GRP-HARTWELL-INDUSTRIES-001",
+  "renderingProvider": {
+    "npi": "1234567890",
+    "name": "Dr. Patricia M. Chen",
+    "taxonomy": "207R00000X",
+    "specialty": "Internal Medicine"
+  },
+  "billingProvider": {
+    "npi": "1234567890",
+    "name": "BluePeak Primary Care Associates",
+    "taxId": "XX-XXXXXXX"
+  },
+  "placeOfService": "11",
+  "diagnosisCodes": [
+    { "sequence": 1, "code": "Z00.00", "system": "ICD-10-CM", "description": "Encounter for general adult medical examination without abnormal findings" },
+    { "sequence": 2, "code": "I10",    "system": "ICD-10-CM", "description": "Essential (primary) hypertension" }
+  ],
+  "serviceLines": [
+    {
+      "lineNumber": 1,
+      "procedureCode": "99213",
+      "procedureDescription": "Office/outpatient visit, established patient, low-moderate medical decision making",
+      "modifiers": [],
+      "diagnosisPointers": [1, 2],
+      "units": 1,
+      "billedAmount": 220.00,
+      "allowedAmount": 148.50,
+      "planPaidAmount": 128.50,
+      "memberCopay": 20.00,
+      "memberDeductible": 0.00,
+      "memberCoinsurance": 0.00,
+      "memberResponsibility": 20.00,
+      "adjustmentReasonCode": "CO-45",
+      "adjustmentReasonDescription": "Charges exceed your contracted/legislated fee arrangement"
+    },
+    {
+      "lineNumber": 2,
+      "procedureCode": "93000",
+      "procedureDescription": "Electrocardiogram, routine ECG with at least 12 leads",
+      "modifiers": [],
+      "diagnosisPointers": [2],
+      "units": 1,
+      "billedAmount": 65.00,
+      "allowedAmount": 38.00,
+      "planPaidAmount": 38.00,
+      "memberCopay": 0.00,
+      "memberDeductible": 0.00,
+      "memberCoinsurance": 0.00,
+      "memberResponsibility": 0.00,
+      "adjustmentReasonCode": "CO-45",
+      "adjustmentReasonDescription": "Charges exceed your contracted/legislated fee arrangement"
+    }
+  ],
+  "claimTotals": {
+    "totalBilled": 285.00,
+    "totalAllowed": 186.50,
+    "totalPlanPaid": 166.50,
+    "totalMemberResponsibility": 20.00
+  },
+  "priorAuthorizationNumber": null,
+  "referralNumber": null,
+  "notes": "Routine annual wellness visit with hypertension follow-up. ECG included per clinical protocol."
+}

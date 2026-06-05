@@ -1,0 +1,107 @@
+{
+  "npi": "2345678901",
+  "entityType": "ORGANIZATION",
+  "providerStatus": "ACTIVE_IN_NETWORK",
+  "networkTiers": ["PREFERRED_TIER_1"],
+  "organization": {
+    "legalName": "Lakeside Orthopedic Group LLC",
+    "doingBusinessAs": "Lakeside Orthopedic Group",
+    "taxId": "XX-XXXXXXX",
+    "organizationType": "GROUP_PRACTICE"
+  },
+  "taxonomy": [
+    {
+      "code": "207X00000X",
+      "description": "Orthopaedic Surgery",
+      "primary": true
+    },
+    {
+      "code": "207XS0114X",
+      "description": "Orthopaedic Surgery — Sports Medicine",
+      "primary": false
+    }
+  ],
+  "practitioners": [
+    {
+      "npi": "2345678902",
+      "name": "Dr. Kevin L. Okoye, MD",
+      "specialty": "Orthopaedic Surgery — Joint Replacement",
+      "credential": "MD, FAAOS"
+    },
+    {
+      "npi": "2345678903",
+      "name": "Dr. Melissa A. Briggs, MD",
+      "specialty": "Orthopaedic Surgery — Sports Medicine",
+      "credential": "MD"
+    }
+  ],
+  "locations": [
+    {
+      "locationId": "LOC-LOG-001",
+      "locationName": "Lakeside Orthopedic Group — Main Clinic",
+      "type": "PRIMARY_PRACTICE",
+      "address": {
+        "street1": "480 Lakeshore Blvd",
+        "street2": "Suite 100",
+        "city": "Springfield",
+        "state": "IL",
+        "zip": "62704",
+        "county": "Sangamon"
+      },
+      "phone": "555-0250",
+      "fax": "555-0251",
+      "acceptingNewPatients": true,
+      "accessibilityFeatures": ["WHEELCHAIR_ACCESSIBLE"],
+      "hours": {
+        "monday": "07:30-17:00",
+        "tuesday": "07:30-17:00",
+        "wednesday": "07:30-17:00",
+        "thursday": "07:30-17:00",
+        "friday": "07:30-16:00",
+        "saturday": "CLOSED",
+        "sunday": "CLOSED"
+      }
+    },
+    {
+      "locationId": "LOC-LOG-002",
+      "locationName": "Lakeside Surgical Center",
+      "type": "AMBULATORY_SURGICAL_CENTER",
+      "facilityNpi": "9876543210",
+      "address": {
+        "street1": "480 Lakeshore Blvd",
+        "street2": "Suite 300",
+        "city": "Springfield",
+        "state": "IL",
+        "zip": "62704",
+        "county": "Sangamon"
+      },
+      "phone": "555-0260",
+      "fax": "555-0261",
+      "acceptingNewPatients": true,
+      "accessibilityFeatures": ["WHEELCHAIR_ACCESSIBLE"],
+      "hours": {
+        "monday": "06:00-18:00",
+        "tuesday": "06:00-18:00",
+        "wednesday": "06:00-18:00",
+        "thursday": "06:00-18:00",
+        "friday": "06:00-15:00",
+        "saturday": "CLOSED",
+        "sunday": "CLOSED"
+      }
+    }
+  ],
+  "networkEffectiveDates": {
+    "credentialedDate": "2012-06-15",
+    "contractEffectiveDate": "2018-01-01",
+    "contractTerminationDate": null,
+    "lastVerificationDate": "2026-01-20"
+  },
+  "priorAuthorizationRequired": true,
+  "priorAuthProcedureCodes": ["27447", "27130", "23472", "29827"],
+  "qualityMetrics": {
+    "hedisCompliance": "HIGH",
+    "starRating": 4.8,
+    "patientSatisfactionScore": 4.9,
+    "jointReplacementOutcomeScore": "EXCELLENT"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "agents": [
+    { "persistent_name": "Mikey", "universe": "The Goonies", "role": "Lead", "created_at": "2026-06-05", "legacy_named": false, "status": "active" },
+    { "persistent_name": "Data", "universe": "The Goonies", "role": "Data Engineer", "created_at": "2026-06-05", "legacy_named": false, "status": "active" },
+    { "persistent_name": "Mouth", "universe": "The Goonies", "role": "Domain Content", "created_at": "2026-06-05", "legacy_named": false, "status": "active" },
+    { "persistent_name": "Chunk", "universe": "The Goonies", "role": "Agent Builder", "created_at": "2026-06-05", "legacy_named": false, "status": "active" },
+    { "persistent_name": "Scribe", "universe": null, "role": "Scribe", "created_at": "2026-06-05", "legacy_named": false, "status": "active" },
+    { "persistent_name": "Ralph", "universe": null, "role": "Work Monitor", "created_at": "2026-06-05", "legacy_named": false, "status": "active" }
+  ]
+}

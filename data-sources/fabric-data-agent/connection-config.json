@@ -1,0 +1,33 @@
+{
+  "_comment": "Sample Fabric Data Agent connection configuration for Azure AI Foundry Knowledge Base. Replace placeholder values with your actual Fabric workspace details.",
+  "connection": {
+    "type": "FabricDataAgent",
+    "display_name": "Healthcare Payor — Fabric Data Agent",
+    "description": "Fabric Data Agent over healthcare payor lakehouse: claims, members, providers, formulary"
+  },
+  "authentication": {
+    "type": "EntraID",
+    "authority": "https://login.microsoftonline.com/${AZURE_TENANT_ID}",
+    "client_id": "${AZURE_CLIENT_ID}",
+    "credential_type": "WorkloadIdentity"
+  },
+  "fabric": {
+    "workspace_id": "${FABRIC_WORKSPACE_ID}",
+    "workspace_name": "healthcare-payor-analytics",
+    "data_agent_name": "HealthcarePayorAgent",
+    "data_agent_id": "${FABRIC_DATA_AGENT_ID}",
+    "endpoint": "https://api.fabric.microsoft.com/v1/workspaces/${FABRIC_WORKSPACE_ID}/dataAgents/${FABRIC_DATA_AGENT_ID}"
+  },
+  "knowledge_base_settings": {
+    "index_name": "fabric-healthcare-payor",
+    "refresh_schedule": "daily",
+    "tables_in_scope": [
+      "claims_fact",
+      "members_dim",
+      "providers_dim",
+      "formulary_current",
+      "prior_auth_decisions",
+      "eligibility_current"
+    ]
+  }
+}

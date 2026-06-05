@@ -1,0 +1,195 @@
+{
+  "$schema": "https://schema.azure.com/ai/foundry/knowledge-base/v1",
+  "name": "healthbridge-knowledge-base",
+  "displayName": "HealthBridge Payor Knowledge Base",
+  "description": "Multi-source Knowledge Base for the HealthBridge Insurance demo. Covers benefits, claims, prior auth, formulary, and provider network content.",
+
+  "retrieval": {
+    "searchType": "hybrid",
+    "topK": 5,
+    "semanticRanking": true,
+    "semanticConfigurationName": "healthbridge-semantic-config",
+    "minimumRerankerScore": 0.5,
+    "queryRewrite": true,
+    "chunkingStrategy": {
+      "type": "fixedSize",
+      "chunkSizeTokens": 512,
+      "overlapTokens": 64
+    }
+  },
+
+  "dataSources": [
+
+    {
+      "id": "blob-storage-plan-documents",
+      "type": "AzureBlobStorage",
+      "displayName": "Plan Documents (Blob Storage)",
+      "description": "PDF and Word documents: Summary of Benefits and Coverage (SBC), Evidence of Coverage (EOC), Member Handbooks, and Clinical Coverage Criteria.",
+      "connection": {
+        "connectionNameRef": "healthbridge-blob-connection",
+        "containerName": "healthcare-docs",
+        "pathPrefix": ""
+      },
+      "indexing": {
+        "fileTypes": ["pdf", "docx", "txt"],
+        "parsingMode": "layout",
+        "enableOcrForImages": true
+      },
+      "metadata": {
+        "domain": "benefits",
+        "sensitivity": "non-phi",
+        "refreshSchedule": "weekly"
+      }
+    },
+
+    {
+      "id": "ai-search-formulary",
+      "type": "AzureAISearch",
+      "displayName": "Formulary & Drug Coverage (AI Search)",
+      "description": "Structured Azure AI Search index containing the current drug formulary: tier assignments, quantity limits, step therapy requirements, prior auth flags, and specialty pharmacy designations.",
+      "connection": {
+        "connectionNameRef": "healthbridge-aisearch-connection",
+        "indexName": "healthbridge-formulary-index"
+      },
+      "retrieval": {
+        "searchType": "hybrid",
+        "topK": 5,
+        "semanticConfigurationName": "formulary-semantic-config",
+        "vectorFieldName": "contentVector",
+        "selectFields": [
+          "drugName",
+          "genericName",
+          "tier",
+          "requiresPriorAuth",
+          "stepTherapyRequired",
+          "quantityLimit",
+          "specialtyPharmacy",
+          "formularyNotes"
+        ]
+      },
+      "metadata": {
+        "domain": "pharmacy",
+        "sensitivity": "non-phi",
+        "refreshSchedule": "monthly"
+      }
+    },
+
+    {
+      "id": "ai-search-providers",
+      "type": "AzureAISearch",
+      "displayName": "Provider Directory (AI Search)",
+      "description": "Searchable provider directory index: physician names, specialties, NPI numbers, locations, network participation status, and accepting-new-patients flags.",
+      "connection": {
+        "connectionNameRef": "healthbridge-aisearch-connection",
+        "indexName": "healthbridge-provider-index"
+      },
+      "retrieval": {
+        "searchType": "hybrid",
+        "topK": 5,
+        "semanticConfigurationName": "provider-semantic-config",
+        "vectorFieldName": "contentVector",
+        "selectFields": [
+          "providerName",
+          "npi",
+          "specialty",
+          "networkStatus",
+          "acceptingNewPatients",
+          "locations",
+          "phoneNumber",
+          "hospitalAffiliations"
+        ]
+      },
+      "metadata": {
+        "domain": "provider-network",
+        "sensitivity": "non-phi",
+        "refreshSchedule": "weekly"
+      }
+    },
+
+    {
+      "id": "fabric-data-agent-claims",
+      "type": "FabricDataAgent",
+      "displayName": "Claims & Eligibility (Fabric Data Agent)",
+      "description": "Real-time query interface to the Fabric lakehouse containing adjudicated claims, member eligibility, and prior authorization records. Returns structured data via natural language query.",
+      "connection": {
+        "connectionNameRef": "healthbridge-fabric-connection",
+        "workspaceId": "<FABRIC_WORKSPACE_ID>",
+        "dataAgentName": "healthbridge-claims-agent"
+      },
+      "capabilities": [
+        "claimStatusLookup",
+        "eligibilityVerification",
+        "priorAuthStatusLookup",
+        "eobRetrieval",
+        "accumulatorLookup"
+      ],
+      "metadata": {
+        "domain": "claims",
+        "sensitivity": "phi-capable",
+        "note": "Requires member authentication context for PHI queries. In demo mode returns synthetic data only.",
+        "refreshSchedule": "real-time"
+      }
+    },
+
+    {
+      "id": "mcp-prior-auth-policies",
+      "type": "MCPServer",
+      "displayName": "Prior Authorization Policies (MCP Server)",
+      "description": "MCP server exposing prior authorization criteria, clinical guidelines, and utilization management policies. Supports tool calls for policy lookup by procedure code, diagnosis code, or service category.",
+      "connection": {
+        "connectionNameRef": "healthbridge-mcp-connection",
+        "serverUrl": "http://localhost:3000",
+        "transport": "http"
+      },
+      "tools": [
+        {
+          "name": "get_prior_auth_requirements",
+          "description": "Returns prior auth requirements for a given procedure code (CPT) or service category",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "procedureCode": { "type": "string", "description": "CPT or HCPCS code" },
+              "serviceCategory": { "type": "string", "description": "Human-readable service category (e.g., 'MRI', 'Physical Therapy')" },
+              "planId": { "type": "string", "description": "Optional: member plan identifier" }
+            }
+          }
+        },
+        {
+          "name": "get_clinical_coverage_criteria",
+          "description": "Returns clinical coverage criteria and medical necessity guidelines for a service",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "serviceCode": { "type": "string" },
+              "diagnosisCode": { "type": "string", "description": "ICD-10 diagnosis code" }
+            }
+          }
+        }
+      ],
+      "metadata": {
+        "domain": "prior-auth",
+        "sensitivity": "non-phi",
+        "refreshSchedule": "on-demand"
+      }
+    }
+
+  ],
+
+  "indexingPipeline": {
+    "embeddingModel": {
+      "deploymentName": "text-embedding-3-small",
+      "dimensions": 1536
+    },
+    "enrichments": [
+      "keyPhraseExtraction",
+      "entityRecognition"
+    ]
+  },
+
+  "notes": [
+    "Replace <FABRIC_WORKSPACE_ID> with the actual Fabric workspace GUID before deploying.",
+    "Connection name references must match the connection names registered in your Foundry project.",
+    "The MCP server URL assumes local dev mode; update to production endpoint for live demo.",
+    "topK values can be tuned per data source override; the root retrieval block sets the default."
+  ]
+}

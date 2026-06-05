@@ -1,0 +1,62 @@
+{
+  "claimId": "CLM-2026-0061872",
+  "claimType": "INSTITUTIONAL",
+  "claimStatus": "PAID",
+  "receivedDate": "2026-04-30",
+  "processedDate": "2026-05-08",
+  "serviceDate": "2026-04-28",
+  "memberId": "MBR-2024-002891",
+  "memberName": "Sarah L. Nguyen",
+  "planId": "HMO-SILVER-2026",
+  "groupId": "GRP-MERIDIAN-TECH-042",
+  "renderingProvider": {
+    "npi": "2345678901",
+    "name": "Lakeside Orthopedic Group",
+    "taxonomy": "207X00000X",
+    "specialty": "Orthopaedic Surgery"
+  },
+  "billingProvider": {
+    "npi": "2345678901",
+    "name": "Lakeside Orthopedic Group",
+    "taxId": "XX-XXXXXXX"
+  },
+  "facility": {
+    "name": "Lakeside Surgical Center",
+    "npi": "9876543210",
+    "type": "AMBULATORY_SURGICAL_CENTER",
+    "address": "480 Lakeshore Blvd, Suite 300, Springfield, IL 62704"
+  },
+  "placeOfService": "24",
+  "diagnosisCodes": [
+    { "sequence": 1, "code": "M17.11", "system": "ICD-10-CM", "description": "Primary osteoarthritis, right knee" },
+    { "sequence": 2, "code": "Z96.651", "system": "ICD-10-CM", "description": "Presence of right artificial knee joint" }
+  ],
+  "serviceLines": [
+    {
+      "lineNumber": 1,
+      "procedureCode": "27447",
+      "procedureDescription": "Arthroplasty, knee, condyle and plateau; medial AND lateral compartments with or without patella resurfacing (total knee arthroplasty)",
+      "modifiers": ["RT"],
+      "diagnosisPointers": [1],
+      "units": 1,
+      "billedAmount": 32500.00,
+      "allowedAmount": 18200.00,
+      "planPaidAmount": 14546.00,
+      "memberCopay": 0.00,
+      "memberDeductible": 1500.00,
+      "memberCoinsurance": 2154.00,
+      "memberResponsibility": 3654.00,
+      "adjustmentReasonCode": "CO-45",
+      "adjustmentReasonDescription": "Charges exceed your contracted/legislated fee arrangement"
+    }
+  ],
+  "claimTotals": {
+    "totalBilled": 32500.00,
+    "totalAllowed": 18200.00,
+    "totalPlanPaid": 14546.00,
+    "totalMemberResponsibility": 3654.00
+  },
+  "priorAuthorizationNumber": "PA-2026-087341",
+  "referralNumber": "REF-2026-044892",
+  "notes": "Total right knee replacement. Prior authorization confirmed. Member has met $0 of $1,500 individual deductible year-to-date prior to this claim. Deductible fully satisfied by this claim."
+}
