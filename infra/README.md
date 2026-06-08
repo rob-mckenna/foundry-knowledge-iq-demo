@@ -13,10 +13,10 @@ Bicep infrastructure-as-code for the Knowledge IQ demo. Deploys all Azure suppor
 | Blob Container | `healthcare-docs` | Private |
 | Container Registry | `crhealthbridgedemo2agib7` | Basic |
 
-> **Note:** Azure AI Foundry Hub and Project are **not** created by this Bicep template.
-> The `Microsoft.MachineLearningServices/workspaces` resource with `kind=Hub/Project` requires
+> **Note:** Azure AI Foundry project is **not** created by this Bicep template.
+> The `Microsoft.MachineLearningServices/workspaces` resource with `kind=project` requires
 > additional dependencies (Key Vault, Application Insights) that add complexity to a demo deployment.
-> Create the Foundry Hub and Project manually via [https://ai.azure.com](https://ai.azure.com).
+> Create the Foundry project manually via [https://ai.azure.com](https://ai.azure.com).
 
 ## Deployed Endpoints & Values
 
@@ -66,7 +66,7 @@ az deployment group create `
 1. **Upload sample data to Blob Storage** — run `data-sources/blob-storage/deploy.ps1`
 2. **Create AI Search indexes** — follow `data-sources/ai-search/README.md`
 3. **Deploy MCP server** — push container image to `crhealthbridgedemo2agib7.azurecr.io`, deploy to Container Apps
-4. **Create Foundry Hub + Project** — via [https://ai.azure.com](https://ai.azure.com)
+4. **Create Foundry project** — via [https://ai.azure.com](https://ai.azure.com)
 5. **Connect Knowledge Base data sources** — follow `docs/azure-setup.md`
 
 ## Tear Down
@@ -75,4 +75,4 @@ az deployment group create `
 az group delete --name rg-knowledge-iq-demo --yes
 ```
 
-> ⚠️ This deletes **all** resources including the Foundry Hub/Project if created in this resource group.
+> ⚠️ This deletes **all** resources including the Foundry project if created in this resource group.

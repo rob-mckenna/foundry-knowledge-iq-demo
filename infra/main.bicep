@@ -2,11 +2,11 @@
   main.bicep — HealthBridge Knowledge IQ Demo Infrastructure
   Deploys all supporting Azure resources for the Knowledge IQ demo.
 
-  NOTE: Azure AI Foundry Hub and Project are NOT created here.
-  The Microsoft.MachineLearningServices/workspaces resource with kind=Hub/Project
+  NOTE: Azure AI Foundry project is NOT created here.
+  The Microsoft.MachineLearningServices/workspaces resource with kind=project
   requires additional dependencies (Key Vault, Application Insights, Storage Account
   with specific RBAC roles) that add significant complexity to a demo deployment.
-  Create the Foundry Hub and Project manually via the Azure AI Foundry portal at
+  Create the Foundry project manually via the Azure AI Foundry portal at
   https://ai.azure.com after this template deploys successfully.
 */
 

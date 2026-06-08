@@ -29,9 +29,9 @@ The demo moves from **breadth** (look how many sources we can connect) to **dept
 
 ### 2a — Open Azure AI Foundry → Knowledge IQ
 
-Navigate to **Knowledge IQ** in the new Azure AI Foundry (not Azure AI Studio). Create a new Knowledge Base named `payor-knowledge-base`.
+Navigate to **Knowledge IQ** in Azure AI Foundry (not Azure AI Studio) from your Foundry project. Create a new Knowledge Base named `payor-knowledge-base`.
 
-**Talking point:** This is the new Foundry — unified AI development, not the classic Studio experience.
+**Talking point:** This is the new Foundry — a flat project experience for unified AI development, not the classic Studio experience.
 
 ### 2b — Add Azure Blob Storage (3 min)
 

@@ -72,28 +72,16 @@ az provider register --namespace Microsoft.CognitiveServices
 az provider register --namespace Microsoft.MachineLearningServices
 ```
 
-### 1c — Create Azure AI Foundry Hub and Project
+### 1c — Create an Azure AI Foundry Project
 
-The new Foundry uses a **Hub + Project** model. The hub owns shared connections; the project is your working environment.
+Azure AI Foundry now uses a flat **project** model. Create the project directly — no hub is required.
 
 ```bash
-# Create the hub
-az ml workspace create \
-  --name hub-knowledge-iq \
-  --resource-group rg-knowledge-iq-demo \
-  --location eastus \
-  --kind hub
-
-# Create the project under the hub
 az ml workspace create \
   --name proj-healthbridge \
   --resource-group rg-knowledge-iq-demo \
   --location eastus \
-  --kind project \
-  --hub-id $(az ml workspace show \
-      --name hub-knowledge-iq \
-      --resource-group rg-knowledge-iq-demo \
-      --query id --output tsv)
+  --kind project
 ```
 
 Open [ai.azure.com](https://ai.azure.com) and verify **proj-healthbridge** appears. The left sidebar should show **Agents**, **Knowledge bases**, and **Deployments** — not the classic Studio layout.

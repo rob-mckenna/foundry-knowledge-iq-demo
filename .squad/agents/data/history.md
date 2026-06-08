@@ -7,6 +7,8 @@
 
 ## Learnings
 
+- **Bicep IaC (2026-06-05):** Resource group `rg-knowledge-iq-demo` pre-existed in `eastus` (not `eastus2`) — location param set to `eastus` to match. Storage account and ACR use `uniqueString(resourceGroup().id)` suffix (`2agib7`) for global uniqueness; actual names are `sthealthbridgedemo2agib7` and `crhealthbridgedemo2agib7`. Azure AI Foundry Hub/Project excluded from Bicep — requires Key Vault + App Insights dependencies; portal creation preferred for demo simplicity. `Microsoft.CognitiveServices/accounts@2024-10-01` with `kind=OpenAI` is the correct resource type for Azure OpenAI in new Bicep. AI Search `semanticSearch: 'free'` tier is sufficient for demo with Basic SKU.
+
 - MCP server uses Node.js ESM (`"type": "module"`) with `@modelcontextprotocol/sdk` v1; stdio transport is standard — Foundry connects via an HTTP endpoint wrapper (e.g., Container Apps) in production.
 - `StreamableHTTPServerTransport` (from `@modelcontextprotocol/sdk/server/streamableHttp.js`) is the right HTTP transport — wraps Node.js `http.createServer`. Each request spawns a new transport instance connected to the shared `McpServer`; `sessionIdGenerator: () => randomUUID()` enables stateful sessions. Configurable via `--transport=http` flag.
 - MCP tools `get_prior_auth_requirements` and `get_clinical_coverage_criteria` read markdown policy files from `sample-data/policies/` — they do full-text line scanning to extract relevant excerpts. Good enough for demo; a real implementation would parse structured policy objects.
@@ -71,3 +73,27 @@
 **From Mouth (Domain Content):** Created 14 sample data files (3 claims, 3 members, 3 providers, 3 policies, 2 benefits). Internally consistent IDs: members MBR-2024-*, providers NPI-*, claims CLM-2026-*, PAs PA-2026-*. HealthBridge Insurance Plan brand. Files ready for distribution to each data source per your scaffolded configs.
 
 **From Chunk (Agent Builder):** Agent definition created (HealthBridge Assistant) with knowledge base config referencing all four sources, system prompt, and 18 sample prompts. Waiting on knowledge base assembly and data population.
+
+### 2026-06-05 — Bicep IaC + Azure Deployment
+
+**Task:** Create `infra/` Bicep templates and deploy to `ME-MngEnvMCAP251766-romcken-1`.
+
+**Deliverables created:**
+
+| Path | Description |
+|------|-------------|
+| `infra/main.bicep` | Orchestrator: deploys all 4 resource modules; includes note on Foundry Hub/Project exclusion |
+| `infra/main.bicepparam` | Parameter values (`eastus`, resource names, tags) |
+| `infra/modules/ai-services.bicep` | Azure OpenAI S0 account + `text-embedding-3-small` deployment (30K TPM) |
+| `infra/modules/search.bicep` | AI Search Basic SKU with `semanticSearch: 'free'` |
+| `infra/modules/storage.bicep` | StorageV2 Standard_LRS + `healthcare-docs` container |
+| `infra/modules/registry.bicep` | ACR Basic SKU, admin enabled |
+| `infra/README.md` | Deployed endpoints, module map, deploy + teardown commands |
+
+**Deployment status:** ✅ Succeeded
+
+**Deployed resource names:**
+- OpenAI: `oai-healthbridge-demo` → `https://oai-healthbridge-demo.openai.azure.com/`
+- AI Search: `srch-healthbridge-demo` → `https://srch-healthbridge-demo.search.windows.net`
+- Storage: `sthealthbridgedemo2agib7` → `https://sthealthbridgedemo2agib7.blob.core.windows.net/`
+- ACR: `crhealthbridgedemo2agib7` → `crhealthbridgedemo2agib7.azurecr.io`
