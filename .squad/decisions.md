@@ -138,6 +138,76 @@ The guide walks a presenter through five steps:
 
 ---
 
+### Decision: KB Connection Guide Validation — MCP-as-Knowledge-Source & UI Corrections
+
+**Author:** Mikey (Lead)  
+**Date:** 2026-06-21  
+**Status:** Accepted  
+**Requested by:** Rob McKenna
+
+## Context
+
+Rob reported that `docs/knowledge-base-connection-guide.md` (authored by Chunk) contained instructions that "don't appear to be accurate" — suspected of describing the old/classic Foundry UI rather than the current Microsoft Foundry portal.
+
+## Validation Outcome
+
+**Confirmed: The guide contained multiple BLOCKER and MAJOR inaccuracies.** Independent review against current Microsoft Learn docs (June 2026) revealed the guide was mixing current Foundry IQ architecture with fictional UI patterns that don't exist in the current portal.
+
+## Key Findings
+
+### 1. MCP Server as Knowledge Source — VALID but DIFFERENT from described
+
+**Finding:** MCP Server IS a valid knowledge source type in the 2026-05-01-preview API (remote, not indexed). HOWEVER:
+- It is NOT configured via a Foundry "connection" — there is no "MCP Server" connection type in the Foundry portal.
+- It IS configured as a knowledge source directly on the Azure AI Search service.
+- The agent connects to the KB (which includes MCP sources) via a `RemoteTool` MCP connection pointing at `{search-endpoint}/knowledgebases/{kb-name}/mcp`.
+
+**Impact:** Steps B4, C8 were completely rewritten. MCP source now properly documented as AI Search knowledge source + REST fallback.
+
+### 2. Navigation — WRONG throughout
+
+| Guide v1.0 (wrong) | Actual current UI |
+|---|---|
+| Settings (gear, bottom-left) → Connections | Operate → Admin → [project] → Add connection |
+| "Knowledge bases" in left sidebar | Build → Knowledge tab |
+| "Agents" in left sidebar | Build → Agents tab |
+| "+ New knowledge base" button | Create knowledge base (under Build → Knowledge) |
+
+### 3. KB Configuration UI — INVENTED
+
+The guide described embedding model selection, dimensions, Hybrid/Semantic/Top-K/Minimum-reranker-score/Query-rewrite settings directly in the KB creation UI. **None of these exist at the KB level.** The KB object only has: name, description, knowledgeSources, retrievalInstructions, answerInstructions, outputMode, models, encryptionKey. Embedding/retrieval config belongs on knowledge sources and search indexes.
+
+### 4. Fabric Connection — Code-only
+
+The guide described creating a Fabric Data Agent connection in the portal. Microsoft Learn explicitly states: "Connection creation is supported only through code."
+
+### 5. Connection types — Wrong labels
+
+- "Azure Blob Storage" → correct portal label is "Azure Storage"
+- "MCP Server" → does not exist as a connection type
+- "Fabric Data Agent" → listed as "Microsoft Fabric" (code-only)
+
+## Correction Applied
+
+Guide rewritten as v1.1 with:
+- Correct navigation paths (with verify-in-portal warnings where UI is still rolling out)
+- Proper Foundry IQ architecture explanation (KB = AI Search object)
+- Knowledge sources instead of "data sources" (correct terminology)
+- Programmatic fallbacks where portal UI may not yet expose preview features
+- MCP correctly documented as both a KB knowledge source (preview) AND an agent tool
+- Microsoft Learn reference table for ongoing maintenance
+
+## Citations
+
+- https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add (2026-06-19)
+- https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-foundry-iq (2026-06-05)
+- https://learn.microsoft.com/en-us/azure/search/agentic-retrieval-how-to-create-knowledge-base (2026-06-02)
+- https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-overview (2026-06-02)
+- https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-how-to-mcp-server (2026-06-02)
+- https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-connect (2026-06-02)
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus

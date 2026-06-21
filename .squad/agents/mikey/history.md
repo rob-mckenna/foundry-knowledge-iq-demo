@@ -58,3 +58,45 @@
 - **Brand standardization:** All 48 files in repo now use "HealthBridge Insurance Plan" unified brand (portal, phone, legal name). Cross-repo consistency achieved.
 - **Orchestration checkpoints logged:** Expansion manifest, full-buildout session log, and decision inbox merged (7 decisions). All squad documentation updated with cross-team impact notes.
 - **Ready for demo deployment:** Four data sources independently demoable. Knowledge Base ready for agent instantiation in Foundry UI.
+
+### 2026-06-21 — KB Connection Guide Validation & Correction (v1.0 → v1.1)
+
+**Requested by:** Rob McKenna (guide contained inaccurate UI instructions)
+
+**Work done:**
+- Performed independent review of `docs/knowledge-base-connection-guide.md` (authored by Chunk)
+- Validated all UI claims against current Microsoft Learn documentation (June 2026)
+- Rewrote guide as v1.1 with corrected navigation, architecture notes, and programmatic fallbacks
+
+**Key UI facts verified (with citations):**
+
+1. **Connections navigation (CORRECTED):** Current path is Operate → Admin → [project] → Add connection. NOT "Settings (gear icon) → Connections". Ref: https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add (updated 2026-06-19)
+
+2. **Knowledge Base = Azure AI Search object (CORRECTED):** KBs are Foundry IQ objects backed by Azure AI Search agentic retrieval. Portal path: Build → Knowledge tab. NOT "Knowledge bases" in the left sidebar. Ref: https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-foundry-iq (updated 2026-06-05)
+
+3. **MCP Server IS a valid KB knowledge source (CONFIRMED, preview):** MCP Server is a "remote" knowledge source kind in the 2026-05-01-preview API. However, it's configured on the AI Search service, not as a Foundry "connection type". Ref: https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-how-to-mcp-server (updated 2026-06-03)
+
+4. **MCP is NOT a Foundry connection type (CORRECTED):** The connection types table at learn.microsoft.com lists Azure AI Search, Azure Storage, Azure OpenAI, etc. — MCP Server is absent. MCP connections for agents use `RemoteTool` category programmatically. Ref: https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add#connection-types
+
+5. **Fabric connections are code-only (CORRECTED):** Microsoft Fabric is listed as a connection type but with note "Connection creation is supported only through code." Ref: same as #4.
+
+6. **KB does NOT expose embedding/retrieval UI settings (CORRECTED):** The KB object has name, description, knowledgeSources, retrievalInstructions, answerInstructions, outputMode, models. Settings like embedding model, dimensions, Top-K, Hybrid mode, semantic ranking are on knowledge sources/indexes, not the KB. Ref: https://learn.microsoft.com/en-us/azure/search/agentic-retrieval-how-to-create-knowledge-base
+
+7. **Agent ↔ KB connection uses MCP tool (CONFIRMED):** Agent connects to KB via MCPTool with server_url pointing to `{search-endpoint}/knowledgebases/{kb-name}/mcp`. The portal may surface this as a "Knowledge" section. Ref: https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-connect
+
+8. **RBAC roles verified:** "Cognitive Services OpenAI User" is correct (not "Cognitive Services User"). "Search Index Data Reader" for read access, "Search Service Contributor" for creating KB/knowledge source objects. Ref: https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-connect#authentication-and-permissions
+
+**What was corrected:**
+- Step A: Clarified managed identity discovery path (Azure portal preferred, Foundry portal path uncertain)
+- Step B: Rewrote connection navigation from "Settings → Connections" to "Operate → Admin → Add connection"
+- Step B: Changed "Azure Blob Storage" type to "Azure Storage" (correct portal label)
+- Step B: Replaced fictional "MCP Server" connection type with programmatic RemoteTool creation
+- Step B: Marked Fabric as code-only
+- Step C: Rewrote entire section from "left sidebar Knowledge bases" to "Build → Knowledge tab"
+- Step C: Replaced invented embedding/retrieval settings UI with knowledge source-centric workflow
+- Step C: Added proper MCP knowledge source creation (portal + REST fallback)
+- Step D: Changed navigation from "Agents in left sidebar" to "Build → Agents tab"
+- Step D: Changed "System prompt" to "Instructions" (current label)
+- Step D: Replaced "Knowledge section" attach flow with MCP tool configuration
+- Added Microsoft Learn reference table at bottom
+- Bumped version to 1.1

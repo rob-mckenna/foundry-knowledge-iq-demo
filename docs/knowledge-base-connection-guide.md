@@ -1,40 +1,45 @@
 # Knowledge Base Connection Guide — HealthBridge payor-knowledge-base
 
-**Audience:** Demo presenter / operator wiring up the Foundry Knowledge Base after Azure deployment.  
-**Starting point:** Signed in at [ai.azure.com](https://ai.azure.com), project **proj-healthbridge** open.  
+**Audience:** Demo presenter / operator wiring up the Foundry IQ Knowledge Base after Azure deployment.  
+**Starting point:** Signed in at [ai.azure.com](https://ai.azure.com) with the **New Foundry** toggle enabled, project **proj-healthbridge** open.  
 **Time to complete:** ~30 minutes (plus RBAC propagation; see Troubleshooting).  
-**Target:** Microsoft Foundry (ai.azure.com) only — do not follow Azure AI Studio or classic Foundry docs.
+**Target:** Microsoft Foundry (ai.azure.com) — New Foundry only. Do not follow Azure AI Studio or classic Foundry docs.
 
-> **All Azure resources are live.** This guide uses the exact endpoint values from the completed deployment. Do not re-provision anything — only configure connections and create the Knowledge Base in the Foundry portal.
+> **All Azure resources are live.** This guide uses the exact endpoint values from the completed deployment. Do not re-provision anything — only configure connections, create knowledge sources/knowledge base on Azure AI Search, and wire the agent in the Foundry portal.
+
+> **Architecture note — Foundry IQ:** In Microsoft Foundry, knowledge bases are powered by **Foundry IQ** and backed by **Azure AI Search** agentic retrieval. A knowledge base is an Azure AI Search object that references one or more *knowledge sources*. The Foundry portal provides a guided UI under **Build → Knowledge**, but knowledge sources can also be created programmatically via the Search REST API (2026-05-01-preview). See [What is Foundry IQ?](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-foundry-iq) for the canonical reference.
 
 ---
 
 ## Step A — Verify / Assign Managed Identity RBAC Roles
 
-> ⚠️ **Critical:** Azure Policy has disabled key-based authentication on both the Storage account and Azure OpenAI resource. All Foundry connections **must** use managed identity (Entra / RBAC). No account keys or API keys will work.
+> ⚠️ **Critical:** Azure Policy has disabled key-based authentication on both the Storage account and Azure OpenAI resource. All connections **must** use managed identity (Entra / RBAC). No account keys or API keys will work.
 
-The Foundry project (`proj-healthbridge`) has a system-assigned managed identity. It needs the following RBAC roles before any connection can successfully authenticate:
+The Foundry project (`proj-healthbridge`) needs a system-assigned managed identity with the following RBAC roles before connections can authenticate:
 
 | Role | Resource | Why Required |
 |------|----------|--------------|
-| **Search Index Data Reader** | `srch-healthbridge-demo` | Read search results from all three indexes |
-| **Search Service Contributor** | `srch-healthbridge-demo` | Manage index metadata (required by Foundry KB indexing) |
-| **Storage Blob Data Reader** | `sthealthbridgedemo2agib7` | Read documents from `healthcare-docs` container |
-| **Cognitive Services OpenAI User** | `oai-healthbridge-demo` | Call the `text-embedding-3-small` embedding deployment |
+| **Search Index Data Reader** | `srch-healthbridge-demo` | Read search results from all three indexes at retrieval time |
+| **Search Service Contributor** | `srch-healthbridge-demo` | Create/manage knowledge sources and knowledge base objects on the search service |
+| **Storage Blob Data Reader** | `sthealthbridgedemo2agib7` | Read documents from `healthcare-docs` container for indexing |
+| **Cognitive Services OpenAI User** | `oai-healthbridge-demo` | Call the `text-embedding-3-small` embedding deployment for vectorization |
 
-### A1 — Find the Managed Identity Object ID (portal)
+> **Ref:** [Foundry IQ authentication & permissions](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-connect#authentication-and-permissions), [Azure AI Search RBAC](https://learn.microsoft.com/en-us/azure/search/search-security-rbac)
 
-1. In the Foundry portal, with **proj-healthbridge** open, click **Settings** (gear icon, bottom-left sidebar).
-2. Select the **Identity** tab (sometimes labelled **Managed identity** under Project Settings).
-3. Copy the **Object (principal) ID** — you will need it for the `az` commands below.
+### A1 — Enable the Project Managed Identity
 
-> Alternatively: **Azure portal → Resource Group `rg-knowledge-iq-demo` → proj-healthbridge → Identity → System assigned → Object ID**.
+1. Open the **Azure portal** → Resource Group `rg-knowledge-iq-demo` → resource **proj-healthbridge**.
+2. In the left blade, click **Identity** → **System assigned** tab.
+3. Set Status to **On** (if not already). Click **Save**.
+4. Copy the **Object (principal) ID** — you will need it for role assignments below.
+
+> ⚠️ Verify in your portal — the Microsoft Foundry portal (ai.azure.com) may also expose managed identity under **Operate → Admin → [project] → Settings**. Use whichever path shows the identity; the Azure portal path above is the most reliable.
 
 ### A2 — Assign RBAC via Azure Portal (click-path)
 
 For each role in the table above:
 
-1. Navigate to the target resource (e.g., `srch-healthbridge-demo`) in the Azure portal.
+1. Navigate to the target resource (e.g., `srch-healthbridge-demo`) in the **Azure portal**.
 2. Click **Access control (IAM)** in the left blade.
 3. Click **+ Add → Add role assignment**.
 4. Select the role name from the table.
@@ -43,7 +48,7 @@ For each role in the table above:
 7. Click **+ Select members**, search for **proj-healthbridge**, select it, click **Select**.
 8. Click **Review + assign** twice to confirm.
 
-Repeat for all four role assignments, noting that `srch-healthbridge-demo` requires two separate role assignments (Steps A2 rows 1 and 2).
+Repeat for all four role assignments, noting that `srch-healthbridge-demo` requires two separate role assignments (rows 1 and 2).
 
 ### A3 — Assign RBAC via Azure CLI (fallback)
 
@@ -101,215 +106,284 @@ az role assignment create \
 
 ---
 
-## Step B — Create Connections in Settings → Connections
+## Step B — Create Connections in the Foundry Admin Panel
 
-These four connections are the bridge between the Foundry Knowledge Base and the live Azure resources. The connection names below are **exact** — they are referenced by `agent/knowledge-base-config.json` and must not be changed.
+These connections bridge the Foundry project and the live Azure resources. The connection names below are **exact** — they are referenced by `agent/knowledge-base-config.json` and must not be changed.
+
+> **Ref:** [Add a new connection to your project](https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add)
 
 ### B1 — Navigate to Connections
 
-1. In **proj-healthbridge**, click **Settings** (bottom-left).
-2. Click the **Connections** tab.
-3. Click **+ New connection**.
+1. In the Microsoft Foundry portal, click **Operate** in the upper-right navigation.
+2. Click **Admin** in the left pane.
+3. Select **proj-healthbridge** in the **Manage all projects** list.
+4. Click **Add connection** in the upper-right corner.
 
-### B2 — Connection: Azure Blob Storage
+> ⚠️ Verify in your portal — the navigation was recently updated. If you do not see "Operate → Admin", try the legacy path: Settings (gear icon, bottom-left) → Connected resources. The connection types and fields are the same either way.
 
-1. **Connection type:** Azure Blob Storage
-2. **Connection name:** `healthbridge-blob-connection`
-3. **Authentication:** Managed identity *(do NOT select "Account key" — key auth is disabled)*
-4. **Subscription:** *(select your subscription)*
-5. **Storage account:** `sthealthbridgedemo2agib7`
-6. Click **Add connection**.
+### B2 — Connection: Azure Storage (Blob)
+
+1. Select **Azure Storage** from the service list.
+2. Browse for and select **`sthealthbridgedemo2agib7`**.
+3. **Authentication:** Microsoft Entra ID (Managed identity) *(do NOT select "Account key" — key auth is disabled)*
+4. Click **Add connection**.
+5. After creation, rename (or confirm the connection name is) `healthbridge-blob-connection`.
+
+> ⚠️ The portal may auto-name the connection. Ensure the final connection name matches `healthbridge-blob-connection` exactly. You can rename connections in Admin after creation.
 
 ### B3 — Connection: Azure AI Search
 
-1. **Connection type:** Azure AI Search
-2. **Connection name:** `healthbridge-aisearch-connection`
-3. **Authentication:** Managed identity *(API key is disabled)*
-4. **Subscription:** *(select your subscription)*
-5. **Search service:** `srch-healthbridge-demo`  
-   Endpoint: `https://srch-healthbridge-demo.search.windows.net`
-6. Click **Add connection**.
+1. Click **Add connection** again, select **Azure AI Search**.
+2. Browse for and select **`srch-healthbridge-demo`** (endpoint: `https://srch-healthbridge-demo.search.windows.net`).
+3. **Authentication:** Microsoft Entra ID (Managed identity) *(API key is disabled)*
+4. Click **Add connection**.
+5. Confirm or rename to `healthbridge-aisearch-connection`.
 
-> This single connection covers all three search indexes (`healthcare-payor-docs`, `healthbridge-formulary-index`, `healthbridge-provider-index`) — you select the specific index when adding each data source to the Knowledge Base in Step C.
+> This single connection covers all three search indexes (`healthcare-payor-docs`, `healthbridge-formulary-index`, `healthbridge-provider-index`) — the specific index is selected when configuring knowledge sources in Step C.
 
-### B4 — Connection: MCP Server
+### B4 — Connection: MCP Server (RemoteTool for Knowledge Base)
 
-1. **Connection type:** MCP Server *(or "Custom / HTTP endpoint" depending on your Foundry UI version)*
-2. **Connection name:** `healthbridge-mcp-connection`
-3. **Server URL:** `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io`
-4. **Transport:** HTTP (Streamable HTTP / POST)
-5. **MCP endpoint path:** `/mcp`
-6. **Authentication:** None *(the Container Apps endpoint is publicly accessible for demo purposes)*
-7. Click **Add connection**.
+> **Important — MCP architecture clarification:** In current Microsoft Foundry, "MCP Server" is **not** a selectable connection type in the portal UI. MCP servers are surfaced in two ways:
+> 1. As a **knowledge source** on Azure AI Search (configured via the Build → Knowledge UI or REST API) — used in Step C8.
+> 2. As an **agent tool** via a programmatic `RemoteTool` project connection — used in Step D4.
+>
+> For the Foundry IQ knowledge base path, the MCP server URL is configured directly on the knowledge source (Step C8), so no separate Foundry "connection" is needed for KB retrieval. However, the agent also needs an MCP tool connection for direct tool calls. Create it programmatically:
 
-> You can verify the server is live before adding the connection: `GET https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/health` should return `200 OK`.
+```bash
+# Create RemoteTool connection for MCP (via Azure CLI / REST)
+# This enables the agent to call MCP tools directly in addition to KB retrieval
+az rest --method PUT \
+  --url "https://management.azure.com/<PROJECT_RESOURCE_ID>/connections/healthbridge-mcp-connection?api-version=2025-10-01-preview" \
+  --body '{
+    "name": "healthbridge-mcp-connection",
+    "type": "Microsoft.MachineLearningServices/workspaces/connections",
+    "properties": {
+      "authType": "None",
+      "category": "RemoteTool",
+      "target": "https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/mcp",
+      "isSharedToAll": true,
+      "metadata": { "ApiType": "MCP" }
+    }
+  }'
+```
+
+> Replace `<PROJECT_RESOURCE_ID>` with the ARM resource ID of `proj-healthbridge`. You can find it via: `az ml workspace show --name proj-healthbridge --resource-group rg-knowledge-iq-demo --query id -o tsv`.
+>
+> You can verify the MCP server is live: `GET https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/health` should return `200 OK`.
 
 ### B5 — Connection: Fabric Data Agent ⚠️
 
-> ⚠️ **PENDING — skip for now.** The Fabric Data Agent requires a Microsoft Fabric workspace with Data Agent preview enabled. This workspace has not yet been provisioned. The Knowledge Base will operate fully with the remaining three connections; only prompts that call `lookup_member` or `lookup_claim` against live Fabric data will be unavailable until this is configured.
+> ⚠️ **PENDING — skip for now.** The Fabric Data Agent requires a Microsoft Fabric workspace with Data Agent preview enabled. This workspace has not yet been provisioned. The Knowledge Base will operate fully with the remaining sources; only prompts that call `lookup_member` or `lookup_claim` against live Fabric data will be unavailable until this is configured.
 
-When the Fabric workspace is ready:
+> **Note:** Microsoft Fabric connections require creation through code (Bicep or SDK) — they cannot be created in the Foundry portal UI. See [Foundry connection types](https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add#connection-types).
 
-1. **Connection type:** Fabric Data Agent
-2. **Connection name:** `healthbridge-fabric-connection`
-3. **Workspace ID:** *(provided when Fabric workspace is provisioned — replace `<FABRIC_WORKSPACE_ID>` in `agent/knowledge-base-config.json`)*
-4. **Data Agent name:** `healthbridge-claims-agent`
-5. Click **Add connection**.
+When the Fabric workspace is ready, create via CLI/Bicep:
+
+- **Connection name:** `healthbridge-fabric-connection`
+- **Workspace ID:** *(replace `<FABRIC_WORKSPACE_ID>` in `agent/knowledge-base-config.json`)*
+- **Data Agent name:** `healthbridge-claims-agent`
 
 ### B6 — Verify Connection Status
 
-After adding each connection, confirm the status column shows **Connected** (green checkmark). If any connection shows **Failed**:
+After adding each connection, confirm the status shows **Connected** (green checkmark) in the Admin panel. If any connection shows **Failed**:
 - Re-check RBAC propagation (Step A); wait up to 10 minutes.
-- Confirm authentication is set to **Managed identity**, not key-based.
+- Confirm authentication is set to **Microsoft Entra ID / Managed identity**, not key-based.
 - See the Troubleshooting table at the end of this guide.
 
 ---
 
 ## Step C — Create the Knowledge Base: payor-knowledge-base
 
-### C1 — Create a New Knowledge Base
+> **Architecture:** The knowledge base and its knowledge sources are **Azure AI Search objects** created on `srch-healthbridge-demo`. The Microsoft Foundry portal wraps this under **Build → Knowledge** (Foundry IQ). You can use the portal UI OR the Search REST API. This guide describes the portal path with programmatic fallback.
+>
+> **Ref:** [Create a Knowledge Base](https://learn.microsoft.com/en-us/azure/search/agentic-retrieval-how-to-create-knowledge-base), [Knowledge Source overview](https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-overview)
 
-1. In **proj-healthbridge**, click **Knowledge bases** in the left sidebar.
-2. Click **+ New knowledge base**.
-3. **Name:** `payor-knowledge-base`
-4. **Description:** `Multi-source Knowledge Base for the HealthBridge Insurance demo — benefits, claims, prior auth, formulary, and provider network.`
-5. Click **Next** (do not save yet — data sources are added in the next steps).
+### C1 — Navigate to Knowledge Base Creation
 
-### C2 — Configure the Embedding Model
+1. In **proj-healthbridge** in the Microsoft Foundry portal, select **Build** from the top navigation menu.
+2. Click the **Knowledge** tab.
+3. Connect to (or confirm connection to) the search service `srch-healthbridge-demo`.
+4. Click **Create knowledge base** (or **+ New**).
+5. **Name:** `payor-knowledge-base`
+6. **Description:** `Multi-source Knowledge Base for the HealthBridge Insurance demo — benefits, claims, prior auth, formulary, and provider network.`
 
-In the **Embedding** section:
+> ⚠️ Verify in your portal — the exact button label may be "Create knowledge base" or "+ New knowledge base" depending on the portal version. The Knowledge tab under Build is the correct location per [Foundry IQ workflow](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-foundry-iq#workflow).
 
-1. **Embedding model connection:** Select `oai-healthbridge-demo` (or the Azure OpenAI connection pointing at `https://oai-healthbridge-demo.openai.azure.com/`).
-2. **Deployment:** `text-embedding-3-small`
-3. **Dimensions:** `1536`
+### C2 — Add Knowledge Source: Blob Storage (Plan Documents)
 
-> ⚠️ If the portal auto-detects dimensions, confirm it shows **1536**. Mismatched dimensions will silently break vector similarity search against the existing AI Search indexes.
+Add a **blob** knowledge source. This auto-generates an indexer pipeline on `srch-healthbridge-demo` that ingests documents from the blob container:
 
-### C3 — Configure Retrieval Settings
+1. Click **+ Add knowledge source** (or equivalent).
+2. **Kind:** Azure Blob
+3. **Connection / Storage account:** `sthealthbridgedemo2agib7` (uses the `healthbridge-blob-connection`)
+4. **Container:** `healthcare-docs`
+5. **Path prefix:** *(leave blank — index all documents)*
+6. **Display name:** `Plan Documents (Blob Storage)`
+7. Click **Add** / **Save**.
 
-In the **Retrieval** section:
+> The auto-generated pipeline handles chunking, vectorization (using the search service's configured embedding model), and indexing. File types supported: PDF, DOCX, TXT.
+>
+> **Embedding model:** The search service should be configured to use `text-embedding-3-small` (1536 dimensions) from `oai-healthbridge-demo`. This is set at the knowledge source / skillset level during pipeline generation. Confirm dimensions = **1536** — mismatch will silently break vector search against pre-built indexes.
 
-1. **Search mode:** Hybrid *(keyword + vector)*
-2. **Semantic ranking:** Enabled (On)
-3. **Top-K:** `5`
-4. **Minimum reranker score:** `0.5`
-5. **Query rewrite:** On
+### C3 — Add Knowledge Source: AI Search — Formulary (existing index)
 
-### C4 — Add Data Source: Blob Storage (Plan Documents)
+Add a **search index** knowledge source wrapping the pre-built formulary index:
 
-Click **+ Add data source**:
-
-1. **Type:** Azure Blob Storage
-2. **Connection:** `healthbridge-blob-connection`
-3. **Container:** `healthcare-docs`
-4. **Path prefix:** *(leave blank — index all documents)*
-5. **Display name:** `Plan Documents (Blob Storage)`
-6. **Parsing mode:** Layout *(preserves document structure; enables OCR for images)*
-7. **File types:** pdf, docx, txt
-8. Click **Add**.
-
-### C5 — Add Data Source: AI Search — Formulary
-
-Click **+ Add data source**:
-
-1. **Type:** Azure AI Search
-2. **Connection:** `healthbridge-aisearch-connection`
+1. Click **+ Add knowledge source**.
+2. **Kind:** Search Index
 3. **Index name:** `healthbridge-formulary-index`
 4. **Display name:** `Formulary & Drug Coverage (AI Search)`
-5. **Semantic configuration:** `formulary-semantic-config` *(if prompted; leave default otherwise)*
+5. **Description:** `Structured formulary: tier assignments, quantity limits, step therapy, PA flags.`
 6. Click **Add**.
 
-### C6 — Add Data Source: AI Search — Provider Directory
+### C4 — Add Knowledge Source: AI Search — Provider Directory (existing index)
 
-Click **+ Add data source**:
-
-1. **Type:** Azure AI Search
-2. **Connection:** `healthbridge-aisearch-connection`
+1. Click **+ Add knowledge source**.
+2. **Kind:** Search Index
 3. **Index name:** `healthbridge-provider-index`
 4. **Display name:** `Provider Directory (AI Search)`
-5. **Semantic configuration:** `provider-semantic-config` *(if prompted; leave default otherwise)*
+5. **Description:** `Provider directory: names, specialties, NPI, locations, network status.`
 6. Click **Add**.
 
-### C7 — Add Data Source: AI Search — General Documents
+### C5 — Add Knowledge Source: AI Search — General Documents (existing index)
 
-Click **+ Add data source**:
-
-1. **Type:** Azure AI Search
-2. **Connection:** `healthbridge-aisearch-connection`
+1. Click **+ Add knowledge source**.
+2. **Kind:** Search Index
 3. **Index name:** `healthcare-payor-docs`
 4. **Display name:** `Healthcare Payor Documents (AI Search)`
 5. Click **Add**.
 
-### C8 — Add Data Source: MCP Server (Prior Auth Policies)
+### C6 — Add Knowledge Source: MCP Server (Prior Auth Policies) — Preview
 
-Click **+ Add data source**:
+> **Note:** MCP Server is a **remote knowledge source** (preview, 2026-05-01-preview API). At query time, the agentic retrieval engine calls the MCP server's tools directly — no pre-indexing occurs. This source requires the 2026-05-01-preview API on `srch-healthbridge-demo`.
+>
+> **Ref:** [Create an MCP Server Knowledge Source](https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-how-to-mcp-server)
 
-1. **Type:** MCP Server
-2. **Connection:** `healthbridge-mcp-connection`
-3. **Server URL:** `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io`
-4. **Endpoint path:** `/mcp`
+If the portal UI supports adding MCP Server knowledge sources (check for "MCP Server" in the knowledge source kind picker), use:
+
+1. **Kind:** MCP Server
+2. **Server URL:** `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/mcp`
+3. **Tools:** `get_prior_auth_requirements`, `get_clinical_coverage_criteria`
+4. **Authentication:** None (public endpoint)
 5. **Display name:** `Prior Authorization Policies (MCP Server)`
 6. Click **Add**.
 
-### C9 — Add Data Source: Fabric Data Agent ⚠️
+**Programmatic fallback** (if the portal does not yet surface MCP Server knowledge sources):
 
-> ⚠️ **Skip until Fabric workspace is provisioned.** When ready, click **+ Add data source**, select **Fabric Data Agent**, choose `healthbridge-fabric-connection`, enter agent name `healthbridge-claims-agent`, and click **Add**.
+```bash
+# Create MCP Server knowledge source via REST API
+curl -X PUT "https://srch-healthbridge-demo.search.windows.net/knowledgesources/mcp-prior-auth-policies?api-version=2026-05-01-preview" \
+  -H "Content-Type: application/json" \
+  -H "api-key: <SEARCH_ADMIN_KEY>" \
+  -d '{
+    "name": "mcp-prior-auth-policies",
+    "kind": "mcpServer",
+    "description": "Prior authorization criteria and clinical guidelines via MCP server.",
+    "mcpServerParameters": {
+      "serverURL": "https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/mcp",
+      "authentication": null,
+      "tools": [
+        { "name": "get_prior_auth_requirements", "outputParsing": { "kind": "auto" } },
+        { "name": "get_clinical_coverage_criteria", "outputParsing": { "kind": "auto" } }
+      ]
+    }
+  }'
+```
 
-### C10 — Save and Start Indexing
+> ⚠️ The MCP Server knowledge source is **preview-only** (2026-05-01-preview). If your search service does not support this API version, the MCP tools can still be accessed directly by the agent as tool calls (see Step D4) rather than through the KB retrieval pipeline.
 
-1. Review the data source list — you should see 4 active sources (5 once Fabric is added).
-2. Click **Save and index**.
-3. Initial indexing runs in the background:
+### C7 — Add Knowledge Source: Fabric Data Agent ⚠️
+
+> ⚠️ **Skip until Fabric workspace is provisioned.** Fabric Data Agent is also a remote knowledge source (preview). When ready, add via REST API with kind `fabricDataAgent` referencing `healthbridge-claims-agent`. See [Fabric Data Agent knowledge source](https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-how-to-fabric-data-agent).
+
+### C8 — Configure Knowledge Base Properties
+
+After all knowledge sources are added, configure the KB-level settings:
+
+- **Retrieval instructions** (optional): `"Use the formulary knowledge source for drug/medication queries, the provider directory for provider lookup queries, and the MCP server for prior authorization questions."`
+- **Output mode:** `answerSynthesis` (for LLM-synthesized answers with citations) or `extractedData` (for raw results passed to the agent)
+- **Retrieval reasoning effort:** `low` (recommended for demo — balances speed and accuracy)
+
+> ⚠️ Unlike classic "Add your data", the current Foundry IQ knowledge base does **not** expose embedding model, dimensions, Top-K, Hybrid/Semantic mode, or minimum reranker score directly in the KB creation UI. These settings are:
+> - **Embedding model / dimensions:** Configured on each knowledge source's indexer pipeline or the underlying search index.
+> - **Search mode (hybrid, vector, keyword):** Determined at query time by the agentic retrieval engine based on the knowledge source type and query.
+> - **Semantic ranking:** Enabled on the search index's semantic configuration.
+> - **Top-K:** Controlled via the `retrieve` API call or defaults to system behavior.
+>
+> For this demo, the pre-built indexes already have correct semantic configurations and vector fields (1536 dimensions, `text-embedding-3-small`).
+
+### C9 — Save the Knowledge Base
+
+1. Review the knowledge source list — you should see 4–5 sources (Blob, 3× Search Index, MCP Server; plus Fabric when ready).
+2. Click **Save** (or **Create**).
+3. Indexing for the Blob knowledge source runs in the background:
    - **Blob Storage** — 5–15 minutes (45 documents)
-   - **AI Search indexes** — Near-instant (indexes are pre-built and already populated)
-   - **MCP Server** — Connected on demand (no pre-indexing)
-4. Monitor status under **Knowledge bases → payor-knowledge-base → Data sources**. Wait for Blob Storage to show **Indexed** before proceeding.
+   - **Search Index sources** — Immediate (indexes are pre-built and populated)
+   - **MCP Server** — Remote; queried on demand (no pre-indexing)
+4. Monitor indexing status in **Build → Knowledge → payor-knowledge-base**. Wait for Blob source to show **Indexed** before proceeding.
 
 ---
 
 ## Step D — Create the Agent: healthbridge-assistant
 
+> **Ref:** [Connect Agents to Foundry IQ Knowledge Bases](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-connect)
+
 ### D1 — Create a New Agent
 
-1. In **proj-healthbridge**, click **Agents** in the left sidebar.
-2. Click **+ New agent**.
-3. **Name:** `healthbridge-assistant`
-4. **Base model:** `gpt-4o` *(deploy via **Deployments → + New deployment** if not already available; use `gpt-4o` version `2024-11-20` or latest)*
-5. **Temperature:** `0.1` *(critical for guardrail reliability — do not increase)*
+1. In **proj-healthbridge**, select **Build** from the top navigation.
+2. Click the **Agents** tab.
+3. Click **+ New agent** (or **Create agent**).
+4. **Name:** `healthbridge-assistant`
+5. **Model:** `gpt-4o` *(deploy via model deployments if not already available; use latest version)*
+6. **Temperature:** `0.1` *(critical for guardrail reliability — do not increase)*
 
-### D2 — Set the System Prompt
+### D2 — Set the System Prompt (Instructions)
 
-1. In the agent editor, locate the **System prompt** (or **Instructions**) field.
+1. In the agent editor, locate the **Instructions** field.
 2. Open `agent/system-prompt.md` in this repository.
-3. Copy the full contents and paste into the System prompt field.
+3. Copy the full contents and paste into the Instructions field.
 4. Click **Save**.
 
-### D3 — Attach the Knowledge Base
+### D3 — Connect the Knowledge Base (MCP Tool)
 
-1. In the agent editor, click the **Knowledge** section (or **+ Add knowledge source**).
-2. Select **Knowledge base**.
-3. Choose `payor-knowledge-base` from the list.
-4. Click **Add** / **Save**.
+The knowledge base is connected to the agent as an **MCP tool** that exposes the `knowledge_base_retrieve` function:
 
-### D4 — Enable Tool Access
+1. In the agent editor, look for the **Tools** section (or **+ Add tool**).
+2. Select **MCP** tool type.
+3. **Server label:** `knowledge-base`
+4. **Server URL:** `https://srch-healthbridge-demo.search.windows.net/knowledgebases/payor-knowledge-base/mcp?api-version=2026-05-01-preview`
+5. **Connection:** Select `healthbridge-aisearch-connection` (or the project connection created in Step B4)
+6. **Allowed tools:** `knowledge_base_retrieve`
+7. **Require approval:** Never
+8. Click **Add** / **Save**.
 
-In the **Tools** or **Actions** section of the agent editor:
+> ⚠️ Verify in your portal — the portal may present this as "Add knowledge source" or a dedicated **Knowledge** section in the agent editor that auto-configures the MCP tool. Either approach connects the same KB. Per [Foundry IQ workflow](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-foundry-iq#workflow): "On the Agents tab, create or select an existing agent → Connect to your knowledge base."
 
-- ✅ **Knowledge Base retrieval** — already enabled by Step D3
-- ✅ **MCP tools** — the MCP connection provides `lookup_member`, `lookup_claim`, `check_benefits`, `lookup_provider`, `get_prior_auth_requirements`, `get_clinical_coverage_criteria`, `check_formulary`
-- ⚠️ **Fabric Data Agent queries** — enable once `healthbridge-fabric-connection` is active
+### D4 — Enable Direct MCP Tool Access (Optional)
+
+For demo scenarios where the agent should also call MCP tools directly (bypassing KB retrieval for faster, targeted tool calls):
+
+In the **Tools** section, add a second MCP tool:
+
+- **Server label:** `healthbridge-mcp`
+- **Server URL:** `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/mcp`
+- **Connection:** `healthbridge-mcp-connection` (created in Step B4)
+- **Allowed tools:** `lookup_member`, `lookup_claim`, `check_benefits`, `lookup_provider`, `get_prior_auth_requirements`, `get_clinical_coverage_criteria`, `check_formulary`
+- **Require approval:** Never
+
+> ⚠️ **Fabric Data Agent queries** — enable once `healthbridge-fabric-connection` is active.
 
 ### D5 — Save and Open Playground
 
 1. Click **Save** to persist the agent configuration.
-2. Click **Open in Playground** (or navigate to **Agents → healthbridge-assistant → Playground**).
+2. Use the **Playground** to test (available in the Agents tab or by clicking "Test" in the agent editor).
 3. The Playground chat interface should open with a fresh conversation thread.
 
 ---
 
 ## Step E — Smoke Test: End-to-End Wiring Verification
 
-Run these three prompts in the Playground **in order**. Each targets a different data source; check the **Citations** panel (or **Source** trace) to confirm the correct source responded.
+Run these three prompts in the Playground **in order**. Each targets a different data source; check the **Citations / Annotations** in the response to confirm the correct source responded.
 
 ---
 
@@ -321,7 +395,7 @@ Run these three prompts in the Playground **in order**. Each targets a different
 **Expected data source:** `Prior Authorization Policies (MCP Server)`  
 **Expected behavior:** The agent calls `get_prior_auth_requirements` with `serviceCategory="Physical Therapy"`. Returns that no PA is required for the first 20 visits per year; PA is required beyond 20 visits. Proactively notes that post-surgical rehabilitation commonly exceeds this threshold.
 
-**Confirm:** Citations panel shows **MCP Server** or the tool call trace shows `get_prior_auth_requirements`. ✅
+**Confirm:** Response annotations show **MCP Server** source or the tool call trace shows `get_prior_auth_requirements`. ✅
 
 ---
 
@@ -333,7 +407,7 @@ Run these three prompts in the Playground **in order**. Each targets a different
 **Expected data source:** `Formulary & Drug Coverage (AI Search)` — index `healthbridge-formulary-index`  
 **Expected behavior:** Agent queries the formulary index, returns celecoxib's tier placement, copay amount, and any quantity limits. Cites formulary source.
 
-**Confirm:** Citations panel shows the **formulary** index or **AI Search** source. ✅
+**Confirm:** Response annotations show the **formulary** index or **AI Search** source. ✅
 
 ---
 
@@ -345,11 +419,11 @@ Run these three prompts in the Playground **in order**. Each targets a different
 **Expected data source:** `Provider Directory (AI Search)` — index `healthbridge-provider-index`  
 **Expected behavior:** Agent returns matching in-network physical therapists with name, location, phone number, and accepting-new-patients status. Notes HMO members need a referral from their PCP before the first PT visit.
 
-**Confirm:** Citations panel shows the **provider** index or **AI Search** source. ✅
+**Confirm:** Response annotations show the **provider** index or **AI Search** source. ✅
 
 ---
 
-### Smoke Test — Blob Storage (Optional)
+### Smoke Test 4 — Blob Storage (Plan Documents)
 
 **Prompt:**
 > *"What is the specialist copay on the HealthBridge HMO Silver plan?"*
@@ -357,11 +431,11 @@ Run these three prompts in the Playground **in order**. Each targets a different
 **Expected data source:** `Plan Documents (Blob Storage)` — container `healthcare-docs`  
 **Expected behavior:** Agent retrieves benefit details from the plan summary document and states the specialist copay. Cites the Summary of Benefits and Coverage (SBC) or equivalent plan document.
 
-**Confirm:** Citations panel shows **Blob Storage** or a document filename. ✅
+**Confirm:** Response annotations show **Blob Storage** source or a document filename. ✅
 
 ---
 
-> **All three smoke tests passing confirms:** RBAC roles are propagated, all three active connections are authenticated correctly, and KB retrieval routing is working end-to-end.
+> **All smoke tests passing confirms:** RBAC roles are propagated, connections are authenticated correctly, knowledge sources are reachable, and the KB retrieval pipeline is working end-to-end.
 
 ---
 
@@ -369,15 +443,16 @@ Run these three prompts in the Playground **in order**. Each targets a different
 
 | Symptom | Likely Cause | Resolution |
 |---------|-------------|------------|
-| Connection shows **Failed** / `403 Forbidden` | RBAC not yet propagated; or wrong auth type (key vs. managed identity) | Wait 5–10 minutes after role assignment. Confirm connection authentication is set to **Managed identity**, not key. Re-run `az role assignment create` commands if needed. |
+| Connection shows **Failed** / `403 Forbidden` | RBAC not yet propagated; or wrong auth type (key vs. managed identity) | Wait 5–10 minutes after role assignment. Confirm connection authentication is set to **Microsoft Entra ID**, not key. Re-run `az role assignment create` commands if needed. |
 | Blob Storage connection fails with `AuthorizationPermissionMismatch` | `Storage Blob Data Reader` role missing or not yet active on `sthealthbridgedemo2agib7` | Verify the role assignment in Azure portal → Storage → Access control (IAM). Wait up to 10 minutes. |
 | AI Search returns 0 results | Wrong index name; or index not yet populated | Confirm exact index names: `healthcare-payor-docs`, `healthbridge-formulary-index`, `healthbridge-provider-index`. Check Azure portal → AI Search → Indexes → document count > 0. |
-| AI Search returns poor/irrelevant results | Semantic ranker not enabled; or embedding dimension mismatch | Verify retrieval settings: Hybrid mode, Semantic ranking On. Confirm embedding model = `text-embedding-3-small`, dimensions = **1536** (not 3072). |
-| MCP Server returns `401 Unauthorized` | Container Apps endpoint requires auth that wasn't configured | The live endpoint is public (no auth). If a `401` appears, verify the Server URL exactly matches `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io` (no trailing slash). |
+| AI Search returns poor/irrelevant results | Semantic configuration missing; or embedding dimension mismatch | Confirm index semantic configurations are enabled. Confirm embedding model = `text-embedding-3-small`, dimensions = **1536** (not 3072). |
+| MCP Server returns `401 Unauthorized` | Container Apps endpoint requires auth that wasn't configured | The live endpoint is public (no auth). If a `401` appears, verify the Server URL exactly matches `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io` (no trailing slash on base, `/mcp` for MCP endpoint). |
 | MCP Server times out (`504 Gateway Timeout`) | Container App cold start (first request after idle period) | Re-send the prompt once; the Container App warms in ~10 seconds. If timeouts persist, check Container Apps logs in the Azure portal. |
-| Knowledge Base stuck in **Indexing** | Large blob batch (45 docs) or transient service issue | Wait 15 minutes; refresh. If still stuck, check Foundry diagnostics under KB → Data sources → status. Re-trigger indexing by clicking **Re-index**. |
-| Agent ignores Knowledge Base / answers from general knowledge | Knowledge source not attached to agent, or KB not fully indexed | In the agent editor, confirm `payor-knowledge-base` is listed under **Knowledge**. Verify KB status is **Indexed** (not Pending or Failed). |
-| Embedding dimension mismatch error | KB configured with wrong dimensions (e.g., 3072 instead of 1536) | Edit the KB embedding settings: model = `text-embedding-3-small`, dimensions = `1536`. Re-index after saving. |
+| Knowledge source stuck in **Indexing** | Large blob batch (45 docs) or transient service issue | Wait 15 minutes; refresh. Check Azure portal → AI Search → Indexers for error details. Re-trigger indexing from the search service or Foundry UI. |
+| Agent ignores Knowledge Base / answers from general knowledge | MCP tool not attached to agent, or KB not fully indexed | In the agent editor, confirm the MCP tool pointing to `payor-knowledge-base` is listed. Verify blob knowledge source status is **Indexed** (not Pending or Failed). |
+| Embedding dimension mismatch error | Index configured with wrong dimensions (e.g., 3072 instead of 1536) | Check the index schema vector field dimensions. Must be `1536` for `text-embedding-3-small`. Rebuild index if mismatched. |
+| MCP knowledge source not available | Search service does not support 2026-05-01-preview | MCP Server knowledge sources require the preview API. Ensure `srch-healthbridge-demo` is in a [supported region](https://learn.microsoft.com/en-us/azure/search/search-region-support). Fallback: use MCP as a direct agent tool (Step D4). |
 
 ---
 
@@ -394,6 +469,19 @@ Run these three prompts in the Playground **in order**. Each targets a different
 | MCP server source | `data-sources/mcp-server/` |
 | Fabric Data Agent config | `data-sources/fabric-data-agent/connection-config.json` |
 
+### Key Microsoft Learn References
+
+| Topic | URL |
+|-------|-----|
+| What is Foundry IQ? | https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-foundry-iq |
+| Add connections to a Foundry project | https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add |
+| Create a Knowledge Base (AI Search) | https://learn.microsoft.com/en-us/azure/search/agentic-retrieval-how-to-create-knowledge-base |
+| Knowledge Source overview | https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-overview |
+| MCP Server knowledge source | https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-how-to-mcp-server |
+| Connect agents to Foundry IQ KB | https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-connect |
+| MCP tools for agents | https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol |
+| Foundry RBAC roles | https://learn.microsoft.com/en-us/azure/foundry/concepts/rbac-foundry |
+
 ---
 
-*Guide version: 1.0 | Created: 2026-06-21 | Microsoft Foundry (ai.azure.com) only*
+*Guide version: 1.1 | Created: 2026-06-21 | Updated: 2026-06-21 | Microsoft Foundry (ai.azure.com) — New Foundry only*

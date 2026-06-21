@@ -88,3 +88,25 @@ All 45 healthcare payor documents uploaded and indexed; MCP server live with ful
   - Three smoke-test prompts map to MCP Server, AI Search formulary, and AI Search provider directory to confirm end-to-end wiring.
 - Decision filed at `.squad/decisions/inbox/chunk-kb-connection-guide.md`.
 - Skill written at `.squad/skills/foundry-kb-connection/SKILL.md`.
+
+## 2026-06-21 — Foundry IQ UI Corrections (from Mikey review)
+
+**CRITICAL: Knowledge Base Connection Guide v1.1 has significant corrections to v1.0 (authored by Chunk).**
+
+Rob flagged suspected classic Foundry UI inaccuracies. Mikey validated against current Microsoft Learn and confirmed **4 BLOCKER + 4 MAJOR + 3 MINOR discrepancies** between v1.0 and current portal:
+
+### Corrections to Future KB Work
+
+1. **Navigation is NOT Settings gear** → Correct path: **Operate → Admin → [project] → Add connection**
+2. **KB creation is NOT left-sidebar** → Correct path: **Build → Knowledge tab**
+3. **MCP is NOT a portal "connection" type** — MCP Server does not exist as a Foundry connection type. Instead:
+   - MCP is configured as a **knowledge source** directly on Azure AI Search (preview API)
+   - Agent connects via a `RemoteTool` MCP connection pointing at `{search-endpoint}/knowledgebases/{kb-name}/mcp`
+4. **Embedding/retrieval settings are NOT KB-level** → These live on **knowledge sources and search indexes**, not the KB object itself. The KB object only has: name, description, knowledgeSources, retrievalInstructions, answerInstructions, outputMode, models, encryptionKey.
+5. **Fabric connection is code-only** — Portal UI does not support Fabric Data Agent connection creation.
+6. **Connection label is "Azure Storage"** (not "Azure Blob Storage")
+7. **Terminology: "knowledge sources"** (not "data sources")
+
+**Reference:** `docs/knowledge-base-connection-guide.md` v1.1 now includes Microsoft Learn citations and corrected patterns for all future KB work.
+
+**Decision Merged:** KB Connection Guide Validation decision (2026-06-21) now in `.squad/decisions.md`.
