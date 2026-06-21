@@ -110,3 +110,7 @@ Rob flagged suspected classic Foundry UI inaccuracies. Mikey validated against c
 **Reference:** `docs/knowledge-base-connection-guide.md` v1.1 now includes Microsoft Learn citations and corrected patterns for all future KB work.
 
 **Decision Merged:** KB Connection Guide Validation decision (2026-06-21) now in `.squad/decisions.md`.
+
+### 2026-06-21 — Connection Naming Discovery (cross-team note from Mikey)
+
+**Key finding:** Foundry portal auto-names connections from Azure resource names (e.g., `sthealthbridgedemo2agib7`) with no custom-name field. Custom names require code (ARM PUT via `az rest`, api-version `2025-04-01-preview`). Relevant to any KB/connection config work: all four connections in the demo are now created via `az rest` to guarantee names match `knowledge-base-config.json`. Guide v1.2 reflects this approach. No changes needed to your KB config JSON — naming is now guaranteed consistent across deployments.

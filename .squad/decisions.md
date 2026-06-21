@@ -208,6 +208,60 @@ Guide rewritten as v1.1 with:
 
 ---
 
+### Decision: Connection Naming — Code-First Creation Required
+
+**Author:** Mikey (Lead)  
+**Date:** 2026-06-21  
+**Status:** Accepted  
+**Requested by:** Rob McKenna
+
+## Problem
+
+Rob discovered that the Microsoft Foundry portal does not provide any way to set a custom connection name. When creating a connection via the portal UI, the name is auto-generated from the Azure resource name (e.g., `sthealthbridgedemo2agib7`) and cannot be renamed after creation.
+
+Our `agent/knowledge-base-config.json` references specific connection names (`healthbridge-blob-connection`, `healthbridge-aisearch-connection`, `healthbridge-mcp-connection`, `healthbridge-fabric-connection`). A portal-created connection will NOT match these names.
+
+## Options Evaluated
+
+### Option A: Create connections via code with exact custom names
+- **Pros:** Connection names match config exactly. No downstream edits. Consistent with MCP/Fabric which are code-only anyway. Reproducible via script.
+- **Cons:** Requires CLI familiarity. Slightly less "demo-friendly" for a portal-only audience.
+
+### Option B: Accept portal auto-names, update knowledge-base-config.json
+- **Pros:** Portal-friendly for presenters who prefer clicking.
+- **Cons:** Auto-generated names are ugly (`sthealthbridgedemo2agib7`). Requires editing config JSON. Creates inconsistency between docs, config, and other guide references. Names vary per deployment — breaks reproducibility.
+
+## Decision: Option A — Code-first creation
+
+**Rationale:**
+1. MCP and Fabric connections are already code-only (no portal path exists), so the code approach was unavoidable for 2 of 4 connections.
+2. Standardizing all 4 connections via code gives a single consistent workflow.
+3. The `az rest` commands are copy-paste-able and complete in ~30 seconds total.
+4. Connection names remain stable across re-deployments and match all config/docs references.
+5. `agent/knowledge-base-config.json` remains unchanged (no Chunk rework needed).
+
+## Portal Naming Behavior (documented for team reference)
+
+| What you do | Resulting connection name |
+|---|---|
+| Portal → Add connection → select `sthealthbridgedemo2agib7` | `sthealthbridgedemo2agib7` |
+| Portal → Add connection → select `srch-healthbridge-demo` | `srch-healthbridge-demo` |
+| `az rest --method PUT .../connections/healthbridge-blob-connection` | `healthbridge-blob-connection` ✅ |
+| Bicep `resource ... { name: 'healthbridge-blob-connection' }` | `healthbridge-blob-connection` ✅ |
+
+## Impact
+
+- Guide updated to v1.2 — Step B now uses `az rest` for all connections
+- `agent/knowledge-base-config.json` — **no changes needed** (names match as designed)
+- Other docs referencing connection names — no changes needed
+
+## Citations
+
+- https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add (2026-06-19) — portal tab shows no name field
+- https://github.com/microsoft-foundry/foundry-samples/blob/main/infrastructure/infrastructure-setup-bicep/01-connections/connection-storage-account.bicep — Bicep `name` property is the connection name
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus

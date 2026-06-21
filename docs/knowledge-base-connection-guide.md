@@ -106,57 +106,102 @@ az role assignment create \
 
 ---
 
-## Step B — Create Connections in the Foundry Admin Panel
+## Step B — Create Connections (via Code — Required for Custom Names)
 
-These connections bridge the Foundry project and the live Azure resources. The connection names below are **exact** — they are referenced by `agent/knowledge-base-config.json` and must not be changed.
+These connections bridge the Foundry project and the live Azure resources. The connection names below are **exact** — they are referenced by `agent/knowledge-base-config.json` and must match.
 
-> **Ref:** [Add a new connection to your project](https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add)
+> **⚠️ Connection naming limitation:** The Microsoft Foundry portal **does not provide a field to set or rename a connection name**. When you create a connection via the portal UI (Operate → Admin → Add connection), the portal **auto-generates** the connection name from the Azure resource name (e.g., a connection to `sthealthbridgedemo2agib7` will be named `sthealthbridgedemo2agib7`, not `healthbridge-blob-connection`). There is no documented rename capability after creation.
+>
+> **To get the exact connection names required by this demo** (`healthbridge-blob-connection`, `healthbridge-aisearch-connection`, etc.), you must create connections via **code** — Bicep, REST API, or `az rest`. This is the recommended approach for this demo and is consistent with how MCP and Fabric connections must be created anyway (they are code-only).
+>
+> **Ref:** [Add a new connection — Bicep tab](https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add#tabpanel_2_bicep), [Connection Bicep templates](https://github.com/microsoft-foundry/foundry-samples/tree/main/infrastructure/infrastructure-setup-bicep/01-connections)
 
-### B1 — Navigate to Connections
+### B0 — Get the Project Resource ID
 
-1. In the Microsoft Foundry portal, click **Operate** in the upper-right navigation.
-2. Click **Admin** in the left pane.
-3. Select **proj-healthbridge** in the **Manage all projects** list.
-4. Click **Add connection** in the upper-right corner.
+All connection creation commands below need the ARM resource ID of `proj-healthbridge`:
 
-> ⚠️ Verify in your portal — the navigation was recently updated. If you do not see "Operate → Admin", try the legacy path: Settings (gear icon, bottom-left) → Connected resources. The connection types and fields are the same either way.
+```bash
+PROJECT_ID=$(az ml workspace show \
+  --name proj-healthbridge \
+  --resource-group rg-knowledge-iq-demo \
+  --query id --output tsv)
+echo $PROJECT_ID
+```
 
-### B2 — Connection: Azure Storage (Blob)
+> This should return something like: `/subscriptions/<sub-id>/resourceGroups/rg-knowledge-iq-demo/providers/Microsoft.MachineLearningServices/workspaces/proj-healthbridge`
 
-1. Select **Azure Storage** from the service list.
-2. Browse for and select **`sthealthbridgedemo2agib7`**.
-3. **Authentication:** Microsoft Entra ID (Managed identity) *(do NOT select "Account key" — key auth is disabled)*
-4. Click **Add connection**.
-5. After creation, rename (or confirm the connection name is) `healthbridge-blob-connection`.
+### B1 — Connection: Azure Storage (Blob) — `healthbridge-blob-connection`
 
-> ⚠️ The portal may auto-name the connection. Ensure the final connection name matches `healthbridge-blob-connection` exactly. You can rename connections in Admin after creation.
+```bash
+# Get the storage account resource ID
+STORAGE_RID=$(az storage account show \
+  --name sthealthbridgedemo2agib7 \
+  --resource-group rg-knowledge-iq-demo \
+  --query id --output tsv)
 
-### B3 — Connection: Azure AI Search
+# Create connection with exact custom name
+az rest --method PUT \
+  --url "https://management.azure.com${PROJECT_ID}/connections/healthbridge-blob-connection?api-version=2025-04-01-preview" \
+  --body "{
+    \"name\": \"healthbridge-blob-connection\",
+    \"properties\": {
+      \"category\": \"AzureStorageAccount\",
+      \"target\": \"https://sthealthbridgedemo2agib7.blob.core.windows.net/\",
+      \"authType\": \"AAD\",
+      \"isSharedToAll\": true,
+      \"metadata\": {
+        \"ApiType\": \"Azure\",
+        \"ResourceId\": \"${STORAGE_RID}\",
+        \"location\": \"eastus\"
+      }
+    }
+  }"
+```
 
-1. Click **Add connection** again, select **Azure AI Search**.
-2. Browse for and select **`srch-healthbridge-demo`** (endpoint: `https://srch-healthbridge-demo.search.windows.net`).
-3. **Authentication:** Microsoft Entra ID (Managed identity) *(API key is disabled)*
-4. Click **Add connection**.
-5. Confirm or rename to `healthbridge-aisearch-connection`.
+> **Authentication is `AAD` (Microsoft Entra ID / managed identity)** — no account key. This is enforced by Azure Policy on this subscription.
+
+### B2 — Connection: Azure AI Search — `healthbridge-aisearch-connection`
+
+```bash
+# Get the search service resource ID
+SEARCH_RID=$(az search service show \
+  --name srch-healthbridge-demo \
+  --resource-group rg-knowledge-iq-demo \
+  --query id --output tsv)
+
+az rest --method PUT \
+  --url "https://management.azure.com${PROJECT_ID}/connections/healthbridge-aisearch-connection?api-version=2025-04-01-preview" \
+  --body "{
+    \"name\": \"healthbridge-aisearch-connection\",
+    \"properties\": {
+      \"category\": \"CognitiveSearch\",
+      \"target\": \"https://srch-healthbridge-demo.search.windows.net\",
+      \"authType\": \"AAD\",
+      \"isSharedToAll\": true,
+      \"metadata\": {
+        \"ApiType\": \"Azure\",
+        \"ResourceId\": \"${SEARCH_RID}\",
+        \"location\": \"eastus\"
+      }
+    }
+  }"
+```
 
 > This single connection covers all three search indexes (`healthcare-payor-docs`, `healthbridge-formulary-index`, `healthbridge-provider-index`) — the specific index is selected when configuring knowledge sources in Step C.
 
-### B4 — Connection: MCP Server (RemoteTool for Knowledge Base)
+### B3 — Connection: MCP Server (RemoteTool) — `healthbridge-mcp-connection`
 
 > **Important — MCP architecture clarification:** In current Microsoft Foundry, "MCP Server" is **not** a selectable connection type in the portal UI. MCP servers are surfaced in two ways:
-> 1. As a **knowledge source** on Azure AI Search (configured via the Build → Knowledge UI or REST API) — used in Step C8.
-> 2. As an **agent tool** via a programmatic `RemoteTool` project connection — used in Step D4.
+> 1. As a **knowledge source** on Azure AI Search (configured via the Build → Knowledge UI or REST API) — used in Step C6.
+> 2. As an **agent tool** via a programmatic `RemoteTool` project connection — created here for use in Step D4.
 >
-> For the Foundry IQ knowledge base path, the MCP server URL is configured directly on the knowledge source (Step C8), so no separate Foundry "connection" is needed for KB retrieval. However, the agent also needs an MCP tool connection for direct tool calls. Create it programmatically:
+> For the Foundry IQ knowledge base path, the MCP server URL is configured directly on the knowledge source (Step C6), so this connection is primarily needed for direct agent tool calls.
 
 ```bash
-# Create RemoteTool connection for MCP (via Azure CLI / REST)
-# This enables the agent to call MCP tools directly in addition to KB retrieval
 az rest --method PUT \
-  --url "https://management.azure.com/<PROJECT_RESOURCE_ID>/connections/healthbridge-mcp-connection?api-version=2025-10-01-preview" \
+  --url "https://management.azure.com${PROJECT_ID}/connections/healthbridge-mcp-connection?api-version=2025-04-01-preview" \
   --body '{
     "name": "healthbridge-mcp-connection",
-    "type": "Microsoft.MachineLearningServices/workspaces/connections",
     "properties": {
       "authType": "None",
       "category": "RemoteTool",
@@ -167,28 +212,38 @@ az rest --method PUT \
   }'
 ```
 
-> Replace `<PROJECT_RESOURCE_ID>` with the ARM resource ID of `proj-healthbridge`. You can find it via: `az ml workspace show --name proj-healthbridge --resource-group rg-knowledge-iq-demo --query id -o tsv`.
->
-> You can verify the MCP server is live: `GET https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/health` should return `200 OK`.
+> Verify the MCP server is live first: `curl https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/health` should return `200 OK`.
 
-### B5 — Connection: Fabric Data Agent ⚠️
+### B4 — Connection: Fabric Data Agent ⚠️ — `healthbridge-fabric-connection`
 
 > ⚠️ **PENDING — skip for now.** The Fabric Data Agent requires a Microsoft Fabric workspace with Data Agent preview enabled. This workspace has not yet been provisioned. The Knowledge Base will operate fully with the remaining sources; only prompts that call `lookup_member` or `lookup_claim` against live Fabric data will be unavailable until this is configured.
 
 > **Note:** Microsoft Fabric connections require creation through code (Bicep or SDK) — they cannot be created in the Foundry portal UI. See [Foundry connection types](https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add#connection-types).
 
-When the Fabric workspace is ready, create via CLI/Bicep:
+When the Fabric workspace is ready, create via `az rest` with:
 
 - **Connection name:** `healthbridge-fabric-connection`
+- **Category:** `MicrosoftFabric`
 - **Workspace ID:** *(replace `<FABRIC_WORKSPACE_ID>` in `agent/knowledge-base-config.json`)*
 - **Data Agent name:** `healthbridge-claims-agent`
 
-### B6 — Verify Connection Status
+### B5 — Verify Connections
 
-After adding each connection, confirm the status shows **Connected** (green checkmark) in the Admin panel. If any connection shows **Failed**:
+After running the commands above, verify connections appear in the portal:
+
+1. In the Microsoft Foundry portal, click **Operate** in the upper-right navigation.
+2. Click **Admin** in the left pane → select **proj-healthbridge**.
+3. Confirm each connection appears with status **Connected** (green checkmark):
+   - `healthbridge-blob-connection`
+   - `healthbridge-aisearch-connection`
+   - `healthbridge-mcp-connection`
+
+If any connection shows **Failed**:
 - Re-check RBAC propagation (Step A); wait up to 10 minutes.
-- Confirm authentication is set to **Microsoft Entra ID / Managed identity**, not key-based.
+- Confirm the managed identity has the required roles on the target resource.
 - See the Troubleshooting table at the end of this guide.
+
+> **Portal-only alternative (if you prefer the portal for Azure Storage and AI Search):** You can create connections via Operate → Admin → Add connection, but the portal will auto-name them (typically the resource name, e.g., `sthealthbridgedemo2agib7`). If you go this route, you must update the `connectionNameRef` values in `agent/knowledge-base-config.json` to match the auto-generated names. The MCP connection still requires the code path above regardless.
 
 ---
 
@@ -484,4 +539,4 @@ Run these three prompts in the Playground **in order**. Each targets a different
 
 ---
 
-*Guide version: 1.1 | Created: 2026-06-21 | Updated: 2026-06-21 | Microsoft Foundry (ai.azure.com) — New Foundry only*
+*Guide version: 1.2 | Created: 2026-06-21 | Updated: 2026-06-21 | Microsoft Foundry (ai.azure.com) — New Foundry only*

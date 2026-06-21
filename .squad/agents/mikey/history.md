@@ -100,3 +100,25 @@
 - Step D: Replaced "Knowledge section" attach flow with MCP tool configuration
 - Added Microsoft Learn reference table at bottom
 - Bumped version to 1.1
+
+### 2026-06-21 — Connection Naming Limitation Discovery (v1.1 → v1.2)
+
+**Requested by:** Rob McKenna (portal doesn't allow naming connections)
+
+**Verified facts:**
+
+1. **Portal does NOT allow custom connection names.** The portal UI (Operate → Admin → Add connection) auto-generates the connection name from the target resource name. There is no name field during creation and no rename capability after. Ref: [connections-add doc](https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add) — portal tab shows steps 1–8 with no name field.
+
+2. **Auto-naming convention:** The portal names connections after the resource (e.g., storage account `sthealthbridgedemo2agib7` → connection name `sthealthbridgedemo2agib7`). Confirmed by inspecting the [Bicep sample](https://github.com/microsoft-foundry/foundry-samples/blob/main/infrastructure/infrastructure-setup-bicep/01-connections/connection-storage-account.bicep) which shows the `name` property as a free-form string at the resource definition level.
+
+3. **Custom names require code.** Connections created via Bicep, REST API (`az rest --method PUT`), or SDK allow setting the connection `name` property freely. The ARM resource path is: `Microsoft.CognitiveServices/accounts/projects/connections@2025-04-01-preview` where the final segment is the connection name.
+
+4. **Recommendation applied:** For this demo, ALL connections (Azure Storage, AI Search, MCP) are now created via `az rest` with exact custom names matching `agent/knowledge-base-config.json`. This avoids a name mismatch cascade and is consistent with MCP/Fabric being code-only anyway.
+
+**What was corrected (v1.2):**
+- Rewrote entire Step B from "portal-first with rename" to "code-first with exact names"
+- Added `B0` step to get PROJECT_ID
+- Provided complete `az rest` commands for all three connections with correct ARM API, categories, and auth types
+- Moved portal path to a "portal-only alternative" footnote that warns about auto-naming and config mismatch
+- Removed all references to "renaming" connections (not possible)
+- Bumped to v1.2
