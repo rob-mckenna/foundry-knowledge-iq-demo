@@ -114,3 +114,8 @@ Rob flagged suspected classic Foundry UI inaccuracies. Mikey validated against c
 ### 2026-06-21 — Connection Naming Discovery (cross-team note from Mikey)
 
 **Key finding:** Foundry portal auto-names connections from Azure resource names (e.g., `sthealthbridgedemo2agib7`) with no custom-name field. Custom names require code (ARM PUT via `az rest`, api-version `2025-04-01-preview`). Relevant to any KB/connection config work: all four connections in the demo are now created via `az rest` to guarantee names match `knowledge-base-config.json`. Guide v1.2 reflects this approach. No changes needed to your KB config JSON — naming is now guaranteed consistent across deployments.
+
+### 2026-06-21 — Portal-First Option B Documentation (cross-team note from Mikey)
+
+KB connection guide now documents both code-first (primary, Option A) and portal-first (Option B) connection creation paths. Portal-first only works for Storage + AI Search; requires manual editing of `knowledge-base-config.json` lines 29/51/83 to match auto-generated connection names. MCP + Fabric remain code-only in both options. No changes to your KB config JSON; guide documents both paths against its existing values. Guide bumped to v1.3.
+

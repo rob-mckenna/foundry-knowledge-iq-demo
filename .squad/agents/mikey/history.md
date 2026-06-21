@@ -122,3 +122,17 @@
 - Moved portal path to a "portal-only alternative" footnote that warns about auto-naming and config mismatch
 - Removed all references to "renaming" connections (not possible)
 - Bumped to v1.2
+
+### 2026-06-21 — Dual-Path Connection Guide (v1.2 → v1.3)
+
+**Requested by:** Rob McKenna (wants both code and portal paths documented)
+
+**What was changed:**
+- Restructured Step B into two clearly-labeled options:
+  - **Option A — Code-first (recommended):** Existing `az rest` flow for all connections with exact custom names. Zero config edits.
+  - **Option B — Portal-first:** Portal clicks for Azure Storage + AI Search (the two portal-supported types), then code for MCP + Fabric. Includes explicit reconciliation table listing the 3 exact `connectionNameRef` lines in `agent/knowledge-base-config.json` (lines 29, 51, 83) that must change to match auto-generated names.
+- Added decision-helper comparison table at top of Step B (method, names, config edits, consistency, best-for)
+- Extracted MCP and Fabric into shared **Step B-MCP** and **Step B-Fabric** sections used by both options
+- Added **Step B-Verify** with a side-by-side name table for Option A vs Option B
+- Listed documentation-only files (`docs/azure-setup.md`, `docs/setup-guide.md`, `agent/README.md`) that also reference connection names and should be updated for consistency if Option B is chosen
+- Bumped to v1.3

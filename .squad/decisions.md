@@ -262,6 +262,35 @@ Our `agent/knowledge-base-config.json` references specific connection names (`he
 
 ---
 
+### Decision: Document Both Connection Creation Paths
+
+**Author:** Mikey (Lead)  
+**Date:** 2026-06-21  
+**Status:** Accepted  
+**Requested by:** Rob McKenna
+
+## Context
+
+Rob wanted both code and portal paths documented in Step B of the KB connection guide. The v1.2 guide was code-only, which is technically correct (only way to get custom names) but didn't serve presenters who prefer portal clicks for the simple connections.
+
+## Decision
+
+Document both paths as Option A (code-first, recommended) and Option B (portal-first, partial). Code-first stays primary because:
+
+1. **Uniform workflow** — all 4 connections use the same method.
+2. **No config edits** — `agent/knowledge-base-config.json` works as-is with the custom names.
+3. **MCP + Fabric are code-only regardless** — portal-first still requires `az rest` for 2 of 4 connections, so the portal doesn't fully eliminate CLI usage.
+
+Option B is documented as a valid alternative with explicit reconciliation instructions: exact lines (29, 51, 83) in `agent/knowledge-base-config.json` to change, plus a note about documentation-only references in `docs/azure-setup.md`, `docs/setup-guide.md`, and `agent/README.md`.
+
+## Impact
+
+- Guide bumped to v1.3
+- `agent/knowledge-base-config.json` NOT modified (both paths documented against its current values)
+- No changes to other files
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus
