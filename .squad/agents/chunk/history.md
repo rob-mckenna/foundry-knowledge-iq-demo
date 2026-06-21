@@ -72,3 +72,19 @@ Live endpoints for Foundry Knowledge Base wiring:
 | **Azure OpenAI** | `oai-healthbridge-demo.openai.azure.com` (embedding model: `text-embedding-3-small`, 1536 dims) |
 
 All 45 healthcare payor documents uploaded and indexed; MCP server live with full tool suite (7 tools, 33 passing tests). Agent's KB config embedding model already aligned to 1536 dims. Ready for Foundry project creation and data source connection.
+
+### 2026-06-21 — Knowledge Base Connection Guide authored
+
+- Authored `docs/knowledge-base-connection-guide.md` — a click-by-click operator guide for wiring `payor-knowledge-base` in Microsoft Foundry after the completed Azure deployment.
+- **Key wiring facts preserved in the guide:**
+  - All connections use **managed identity (Entra RBAC)** — key auth is disabled by Azure Policy on Storage and OpenAI.
+  - Four required RBAC roles: Search Index Data Reader + Search Service Contributor on `srch-healthbridge-demo`; Storage Blob Data Reader on `sthealthbridgedemo2agib7`; Cognitive Services OpenAI User on `oai-healthbridge-demo`.
+  - Connection names (exact, must match `agent/knowledge-base-config.json`): `healthbridge-blob-connection`, `healthbridge-aisearch-connection`, `healthbridge-mcp-connection`, `healthbridge-fabric-connection` (⚠️ pending).
+  - Knowledge Base name: `payor-knowledge-base` (consistent with `docs/demo-flow.md`).
+  - Embedding model: `text-embedding-3-small`, **1536 dimensions** — critical, must not be changed to 3072.
+  - Retrieval: hybrid search, semantic ranking On, Top-K=5, minimum reranker score=0.5.
+  - Three AI Search indexes attached separately: `healthcare-payor-docs`, `healthbridge-formulary-index`, `healthbridge-provider-index`.
+  - MCP endpoint: `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io` (POST `/mcp`).
+  - Three smoke-test prompts map to MCP Server, AI Search formulary, and AI Search provider directory to confirm end-to-end wiring.
+- Decision filed at `.squad/decisions/inbox/chunk-kb-connection-guide.md`.
+- Skill written at `.squad/skills/foundry-kb-connection/SKILL.md`.

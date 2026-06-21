@@ -115,6 +115,29 @@ Files updated: `docs/azure-setup.md`, `docs/setup-guide.md`, `docs/demo-flow.md`
 
 ---
 
+### Decision: KB Connection Guide — Managed Identity Auth Approach
+
+**Author:** Chunk (Agent Builder)  
+**Date:** 2026-06-21  
+**Status:** Accepted
+
+Authored `docs/knowledge-base-connection-guide.md` — a complete, click-by-click operator guide for wiring the Microsoft Foundry Knowledge Base `payor-knowledge-base` now that all Azure resources are live.
+
+The guide walks a presenter through five steps:
+- **Step A** — Verify and assign four RBAC roles to the Foundry project managed identity (search, storage, OpenAI)
+- **Step B** — Create the four Foundry connections (blob, AI Search, MCP, Fabric ⚠️) using exact connection names
+- **Step C** — Create `payor-knowledge-base` with all four active data sources, embedding model, and hybrid + semantic retrieval
+- **Step D** — Create/attach the `healthbridge-assistant` agent with system prompt and KB
+- **Step E** — Three smoke-test prompts confirming end-to-end wiring (MCP Server, AI Search formulary, AI Search provider directory)
+
+**Key Technical Decision:** Azure Policy on this subscription disables key-based auth on Storage and Azure OpenAI. All Foundry connections use managed identity (Entra RBAC). Required roles: Search Index Data Reader + Search Service Contributor on `srch-healthbridge-demo`; Storage Blob Data Reader on `sthealthbridgedemo2agib7`; Cognitive Services OpenAI User on `oai-healthbridge-demo`.
+
+**Embedding Model:** `text-embedding-3-small`, 1536 dimensions. Must not be changed — existing AI Search indexes depend on this dimensionality.
+
+**Impact:** Operators can now wire the full Knowledge Base without referencing multiple prior docs. Guide is self-contained from Foundry project creation to smoke tests passing.
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus
