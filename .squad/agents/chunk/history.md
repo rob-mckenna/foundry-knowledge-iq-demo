@@ -55,3 +55,20 @@
 - **Mouth (Brand):** All 48 files standardized to "HealthBridge Insurance Plan." System prompt updated to match brand + contact details (1-800-555-BLUE, HealthBridge.example.com).
 
 **From Data (Data Engineer):** Scaffolded all four data source configs. Your agent's knowledge base config references all sources. Data distribution plan: JSON for MCP/Fabric, documents/markdown for Blob/AI Search. Ready for knowledge base assembly and prompt testing.
+
+## Azure Deployment Complete (2026-06-21)
+
+**Data Engineer deployed all Azure resources and populated data sources.**
+
+Live endpoints for Foundry Knowledge Base wiring:
+
+| Resource | Endpoint / Details |
+|---|---|
+| **MCP Server** | `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io` (POST `/mcp`, health check at `/health`) |
+| **AI Search — Docs** | `srch-healthbridge-demo.search.windows.net` / `healthcare-payor-docs` (45 documents) |
+| **AI Search — Formulary** | `srch-healthbridge-demo.search.windows.net` / `healthbridge-formulary-index` (10 records) |
+| **AI Search — Providers** | `srch-healthbridge-demo.search.windows.net` / `healthbridge-provider-index` (7 records) |
+| **Blob Storage** | `sthealthbridgedemo2agib7.blob.core.windows.net` / `healthcare-docs` (45 sample files, private) |
+| **Azure OpenAI** | `oai-healthbridge-demo.openai.azure.com` (embedding model: `text-embedding-3-small`, 1536 dims) |
+
+All 45 healthcare payor documents uploaded and indexed; MCP server live with full tool suite (7 tools, 33 passing tests). Agent's KB config embedding model already aligned to 1536 dims. Ready for Foundry project creation and data source connection.

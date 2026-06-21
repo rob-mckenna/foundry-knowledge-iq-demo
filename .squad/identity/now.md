@@ -1,18 +1,20 @@
 ---
-updated_at: 2026-06-08T04:25:00.000Z
-focus_area: Demo buildout complete — infra and docs cleaned up
+updated_at: 2026-06-21T04:03:24Z
+focus_area: Azure infrastructure live — Foundry project creation and KB wiring next
 active_issues: []
 ---
 
 # What We're Focused On
 
-Core demo is built: sample data, MCP server, agent config, and docs are in place. Bicep infra added. All outdated Foundry Hub/Studio terminology removed — using new flat Foundry project model only. Repo pushed to GitHub (private, rob-mckenna/foundry-knowledge-iq-demo, branch: main). Node_modules removed from tracking, proper .gitignore in place.
+Azure deployment complete: all Azure resources (OpenAI, AI Search, Storage, Container Registry) provisioned, sample data uploaded and indexed, MCP server containerized and live at `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io`. Three AI Search indexes populated (45 docs, 10 formulary, 7 provider records). Agent's KB config ready to wire. Next: Foundry project creation and data source connection.
 
 ## Next Steps
 
-- Deploy Azure resources (switch to subscription c81fda52-936e-4f14-8af4-951c0dbb92d2)
-- Upload sample data to blob storage
-- Create AI Search indexes
-- Deploy MCP server container
-- Create Foundry project via ai.azure.com
-- Connect Knowledge Base data sources
+- Create Foundry project at `ai.azure.com` (`kind=project`, not Hub)
+- Create Knowledge Base in Foundry, connect 4 data sources:
+  - MCP (HTTP POST endpoint)
+  - AI Search (3 indexes: healthcare-payor-docs, healthbridge-formulary-index, healthbridge-provider-index)
+  - Blob Storage (healthcare-docs container)
+  - Fabric Data Agent (⚠️ pending setup)
+- Create agent from KB + system prompt
+- Run sample-prompts.md test suite (30 prompts across 5 workflows)

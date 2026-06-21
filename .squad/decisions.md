@@ -73,6 +73,48 @@ Established documentation hierarchy: `azure-setup.md` (raw CLI provisioning deta
 
 ---
 
+### Decision: Azure Infrastructure Deployment — HealthBridge Knowledge IQ Demo
+
+**Author:** Data  
+**Date:** 2026-06-05  
+**Status:** Accepted
+
+The demo requires Azure backing services for AI Search, Blob Storage, Azure OpenAI embeddings, and a Container Registry for the MCP server image. These were created as Bicep IaC in `infra/` and deployed to subscription `ME-MngEnvMCAP251766-romcken-1`.
+
+Created modular Bicep templates (`infra/main.bicep` + four modules) and deployed to the pre-existing resource group `rg-knowledge-iq-demo` in region `eastus`.
+
+**Foundry Hub/Project excluded from Bicep** — the `Microsoft.MachineLearningServices/workspaces` resource with `kind=Hub/Project` requires Key Vault + Application Insights dependencies that add significant complexity to a demo IaC template. The Hub/Project will be created via the Azure AI Foundry portal.
+
+Deployed resources:
+
+| Resource | Name | Endpoint / Server |
+|---|---|---|
+| Resource Group | `rg-knowledge-iq-demo` | `eastus` |
+| Azure OpenAI | `oai-healthbridge-demo` | `https://oai-healthbridge-demo.openai.azure.com/` |
+| Embedding Deployment | `text-embedding-3-small` | 30K TPM, 1536 dims |
+| Azure AI Search | `srch-healthbridge-demo` | `https://srch-healthbridge-demo.search.windows.net` |
+| Storage Account | `sthealthbridgedemo2agib7` | `https://sthealthbridgedemo2agib7.blob.core.windows.net/` |
+| Blob Container | `healthcare-docs` | (private) |
+| Container Registry | `crhealthbridgedemo2agib7` | `crhealthbridgedemo2agib7.azurecr.io` |
+
+Storage account and ACR use `uniqueString(resourceGroup().id)` suffix (`2agib7`) to satisfy global uniqueness requirements. All resources tagged: `project=knowledge-iq-demo`, `environment=demo`.
+
+---
+
+### Decision: Remove hub terminology from Azure AI Foundry docs
+
+**Author:** Mouth  
+**Date:** 2026-06-08  
+**Requested by:** Rob McKenna
+
+Updated setup and infrastructure documentation to use the current Azure AI Foundry flat project model only. Removed references to Foundry Hub, Hub + Project architecture, `--kind hub`, `--hub-id`, and `hub-knowledge-iq`, and rewrote setup steps to create a Foundry project directly with `az ml workspace create --kind project`.
+
+Docs now align with the current Azure AI Foundry experience at `ai.azure.com`, while still warning presenters not to use Azure AI Studio or classic Foundry guidance. Infrastructure notes now consistently state that the Foundry project is created manually outside the Bicep deployment.
+
+Files updated: `docs/azure-setup.md`, `docs/setup-guide.md`, `docs/demo-flow.md`, `infra/main.bicep`, `infra/README.md`
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus
