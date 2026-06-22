@@ -291,6 +291,69 @@ Option B is documented as a valid alternative with explicit reconciliation instr
 
 ---
 
+### Decision: Foundry Connections Precondition Check — BLOCKED
+
+**Author:** Data (Data Engineer)  
+**Date:** 2026-06-22  
+**Status:** BLOCKED — Foundry project does not exist  
+**Requested by:** Rob McKenna
+
+## Execution Summary
+
+Attempted execution of Option A (code-first) from `docs/knowledge-base-connection-guide.md` to create three Foundry project connections via `az rest` (Azure Blob Storage, Azure AI Search, MCP RemoteTool).
+
+## Precondition Check Result
+
+The first step (A0) failed:
+
+```
+az ml workspace show --name proj-healthbridge --resource-group rg-knowledge-iq-demo
+ERROR: (ResourceNotFound) The Resource 'Microsoft.MachineLearningServices/workspaces/proj-healthbridge'
+under resource group 'rg-knowledge-iq-demo' was not found.
+```
+
+**The `proj-healthbridge` Foundry project has NOT been created yet.** Manual creation at `ai.azure.com` is pending.
+
+## Connection Status
+
+| Connection | Name | Status |
+|---|---|---|
+| Azure Blob Storage | `healthbridge-blob-connection` | ❌ NOT CREATED — project missing |
+| Azure AI Search | `healthbridge-aisearch-connection` | ❌ NOT CREATED — project missing |
+| MCP RemoteTool | `healthbridge-mcp-connection` | ❌ NOT CREATED — project missing |
+| Fabric Data Agent | `healthbridge-fabric-connection` | ⚠️ PENDING — Fabric workspace not provisioned (separate blocker, skip per guide) |
+
+## Coordinator Note: Potential Resource-Model Concern
+
+During execution, a deeper technical issue was flagged: Option A in the guide uses CLI commands based on the **old AI Studio/hub model** (`az ml workspace`, resource type `Microsoft.MachineLearningServices/workspaces` with `kind=Hub/Project`). 
+
+However, new Microsoft Foundry projects may use a **different resource model** (`Microsoft.CognitiveServices/accounts` with child projects), particularly in recent Azure API versions. This could mean:
+- The `az ml workspace` commands in the guide may fail or return unexpected paths for new Foundry deployments
+- The connection creation REST endpoint paths may differ from what the guide prescribes
+
+**Recommendation:** Once the Foundry project is created, **verify the actual resource type and API paths empirically** (e.g., via `az rest GET /subscriptions/.../resourceGroups/rg-knowledge-iq-demo/resources?$filter=name eq 'proj-healthbridge'` or the Azure portal resource explorer) before assuming the guide's `az rest` paths are correct.
+
+## Required Action
+
+1. Go to **ai.azure.com** (new Microsoft Foundry portal — ensure "New Foundry" toggle is enabled).
+2. Create a **new project** named exactly **`proj-healthbridge`** in resource group `rg-knowledge-iq-demo`.
+3. Once created, **verify the resource type** in Azure Portal → Resource Explorer.
+4. If the resource type is NOT `Microsoft.MachineLearningServices/workspaces`, or if `az rest` commands return unexpected results, escalate to Mikey (guide validation owner) for possible guide v1.4 corrections.
+5. Once verified, re-run this task — all three `az rest` connection creates can proceed in under 2 minutes.
+
+## What Remains After Project Creation & Verification
+
+Once `proj-healthbridge` exists and resource model is confirmed:
+1. **A0** — `az ml workspace show` to capture `$PROJECT_ID`
+2. **A1** — Create `healthbridge-blob-connection` (AzureStorageAccount / AAD)
+3. **A2** — Create `healthbridge-aisearch-connection` (CognitiveSearch / AAD)
+4. **B-MCP** — Create `healthbridge-mcp-connection` (RemoteTool / None)
+5. **Verify** — `az rest GET .../connections?api-version=2025-04-01-preview`
+
+Fabric connection (`healthbridge-fabric-connection`) remains ⚠️ PENDING — no Fabric workspace provisioned yet. KB will function with the other 3 sources.
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus

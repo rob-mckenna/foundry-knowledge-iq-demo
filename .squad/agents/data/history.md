@@ -7,6 +7,9 @@
 
 ## Learnings
 
+- **Foundry project does NOT exist (2026-06-22):** `az ml workspace show --name proj-healthbridge --resource-group rg-knowledge-iq-demo` returns `ResourceNotFound`. The `Microsoft.MachineLearningServices/workspaces/proj-healthbridge` resource has not been created. This is a manual step at ai.azure.com — the Foundry project must be created in the portal before any `az rest` connections can be attempted. The `az ml` extension must be installed non-interactively via `echo "y" | az extension add -n ml` in PowerShell (plain `az extension add -n ml` hangs waiting for interactive prompt in non-interactive shells). The Option A `az rest` PowerShell pattern (body-as-file) was not reached because the precondition check failed cleanly with exit code 3.
+- **az ml extension install in PowerShell:** `az extension add -n ml` hangs in non-interactive shells; use `echo "y" | az extension add -n ml` to auto-confirm the install prompt.
+
 - **Bicep IaC (2026-06-05):** Resource group `rg-knowledge-iq-demo` pre-existed in `eastus` (not `eastus2`) — location param set to `eastus` to match. Storage account and ACR use `uniqueString(resourceGroup().id)` suffix (`2agib7`) for global uniqueness; actual names are `sthealthbridgedemo2agib7` and `crhealthbridgedemo2agib7`. Azure AI Foundry Hub/Project excluded from Bicep — requires Key Vault + App Insights dependencies; portal creation preferred for demo simplicity. `Microsoft.CognitiveServices/accounts@2024-10-01` with `kind=OpenAI` is the correct resource type for Azure OpenAI in new Bicep. AI Search `semanticSearch: 'free'` tier is sufficient for demo with Basic SKU.
 
 - MCP server uses Node.js ESM (`"type": "module"`) with `@modelcontextprotocol/sdk` v1; stdio transport is standard — Foundry connects via an HTTP endpoint wrapper (e.g., Container Apps) in production.
@@ -97,3 +100,58 @@
 - AI Search: `srch-healthbridge-demo` → `https://srch-healthbridge-demo.search.windows.net`
 - Storage: `sthealthbridgedemo2agib7` → `https://sthealthbridgedemo2agib7.blob.core.windows.net/`
 - ACR: `crhealthbridgedemo2agib7` → `crhealthbridgedemo2agib7.azurecr.io`
+
+### 2026-06-20 — Full Azure Deployment Execution
+
+**Task:** Execute all deployment steps end-to-end: Bicep, blob upload, AI Search indexes, MCP container.
+
+**Steps completed:**
+
+| Step | Status | Notes |
+|------|--------|-------|
+| Resource group `rg-knowledge-iq-demo` | ✅ Exists | eastus, pre-existing |
+| Bicep deployment | ✅ Succeeded (idempotent) | All 4 modules confirmed |
+| Blob upload (45 files) | ✅ Done | 6 policies, 6 benefits, 8 members, 8 claims, 7 providers, 10 formulary |
+| AI Search index `healthcare-payor-docs` | ✅ Created | 45 docs via blob indexer |
+| AI Search index `healthbridge-formulary-index` | ✅ Created + populated | 10 formulary drug records |
+| AI Search index `healthbridge-provider-index` | ✅ Created + populated | 7 provider records |
+| MCP server Docker image | ✅ Built + pushed | `crhealthbridgedemo2agib7.azurecr.io/mcp-server:latest` |
+| Container Apps environment | ✅ Created | `cae-healthbridge-demo` in eastus |
+| Container App (MCP server) | ✅ Deployed + healthy | `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io` |
+
+**New endpoints:**
+- MCP server HTTP: `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/mcp`
+- MCP health check: `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/health` → `{"status":"ok","server":"healthcare-payor-mcp","version":"1.0.0"}`
+
+**Gotchas encountered and resolved:**
+
+1. **Storage account key auth disabled by Azure Policy** — `allowSharedKeyAccess: false` is enforced org-wide. `deploy.ps1` (which uses connection string) fails. Fixed by: assigning `Storage Blob Data Contributor` RBAC to the current user and using `--auth-mode login` for all blob operations. Updated `infra/modules/storage.bicep` to explicitly set `allowSharedKeyAccess: false` and `publicNetworkAccess: 'Enabled'` to reflect actual state.
+
+2. **Storage `publicNetworkAccess: Disabled`** — The existing storage account had public access disabled (likely from a prior deployment attempt). Fixed by `az storage account update --public-network-access Enabled`. Bicep updated to preserve this setting.
+
+3. **AI Search index schema API field names wrong** — The index schemas used `analyzerName` (should be `analyzer`) and `contentFields`/`keywordsFields` (should be `prioritizedContentFields`/`prioritizedKeywordsFields`) per API 2024-07-01. Fixed in all three schema files and during runtime via string replace.
+
+4. **Schema top-level `description` field rejected** — Azure Search API doesn't support `description` at index root level. Stripped via `PSObject.Properties.Remove('description')` before PUT.
+
+5. **OpenAI key auth disabled** (`disableLocalAuth: true` on `oai-healthbridge-demo`) — Cannot use API keys for OpenAI. AI Search managed identity must be used for vectorizer. Set up: enabled System-Assigned MI on `srch-healthbridge-demo`, assigned `Cognitive Services OpenAI User` role on OpenAI and `Storage Blob Data Reader` on storage to the search MI (`2cdd94df-c82e-4ac0-930f-1629387d9f1b`). Index vectorizer configs reference OpenAI endpoint without `apiKey` (relies on MI).
+
+6. **Blob indexer RBAC propagation delay** — First two indexer creation attempts failed with "credentials invalid" because RBAC hadn't propagated yet (~90 seconds needed). Third attempt succeeded.
+
+7. **Provider data null arrays** — NPIs 2345678901, 5678901234, 7890123456 are org/group providers with null `boardCertifications` and `languages`. Fixed by explicit null-checking and defaulting to `@("English")` / `@()`.
+
+8. **No Dockerfile for MCP server** — Created `data-sources/mcp-server/Dockerfile`. Build context is repo root; copies `data-sources/mcp-server/` and `sample-data/` so `../../sample-data` path in server.js resolves correctly at `/app/sample-data`.
+
+**Resources created/modified this session:**
+- `log-healthbridge-demo` (Log Analytics workspace, eastus)
+- `cae-healthbridge-demo` (Container Apps environment, Consumption tier)
+- `ca-mcp-healthbridge` (Container App, 0.5 CPU / 1 GiB, min 1 replica, external ingress)
+- AI Search indexes: `healthcare-payor-docs`, `healthbridge-formulary-index`, `healthbridge-provider-index`
+- AI Search data source: `healthcare-docs-blob` (ResourceId MI auth)
+- AI Search indexer: `healthcare-payor-indexer` (runs every 12h)
+- RBAC: search MI has `Storage Blob Data Reader` + `Cognitive Services OpenAI User`
+- RBAC: current user has `Storage Blob Data Contributor` on storage
+
+**What remains (manual / out of scope):**
+- Foundry project creation via ai.azure.com (manual — per team decision)
+- Connect Knowledge Base data sources in Foundry UI (follow `docs/azure-setup.md`)
+- Fabric Data Agent setup (requires Fabric workspace with Data Agent feature enabled — noted ⚠️)

@@ -136,3 +136,9 @@
 - Added **Step B-Verify** with a side-by-side name table for Option A vs Option B
 - Listed documentation-only files (`docs/azure-setup.md`, `docs/setup-guide.md`, `agent/README.md`) that also reference connection names and should be updated for consistency if Option B is chosen
 - Bumped to v1.3
+
+### 2026-06-22 — Foundry Resource-Model Mismatch Concern Flagged
+
+**From Data Agent execution (blocked):** During connection creation attempt, a technical concern was raised about Option A in the guide: the `az ml workspace` and `az rest` commands in the guide may be based on the **old AI Studio resource model** (`Microsoft.MachineLearningServices/workspaces`), while new Microsoft Foundry projects may use a different resource model (`Microsoft.CognitiveServices/accounts`). This could cause CLI command failures or REST path mismatches post-deployment. **ACTION:** Once Rob creates the Foundry project manually, verify actual resource type (via portal Resource Explorer) and reconcile guide if needed (possible v1.4 update to guide).
+
+---
