@@ -119,3 +119,7 @@ Rob flagged suspected classic Foundry UI inaccuracies. Mikey validated against c
 
 KB connection guide now documents both code-first (primary, Option A) and portal-first (Option B) connection creation paths. Portal-first only works for Storage + AI Search; requires manual editing of `knowledge-base-config.json` lines 29/51/83 to match auto-generated connection names. MCP + Fabric remain code-only in both options. No changes to your KB config JSON; guide documents both paths against its existing values. Guide bumped to v1.3.
 
+## 2026-06-23 — Foundry Resource Model Verified (Cross-Agent Note)
+
+**FROM: Data + Mikey** — New Foundry project is `Microsoft.CognitiveServices/accounts/projects` under `foundry-healthbridge-demo` account (NOT `MachineLearningServices/workspaces`). Blob + AI Search connections already exist with auto-names (`sthealthbridgedemo2ag633uyd`, `srch-healthbridge-connection`). If Option B chosen, edit `knowledge-base-config.json` lines 29/51/83 to match these auto-names. Guide updated to v1.4 with correct CognitiveServices paths.
+

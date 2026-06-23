@@ -354,6 +354,139 @@ Fabric connection (`healthbridge-fabric-connection`) remains ⚠️ PENDING — 
 
 ---
 
+### Decision: New Foundry Resource Model — Empirical Discovery
+
+**Author:** Data  
+**Date:** 2026-06-22  
+**Status:** Accepted  
+
+## Context
+
+Prior history noted `proj-healthbridge` as not existing because `az ml workspace show` returned ResourceNotFound. Rob McKenna confirmed the project DOES exist — the wrong resource model was being queried. This decision records the verified correct model so Mikey can fix the setup guide.
+
+## Findings (READ-ONLY discovery, no resources created)
+
+### Foundry Account
+
+| Field | Value |
+|-------|-------|
+| Name | `foundry-healthbridge-demo` |
+| Type | `Microsoft.CognitiveServices/accounts` |
+| Kind | `AIServices` |
+| SKU | S0 |
+| Location | eastus |
+| Full Resource ID | `/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/rg-knowledge-iq-demo/providers/Microsoft.CognitiveServices/accounts/foundry-healthbridge-demo` |
+
+### Project
+
+| Field | Value |
+|-------|-------|
+| Name | `proj-healthbridge` |
+| Type | `Microsoft.CognitiveServices/accounts/projects` |
+| Kind | `AIServices` |
+| Provisioning State | `Succeeded` |
+| Full Resource ID | `/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/rg-knowledge-iq-demo/providers/Microsoft.CognitiveServices/accounts/foundry-healthbridge-demo/projects/proj-healthbridge` |
+
+### Connections Endpoint
+
+**Working pattern:**
+```
+https://management.azure.com/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/rg-knowledge-iq-demo/providers/Microsoft.CognitiveServices/accounts/foundry-healthbridge-demo/projects/proj-healthbridge/connections?api-version=2025-04-01-preview
+```
+
+**API version results:**
+
+| api-version | Result |
+|-------------|--------|
+| `2025-04-01-preview` | ✅ 200 OK |
+| `2025-06-01` | ✅ 200 OK |
+| `2025-10-01-preview` | ✅ 200 OK |
+| `2024-10-01-preview` | ❌ NoRegisteredProviderFound |
+| `2025-01-01-preview` | ❌ NoRegisteredProviderFound |
+
+All supported api-versions per ARM: `2025-04-01-preview, 2025-06-01, 2025-07-01-preview, 2025-09-01, 2025-10-01-preview, 2025-12-01, 2026-01-15-preview, 2026-03-01, 2026-03-15-preview, 2026-05-01, 2026-05-15-preview`
+
+Account-level connections also work: `<ACCOUNT_ID>/connections?api-version=2025-04-01-preview`
+
+### Existing Connections on proj-healthbridge
+
+| Name | Category | AuthType | Target |
+|------|----------|----------|--------|
+| `srch-healthbridge-connection` | CognitiveSearch | ApiKey | `https://srch-healthbridge-demo.search.windows.net` |
+| `msf-demo-appinsights-8417` | AppInsights | ApiKey | `/subscriptions/.../ms-foundry-demo-rg/.../msf-demo-appinsights` |
+| `sthealthbridgedemo2ag633uyd` | AzureStorageAccount | AAD | `https://sthealthbridgedemo2agib7.blob.core.windows.net/` |
+
+### Correct Verify-Project Commands (replaces `az ml workspace show`)
+
+```powershell
+# Option 1 — show the project resource directly
+az resource show `
+  --ids "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/rg-knowledge-iq-demo/providers/Microsoft.CognitiveServices/accounts/foundry-healthbridge-demo/projects/proj-healthbridge" `
+  --api-version 2025-04-01-preview
+
+# Option 2 — show the parent Foundry account
+az cognitiveservices account show -g rg-knowledge-iq-demo -n foundry-healthbridge-demo
+
+# Option 3 — list connections (proves project is live and accessible)
+az rest --method GET `
+  --url "https://management.azure.com/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/rg-knowledge-iq-demo/providers/Microsoft.CognitiveServices/accounts/foundry-healthbridge-demo/projects/proj-healthbridge/connections?api-version=2025-04-01-preview"
+```
+
+## Decision
+
+1. **Retire `az ml workspace show`** from the guide — it is categorically wrong for new Foundry.
+2. **Use `Microsoft.CognitiveServices/accounts` (kind=AIServices)** as the canonical resource type for all guide references to the Foundry account.
+3. **Use `Microsoft.CognitiveServices/accounts/projects`** for project references.
+4. **Use `api-version=2025-04-01-preview`** as the minimum recommended api-version for connections REST calls (stable and supported).
+5. **Use `az resource show --ids <PROJ_ID> --api-version 2025-04-01-preview`** as the project verification command.
+6. The MCP and Blob Storage connections still need to be created under `proj-healthbridge`. The AI Search and Storage connections already exist.
+
+---
+
+### Decision: Foundry Resource Model — CognitiveServices, Not MLServices
+
+**Author:** Mikey (Lead)  
+**Date:** 2026-06-22  
+**Status:** Accepted  
+**Requested by:** Rob McKenna (Data performed empirical verification)
+
+## Context
+
+The KB connection guide (v1.0–v1.3) used `Microsoft.MachineLearningServices/workspaces` as the project resource type and `az ml workspace show` to get the project ID. Data performed empirical verification against the live Azure resources and discovered the project is actually a `Microsoft.CognitiveServices/accounts/projects` resource under a CognitiveServices account.
+
+## Key Facts (empirically verified)
+
+| Property | Value |
+|---|---|
+| Foundry account | `foundry-healthbridge-demo` |
+| Account type | `Microsoft.CognitiveServices/accounts` (kind: AIServices) |
+| Project | `proj-healthbridge` |
+| Project type | `Microsoft.CognitiveServices/accounts/projects` |
+| Connections API | `https://management.azure.com<PROJECT_ID>/connections?api-version=2025-04-01-preview` |
+| Managed identity | System-assigned, on the ACCOUNT (not the project sub-resource) |
+| Existing Blob connection | `sthealthbridgedemo2ag633uyd` (AAD auth) |
+| Existing Search connection | `srch-healthbridge-connection` (ApiKey auth) |
+
+## Decision
+
+1. **All documentation and CLI commands must use CognitiveServices resource paths** — never MachineLearningServices.
+2. **The correct `az` command to inspect the account** is `az cognitiveservices account show`, not `az ml workspace show`.
+3. **Managed identity RBAC targets the account** (`foundry-healthbridge-demo`), not the project.
+4. **Existing connections are functional** — Rob can either create new custom-named connections (Option A) or use the existing auto-named ones (Option B, requires config edit).
+
+## Impact
+
+- `docs/knowledge-base-connection-guide.md` updated to v1.4
+- `docs/azure-setup.md` and `docs/setup-guide.md` flagged with caution notes (full rewrite deferred)
+- `agent/knowledge-base-config.json` NOT modified (documented reconciliation only)
+- All future guides/scripts must use CognitiveServices paths
+
+## Action for Rob
+
+**Immediate:** Run only the MCP connection creation command from Step B-MCP (the only missing connection). Then decide Option A vs B for blob/search naming reconciliation.
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus

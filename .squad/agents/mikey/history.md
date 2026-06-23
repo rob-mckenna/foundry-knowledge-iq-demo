@@ -5,140 +5,43 @@
 - **Stack:** Azure AI Foundry, AI Search, Blob Storage, Fabric Data Agent, MCP
 - **User:** Rob McKenna
 
-## Learnings
+## Summary
 
-### 2026-06-05 — Initial project structure established
+**Completed:** All documentation written (README, setup-guide, demo-flow, architecture). KB connection guide (v1.0→v1.4) fully validated & corrected against live Microsoft Foundry portal (June 2026). Foundry resource model verified: new Foundry = `Microsoft.CognitiveServices/accounts/projects`, NOT `MachineLearningServices/workspaces`. All UI paths, RBAC targets, and connection creation flows corrected. Guide now documents two connection creation paths (Option A code-first, Option B portal-first with reconciliation). Decisions merged: ADR on demo architecture, 7 KB connection guide corrections, resource model fix.
 
-**Work done:**
-- Created `README.md` at project root (customer-facing, concise)
-- Scaffolded full directory structure: `data-sources/{mcp-server,ai-search,fabric-data-agent,blob-storage}`, `sample-data/`, `agent/`, `docs/`
-- Wrote placeholder READMEs for all directories explaining purpose, structure, and Foundry connection method
-- Wrote `docs/demo-flow.md` — full 45-minute narrative with 4 acts, 5 demo prompts, and anticipated Q&A
-- Filed architectural decision to `.squad/decisions/inbox/mikey-demo-architecture.md`
+## Key Work Phases
 
-**Key decisions made (see ADR):**
-- Four data sources selected for maximum architectural diversity: MCP (real-time), AI Search (semantic), Fabric Data Agent (structured analytics), Blob Storage (documents)
-- Single `sample-data/` directory as cross-source truth; all member/provider/claim IDs must be consistent
-- Five payor workflows anchor the demo prompts: eligibility, prior auth, formulary, claims analytics, provider network
-- New Azure AI Foundry only — no classic Foundry / Azure AI Studio references anywhere
+### 2026-06-05 — Architecture & Documentation
+- Created README (customer-facing), full directory structure, demo-flow narrative (45 min / 4 acts / Marcus Hartwell story arc), setup-guide, architecture doc with ASCII + Mermaid diagrams
+- **Key decisions:** Four-source architecture (MCP, AI Search, Fabric, Blob) for diversity; single sample-data/ source of truth; five payor workflows; new Foundry only
+- **Output:** All docs synchronized to HealthBridge Insurance Plan brand; Fabric flagged ⚠️ consistently
 
-**What's next:**
-- Team needs to populate `sample-data/` with synthetic data (500 members, 200 providers, 2,000 claims)
-- MCP server implementation in `data-sources/mcp-server/`
-- AI Search index config and document corpus
-- Fabric lakehouse setup and Data Agent configuration
-- Agent definition JSON and system prompt
+### 2026-06-21 — KB Connection Guide Validation (v1.0 → v1.4)
 
-### 2026-06-05 — Comprehensive documentation written
+**v1.1 (Rob's request):** Validated guide against Microsoft Learn (June 2026). Found 4 BLOCKER + 4 MAJOR + 3 MINOR errors in v1.0:
+- Navigation corrected: NOT "Settings gear → Connections" → actual is "Operate → Admin → Add connection"
+- KB architecture corrected: KB = Azure AI Search object, NOT portal "Knowledge bases" sidebar item
+- MCP corrected: NOT a Foundry connection type; configured as knowledge source on AI Search + agent tool
+- Embedding/retrieval UI corrected: These settings live on knowledge sources/indexes, NOT KB level
+- Fabric corrected: code-only, not portal
+- RBAC corrected: Cognitive Services OpenAI User role verified (not "Cognitive Services User")
 
-**Work done:**
-- Created `docs/setup-guide.md` — complete setup guide covering all prerequisites, MCP server install/test steps, AI Search index creation, Blob Storage deploy script, Fabric placeholder, Foundry connections, Knowledge Base configuration, agent deployment, and verification checklist
-- Created `docs/demo-script.md` — presenter-ready script with 3-minute quick-hits version and 10-minute Marcus Hartwell narrative arc; includes talking points for payor audience, screenshot placeholder notes, and common setup issues table
-- Created `docs/architecture.md` — full architecture overview with ASCII component map, Mermaid sequence diagram for query-time data flow, per-source role descriptions, MCP integration detail, and key architectural decisions table
-- Updated `README.md` — polished project README with Mermaid architecture graph, quick start (3 commands), data sources table, Fabric pending callout, sample prompts table, and complete documentation index
+**v1.2 (Rob's request):** Connection naming limitation discovered — portal auto-names from resource name with no rename option. Decision: ALL connections created via `az rest` for exact custom names matching config.json (consistent with MCP/Fabric being code-only anyway).
 
-**Doc structure decisions made:**
-- `setup-guide.md` is the canonical "how to run it" document; `azure-setup.md` is retained as a lower-level provisioning reference — both coexist
-- `demo-script.md` uses a single named fictional member (Marcus Hartwell / MBR-2024-001234) as the narrative thread for the 10-min version — this makes prompts coherent and memorable
-- Architecture doc includes both ASCII art (for GitHub rendering) and Mermaid diagrams (for richer tooling)
-- README quick start deliberately shows only 3 commands to get MCP running — lowers the barrier for first-time readers
-- Fabric Data Agent is flagged with ⚠️ consistently across all four docs using identical language
-- Screenshot placeholders are numbered and tabulated in demo-script.md to make it easy for a presenter to capture them in sequence
+**v1.3 (Rob's request):** Documented both paths — Option A (code-first all 4 connections) as primary, Option B (portal + code) with explicit `knowledge-base-config.json` line reconciliation (29, 51, 83).
 
-## Cross-Team Updates (2026-06-05)
+**v1.4 (Data's empirical discovery):** Resource model entirely corrected. Old guide used `MachineLearningServices/workspaces` + `az ml workspace show`. Actual: `CognitiveServices/accounts/projects` with different API paths. Rewrote Steps A0/A1/B to use correct resource types, corrected RBAC targets (Foundry account identity, not project), documented existing auto-named connections (`sthealthbridgedemo2ag633uyd`, `srch-healthbridge-connection`), added caution notes to azure-setup.md and setup-guide.md.
 
-**From Mouth (Domain Content):** Created 14 sample data files (claims, members, providers, policies, benefits) with internally consistent IDs (member MBR-*, provider NPI-*, claims CLM-*, prior auths PA-*). HealthBridge Insurance Plan brand, IL HMO focus. Ready for distribution across all four data sources.
+## Cross-Team Alignment (2026-06-05)
+- **Mouth:** Created 14 sample data files (members, claims, providers, policies, benefits) with consistent IDs
+- **Data:** Scaffolded all 4 data source configs (MCP, AI Search 3-index, Blob, Fabric)
+- **Chunk:** Created agent definition + 30 prompts + system prompt
+- **Expansion:** Mouth expanded to 8 members/8 claims/7 providers; Data completed MCP (7 tools, 33 tests) + 3 AI Search schemas; Chunk completed demo narrative + system prompt tools section
 
-**From Data (Data Engineer):** Scaffolded all four data source configs: MCP server (Node.js ESM with lookup/benefits tools), AI Search (index + skillset with HNSW vectors), Blob Storage (PowerShell deploy), Fabric Data Agent (connection config). All sources have actionable setup READMEs.
+## Decisions Filed
+1. **ADR: Demo Architecture** (2026-06-05) — Four-source diversity, five payor workflows, new Foundry only
+2. **KB Connection Guide Validation** (2026-06-21) — 8 UI facts verified with Microsoft Learn citations
+3. **Connection Naming Limitation** (2026-06-21) — Portal auto-names; code-first approach recommended
+4. **Document Both Paths** (2026-06-21) — Option A (code) and Option B (portal) with reconciliation
+5. **Foundry Resource Model** (2026-06-22) — CognitiveServices/accounts/projects, not MLServices; guide v1.4 corrected all paths/RBAC
 
-**From Chunk (Agent Builder):** Created agent definition (HealthBridge Assistant) with knowledge base config linking all four sources, system prompt, and 18 sample prompts (15 functional + 3 guardrail). Agent ready for Foundry instantiation.
-
-**Expansion Phase (2026-06-05):**
-- **Full buildout completed:** Mouth expanded to 8 members + 8 claims + 7 providers + 6 benefit summaries + 10 formulary drugs. Data completed MCP server (7 tools, HTTP, 33 passing tests) + 3 AI Search index schemas. Chunk completed 30 test prompts + demo narrative + system prompt tools section. All deliverables verified against live data.
-- **Brand standardization:** All 48 files in repo now use "HealthBridge Insurance Plan" unified brand (portal, phone, legal name). Cross-repo consistency achieved.
-- **Orchestration checkpoints logged:** Expansion manifest, full-buildout session log, and decision inbox merged (7 decisions). All squad documentation updated with cross-team impact notes.
-- **Ready for demo deployment:** Four data sources independently demoable. Knowledge Base ready for agent instantiation in Foundry UI.
-
-### 2026-06-21 — KB Connection Guide Validation & Correction (v1.0 → v1.1)
-
-**Requested by:** Rob McKenna (guide contained inaccurate UI instructions)
-
-**Work done:**
-- Performed independent review of `docs/knowledge-base-connection-guide.md` (authored by Chunk)
-- Validated all UI claims against current Microsoft Learn documentation (June 2026)
-- Rewrote guide as v1.1 with corrected navigation, architecture notes, and programmatic fallbacks
-
-**Key UI facts verified (with citations):**
-
-1. **Connections navigation (CORRECTED):** Current path is Operate → Admin → [project] → Add connection. NOT "Settings (gear icon) → Connections". Ref: https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add (updated 2026-06-19)
-
-2. **Knowledge Base = Azure AI Search object (CORRECTED):** KBs are Foundry IQ objects backed by Azure AI Search agentic retrieval. Portal path: Build → Knowledge tab. NOT "Knowledge bases" in the left sidebar. Ref: https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-foundry-iq (updated 2026-06-05)
-
-3. **MCP Server IS a valid KB knowledge source (CONFIRMED, preview):** MCP Server is a "remote" knowledge source kind in the 2026-05-01-preview API. However, it's configured on the AI Search service, not as a Foundry "connection type". Ref: https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-how-to-mcp-server (updated 2026-06-03)
-
-4. **MCP is NOT a Foundry connection type (CORRECTED):** The connection types table at learn.microsoft.com lists Azure AI Search, Azure Storage, Azure OpenAI, etc. — MCP Server is absent. MCP connections for agents use `RemoteTool` category programmatically. Ref: https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add#connection-types
-
-5. **Fabric connections are code-only (CORRECTED):** Microsoft Fabric is listed as a connection type but with note "Connection creation is supported only through code." Ref: same as #4.
-
-6. **KB does NOT expose embedding/retrieval UI settings (CORRECTED):** The KB object has name, description, knowledgeSources, retrievalInstructions, answerInstructions, outputMode, models. Settings like embedding model, dimensions, Top-K, Hybrid mode, semantic ranking are on knowledge sources/indexes, not the KB. Ref: https://learn.microsoft.com/en-us/azure/search/agentic-retrieval-how-to-create-knowledge-base
-
-7. **Agent ↔ KB connection uses MCP tool (CONFIRMED):** Agent connects to KB via MCPTool with server_url pointing to `{search-endpoint}/knowledgebases/{kb-name}/mcp`. The portal may surface this as a "Knowledge" section. Ref: https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-connect
-
-8. **RBAC roles verified:** "Cognitive Services OpenAI User" is correct (not "Cognitive Services User"). "Search Index Data Reader" for read access, "Search Service Contributor" for creating KB/knowledge source objects. Ref: https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-connect#authentication-and-permissions
-
-**What was corrected:**
-- Step A: Clarified managed identity discovery path (Azure portal preferred, Foundry portal path uncertain)
-- Step B: Rewrote connection navigation from "Settings → Connections" to "Operate → Admin → Add connection"
-- Step B: Changed "Azure Blob Storage" type to "Azure Storage" (correct portal label)
-- Step B: Replaced fictional "MCP Server" connection type with programmatic RemoteTool creation
-- Step B: Marked Fabric as code-only
-- Step C: Rewrote entire section from "left sidebar Knowledge bases" to "Build → Knowledge tab"
-- Step C: Replaced invented embedding/retrieval settings UI with knowledge source-centric workflow
-- Step C: Added proper MCP knowledge source creation (portal + REST fallback)
-- Step D: Changed navigation from "Agents in left sidebar" to "Build → Agents tab"
-- Step D: Changed "System prompt" to "Instructions" (current label)
-- Step D: Replaced "Knowledge section" attach flow with MCP tool configuration
-- Added Microsoft Learn reference table at bottom
-- Bumped version to 1.1
-
-### 2026-06-21 — Connection Naming Limitation Discovery (v1.1 → v1.2)
-
-**Requested by:** Rob McKenna (portal doesn't allow naming connections)
-
-**Verified facts:**
-
-1. **Portal does NOT allow custom connection names.** The portal UI (Operate → Admin → Add connection) auto-generates the connection name from the target resource name. There is no name field during creation and no rename capability after. Ref: [connections-add doc](https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add) — portal tab shows steps 1–8 with no name field.
-
-2. **Auto-naming convention:** The portal names connections after the resource (e.g., storage account `sthealthbridgedemo2agib7` → connection name `sthealthbridgedemo2agib7`). Confirmed by inspecting the [Bicep sample](https://github.com/microsoft-foundry/foundry-samples/blob/main/infrastructure/infrastructure-setup-bicep/01-connections/connection-storage-account.bicep) which shows the `name` property as a free-form string at the resource definition level.
-
-3. **Custom names require code.** Connections created via Bicep, REST API (`az rest --method PUT`), or SDK allow setting the connection `name` property freely. The ARM resource path is: `Microsoft.CognitiveServices/accounts/projects/connections@2025-04-01-preview` where the final segment is the connection name.
-
-4. **Recommendation applied:** For this demo, ALL connections (Azure Storage, AI Search, MCP) are now created via `az rest` with exact custom names matching `agent/knowledge-base-config.json`. This avoids a name mismatch cascade and is consistent with MCP/Fabric being code-only anyway.
-
-**What was corrected (v1.2):**
-- Rewrote entire Step B from "portal-first with rename" to "code-first with exact names"
-- Added `B0` step to get PROJECT_ID
-- Provided complete `az rest` commands for all three connections with correct ARM API, categories, and auth types
-- Moved portal path to a "portal-only alternative" footnote that warns about auto-naming and config mismatch
-- Removed all references to "renaming" connections (not possible)
-- Bumped to v1.2
-
-### 2026-06-21 — Dual-Path Connection Guide (v1.2 → v1.3)
-
-**Requested by:** Rob McKenna (wants both code and portal paths documented)
-
-**What was changed:**
-- Restructured Step B into two clearly-labeled options:
-  - **Option A — Code-first (recommended):** Existing `az rest` flow for all connections with exact custom names. Zero config edits.
-  - **Option B — Portal-first:** Portal clicks for Azure Storage + AI Search (the two portal-supported types), then code for MCP + Fabric. Includes explicit reconciliation table listing the 3 exact `connectionNameRef` lines in `agent/knowledge-base-config.json` (lines 29, 51, 83) that must change to match auto-generated names.
-- Added decision-helper comparison table at top of Step B (method, names, config edits, consistency, best-for)
-- Extracted MCP and Fabric into shared **Step B-MCP** and **Step B-Fabric** sections used by both options
-- Added **Step B-Verify** with a side-by-side name table for Option A vs Option B
-- Listed documentation-only files (`docs/azure-setup.md`, `docs/setup-guide.md`, `agent/README.md`) that also reference connection names and should be updated for consistency if Option B is chosen
-- Bumped to v1.3
-
-### 2026-06-22 — Foundry Resource-Model Mismatch Concern Flagged
-
-**From Data Agent execution (blocked):** During connection creation attempt, a technical concern was raised about Option A in the guide: the `az ml workspace` and `az rest` commands in the guide may be based on the **old AI Studio resource model** (`Microsoft.MachineLearningServices/workspaces`), while new Microsoft Foundry projects may use a different resource model (`Microsoft.CognitiveServices/accounts`). This could cause CLI command failures or REST path mismatches post-deployment. **ACTION:** Once Rob creates the Foundry project manually, verify actual resource type (via portal Resource Explorer) and reconcile guide if needed (possible v1.4 update to guide).
-
----

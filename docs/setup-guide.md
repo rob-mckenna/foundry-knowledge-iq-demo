@@ -76,6 +76,8 @@ az provider register --namespace Microsoft.MachineLearningServices
 
 Azure AI Foundry now uses a flat **project** model. Create the project directly — no hub is required.
 
+> ⚠️ **Resource model update (2026-06-22):** The live `proj-healthbridge` project is a `Microsoft.CognitiveServices/accounts/projects` resource under the Foundry account `foundry-healthbridge-demo` — NOT an `Microsoft.MachineLearningServices/workspaces` resource. The `az ml workspace create --kind project` command below may have been used historically, but the current new-Foundry model uses CognitiveServices. If recreating, use the Foundry portal or Bicep with `Microsoft.CognitiveServices/accounts/projects`. See `docs/knowledge-base-connection-guide.md` Step B for the correct resource ID format.
+
 ```bash
 az ml workspace create \
   --name proj-healthbridge \
