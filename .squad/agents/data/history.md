@@ -44,5 +44,15 @@
 | Storage | `sthealthbridgedemo2agib7` | `https://sthealthbridgedemo2agib7.blob.core.windows.net/` (45 docs) |
 | MCP Server (CA) | `ca-mcp-healthbridge` | `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/mcp` |
 
-**Next:** Create remaining connections (MCP + custom-named Blob/Search via `az rest`, or use existing auto-names + edit KB config).
+**Next:** Fabric prerequisites remain to create `healthbridge-fabric-connection`; all other KB connection name alignment is complete.
 
+## Learnings
+
+- **2026-07-07T03:51:25.125-04:00:** Verified live Foundry project path remains `Microsoft.CognitiveServices/accounts/foundry-healthbridge-demo/projects/proj-healthbridge`; connections endpoint `.../connections?api-version=2025-04-01-preview` is healthy.
+- **2026-07-07T03:51:25.125-04:00:** Created `healthbridge-mcp-connection` (category `RemoteTool`, auth `None`, target `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/mcp`) after confirming MCP `/health` returned 200.
+- **2026-07-07T03:51:25.125-04:00:** On Windows PowerShell, `az rest --method PUT` for Foundry connections is reliable when request body is passed as `@<json-file>` (UTF-8 no BOM); inline JSON body attempts returned parse/media-type errors.
+- **2026-07-07T03:51:25.125-04:00:** KB wiring still has two blockers: `healthbridge-fabric-connection` is absent (Fabric workspace/agent prerequisite), and config-name mismatch remains unless team chooses Option A (create `healthbridge-blob-connection` + `healthbridge-aisearch-connection`) or Option B (map config to existing `sthealthbridgedemo2ag633uyd` + `srch-healthbridge-connection`).
+- **Key file paths:** `docs/knowledge-base-connection-guide.md`, `agent/knowledge-base-config.json`, `.squad/decisions.md`.
+- **2026-07-07T04:05:39.100-04:00:** Resolved runtime/config name mismatch by creating `healthbridge-blob-connection` and `healthbridge-aisearch-connection` on `proj-healthbridge`; `agent/knowledge-base-config.json` required no edits because refs already matched target names.
+- **2026-07-07T04:05:39.100-04:00:** Final source readiness matrix now shows MCP ✅, AI Search ✅, Blob ✅, Fabric ❌ (missing `healthbridge-fabric-connection` due to external Fabric workspace/agent prerequisite).
+- **2026-07-07T07:05:22Z (Scribe consolidation):** Data agent work archived in decisions.md consolidation. Decision entry "Foundry connection create payload pattern on Windows" merged from inbox → active decisions. Decisions archive created with 8 historical entries (2026-06-05 and 2026-06-08 phases). Team runbooks should adopt file-based JSON payload approach for Windows Foundry connection creation.
