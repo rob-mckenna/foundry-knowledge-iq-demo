@@ -395,6 +395,24 @@ Inline JSON bodies repeatedly failed with `Unsupported Media Type` / `unable to 
 
 ---
 
+### Decision: Connection name mismatch resolved via custom-name creation
+
+**Author:** Data  
+**Date:** 2026-07-07T04:05:39.100-04:00  
+**Requested by:** Rob McKenna
+
+## Decision
+
+Use Option A in the live project: create custom-named Foundry connections `healthbridge-blob-connection` and `healthbridge-aisearch-connection` so runtime state matches `agent/knowledge-base-config.json` without config edits.
+
+## Result
+
+- Name mismatch blocker is cleared.
+- `agent/knowledge-base-config.json` remains unchanged and now aligns with project connections for Blob, AI Search, and MCP.
+- Remaining blocker is only Fabric prerequisites (`healthbridge-fabric-connection` not yet creatable until Fabric workspace/data agent inputs are available).
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus
