@@ -7,6 +7,44 @@
 
 ## Work Log
 
+### 2026-07-09 — Demo Script Finalization (Issue #10)
+
+Updated `docs/demo-script.md` from v1.0 → v1.1. Changes:
+
+**Scope and framing:**
+- Added top-of-file Fabric blocker warning — Fabric is blocked, demo runs on 3 sources
+- 3-min version updated: "four sources" → "three sources"; added note for handling Fabric questions
+- 10-min version updated: Fabric references changed to "coming soon" with a single natural bridge line
+
+**Timing:**
+- Added explicit clock markers (0:00–1:00, 1:00–2:30, etc.) to every act in both versions
+- Added total budget callouts ("Total budget: 3 min", "Total budget: 10 min")
+
+**Presenter notes:**
+- Added `📝 Presenter note:` callouts at every key decision point in the 10-min version:
+  - Act 1: pause and read the room
+  - Act 2: read citation name aloud
+  - Act 3: identified as the wow moment; technical add-on
+  - Act 4: clinical vs. technical angle split
+  - Act 6: skip if running late
+  - Act 7: Fabric bridge line
+- Updated "Before You Start" checklist with go/no-go gate: don't present with a broken environment
+
+**Fallback procedures (new section):**
+- Fallback A: "I wasn't able to find information" → index not ready
+- Fallback B: no citations → toggle / system prompt issue
+- Fallback C: MCP fails → skip Act 3, pivot to Act 4
+- Fallback D: AI Search empty → fall back to Blob Storage prompts
+- Fallback E: slow/timeout → narrate while waiting; rephrase if >30 sec
+
+**Troubleshooting table:**
+- Expanded with Fabric "attempted by mistake" row and sign-in issue row
+- Fallback references linked by letter
+
+**Key decisions:**
+- Confirmed demo-script.md counts "three" active sources until Fabric is live (not four)
+- Fabric question handling standardized: use the "coming soon" bridge line, not silence
+
 ### 2026-07-09 — Demo Readiness Checklist (Issue #7)
 
 Created `docs/demo-readiness-checklist.md` — a day-of-demo sign-off sheet covering all core prerequisites for the HealthBridge Knowledge IQ demo.
