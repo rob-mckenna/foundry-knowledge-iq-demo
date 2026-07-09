@@ -26,13 +26,13 @@ Is Dr. Patricia Chen an in-network provider for my plan?
 > Callout: Tier 1, specialty, NPI, accepting new patients, citation visible.
 
 ```
-Is Ozempic covered on my formulary, and is prior authorization required?
+My doctor prescribed celecoxib for pain after surgery. What tier is it on the formulary?
 ```
 > Say: "Formulary — different AI Search index."
-> Callout: Tier 4 Specialty, PA required, step therapy.
+> Callout: Tier 2, $45 retail per 30-day supply, $110 mail order per 90-day supply, no PA required.
 
 ```
-What is the out-of-pocket maximum for the PPO Gold plan this year?
+What is the out-of-pocket maximum for the HMO Silver plan this year?
 ```
 > Say: "PDF in Blob Storage — zero preprocessing."
 > Callout: Individual + family OOP, citation points to PDF.
@@ -76,7 +76,7 @@ My doctor prescribed celecoxib for pain after surgery.
 What tier is it on the formulary?
 ```
 > Say while waiting: "Formulary index — vector + semantic search."
-> Callout: Tier 1, no PA, copay only.
+> Callout: Tier 2, $45 retail per 30-day supply, $110 mail order per 90-day supply, no PA required.
 > 📸 Screenshot 5
 
 ---
