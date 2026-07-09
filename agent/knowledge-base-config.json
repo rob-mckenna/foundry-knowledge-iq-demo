@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.azure.com/ai/foundry/knowledge-base/v1",
-  "name": "healthbridge-knowledge-base",
+  "name": "payor-knowledge-base",
   "displayName": "HealthBridge Payor Knowledge Base",
   "description": "Multi-source Knowledge Base for the HealthBridge Insurance demo. Covers benefits, claims, prior auth, formulary, and provider network content.",
 

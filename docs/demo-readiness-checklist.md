@@ -1,568 +1,133 @@
-# HealthBridge Knowledge IQ — Demo Readiness Checklist
+# Demo Readiness Checklist — HealthBridge Knowledge IQ
 
-**Version:** 1.0  
-**Date Created:** 2026-07-09  
-**Target Audience:** HealthBridge Sales / Presenter  
-**For:** Live demonstration to healthcare payor decision-makers
+**Demo:** Knowledge IQ in Azure AI Foundry — Healthcare Payor  
+**Environment:** `proj-healthbridge` on [ai.azure.com](https://ai.azure.com)  
+**Member scenario:** Marcus Hartwell · MBR-2024-001234 · PPO Gold
 
----
-
-## Overview
-
-This checklist verifies that all infrastructure, configurations, data, and workflows are ready for a live demo of Knowledge IQ in Azure AI Foundry. The demo is ~5 minutes and requires all four data sources to be live, with sample data verified to be correct and complete.
-
-**High-risk items** (marked ⚠️) can block the demo if not ready. Fallback procedures are provided below.
+> **⚠️ Known blocker:** Fabric Data Agent connection (`healthbridge-fabric-connection`) is not yet available — requires Fabric workspace GUID + `healthbridge-claims-agent` setup. Demo prompts that rely on claims analytics (Prompt 4 / Prompt 5) must be skipped or noted as "coming soon" until this is resolved. See `docs/connection-status.md`.
 
 ---
 
-## Part I: Pre-Demo Infrastructure Checks
+## 1 · Azure Infrastructure
 
-### Azure Resource Group & Subscription
-
-- [ ] **Subscription access:** Verify you can log into Azure CLI and see `rg-knowledge-iq-demo` resource group
-  ```bash
-  az group show --name rg-knowledge-iq-demo
-  ```
-- [ ] **Required resource providers registered:**
-  ```bash
-  az provider show --namespace Microsoft.Search --query registrationState
-  az provider show --namespace Microsoft.CognitiveServices --query registrationState
-  ```
-
-### Azure OpenAI Deployment
-
-- [ ] **Embedding model deployed:** `text-embedding-3-small` with at least 10K TPM available
-  ```bash
-  az cognitiveservices account deployment list \
-    --name foundry-healthbridge-demo \
-    --resource-group rg-knowledge-iq-demo
-  ```
-  Expected: `text-embedding-3-small` in STANDARD deployment mode, status `Succeeded`
-
-- [ ] **Completion model deployed:** `gpt-4o` with at least 20K TPM available (used by both agent and knowledge base synthesis)
-  ```bash
-  # Same command as above; look for gpt-4o in the deployment list
-  ```
-
-### ⚠️ MCP Server — Azure Container Apps
-
-- [ ] **Container App is running:**
-  ```bash
-  az containerapp show --name ca-mcp-healthbridge \
-    --resource-group rg-knowledge-iq-demo \
-    --query "properties.provisioningState"
-  ```
-  Expected: `Succeeded`
-
-- [ ] **MCP Server responds to health check (< 3 seconds):**
-  ```bash
-  curl -s https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/health | jq .
-  ```
-  Expected:
-  ```json
-  {
-    "status": "ok",
-    "server": "healthcare-payor-mcp",
-    "version": "1.0.0"
-  }
-  ```
-
-- [ ] **Sample data loaded in MCP:** Verify at least 5 sample members are present
-  ```bash
-  curl -s "https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/tools/lookup_member?memberId=MBR-2024-002891" | jq .
-  ```
-  Expected: Member record for Sarah Nguyen with plan HMO Silver and status ACTIVE
-
-### Azure AI Search Service
-
-- [ ] **Search service status is healthy:**
-  ```bash
-  az search service show --name srch-healthbridge-demo \
-    --resource-group rg-knowledge-iq-demo \
-    --query "provisioningState"
-  ```
-  Expected: `Succeeded`
-
-- [ ] **All three indexes exist and are not empty:**
-  ```bash
-  az search index list --service-name srch-healthbridge-demo
-  ```
-  Expected: Three indexes listed:
-  - `healthbridge-formulary-index` (should have ~10 drug records)
-  - `healthbridge-provider-index` (should have ~7 provider records)
-  - `healthcare-payor-docs` (should have ~45 policy/benefits documents)
-
-- [ ] **Index document counts (via Azure CLI or portal):**
-  - [ ] `healthcare-payor-docs`: ≥ 40 documents (policy PDFs, benefits summaries, coverage criteria)
-  - [ ] `healthbridge-formulary-index`: ≥ 10 documents (drug records, celecoxib must be present)
-  - [ ] `healthbridge-provider-index`: ≥ 6 documents (provider network, must include Dr. Patricia Chen)
-
-### Azure Blob Storage
-
-- [ ] **Storage account is accessible:**
-  ```bash
-  az storage account show --name sthealthbridgedemo2agib7 \
-    --resource-group rg-knowledge-iq-demo
-  ```
-  Expected: `provisioningState: Succeeded`
-
-- [ ] **Container exists and contains documents:**
-  ```bash
-  az storage blob list --account-name sthealthbridgedemo2agib7 \
-    --container-name healthcare-docs
-  ```
-  Expected: At least 15 files (benefit summaries, policy documents)
+| # | Item | Owner | Status |
+|---|------|-------|--------|
+| 1.1 | Resource group `rg-knowledge-iq-demo` exists in `eastus` | Data | ☐ |
+| 1.2 | Azure AI Foundry account `foundry-healthbridge-demo` is live | Data | ☐ |
+| 1.3 | Project `proj-healthbridge` open and accessible at ai.azure.com | Data | ☐ |
+| 1.4 | Azure OpenAI `oai-healthbridge-demo` deployed with `text-embedding-3-small` (≥30K TPM) | Data | ☐ |
+| 1.5 | AI Search service `srch-healthbridge-demo` is running (Basic tier or above) | Data | ☐ |
+| 1.6 | Storage account `sthealthbridgedemo2agib7` accessible, container `healthcare-docs` exists | Data | ☐ |
+| 1.7 | MCP server Container App reachable at health endpoint | Data | ☐ |
 
 ---
 
-## Part II: Foundry Configuration Checks
+## 2 · RBAC & Managed Identity
 
-### Foundry Project & Connections
-
-- [ ] **Foundry project exists and is accessible:**
-  ```bash
-  az ml workspace show --name proj-healthbridge --resource-group rg-knowledge-iq-demo
-  ```
-  Expected: Name = `proj-healthbridge`, provisioningState = `Succeeded`
-
-- [ ] **Four connections are created and active (verify in Foundry portal → Operate → Admin → Connections):**
-  | Connection Name | Type | Status |
-  |---|---|---|
-  | `healthbridge-mcp-connection` | RemoteTool (MCP) | ✅ Active |
-  | `healthbridge-blob-connection` | Azure Storage | ✅ Active |
-  | `healthbridge-aisearch-connection` | Azure AI Search | ✅ Active |
-  | `healthbridge-fabric-connection` | Fabric Data Agent | ⚠️ (see blockers below) |
-
-- [ ] **Test each connection from Foundry portal:**
-  - MCP: Click **Test** → expected response: `{ status: "ok" }`
-  - Blob: Click **Test** → expected result: Can authenticate and list containers
-  - AI Search: Click **Test** → expected result: Can connect and list indexes
-
-### ⚠️ Knowledge Base (`payor-knowledge-base`)
-
-- [ ] **Knowledge base exists:**
-  Navigate to Foundry portal → **Build** → **Knowledge** → Look for `payor-knowledge-base`
-  Expected: Status = **Ready** (not grayed out, not syncing)
-
-- [ ] **All four knowledge sources are attached:**
-  Open KB details, check **Knowledge sources** section:
-  - [ ] `healthcare-payor-docs-source` (Azure AI Search, `healthcare-payor-docs` index) — status: Active
-  - [ ] `healthbridge-formulary-source` (Azure AI Search, `healthbridge-formulary-index`) — status: Active
-  - [ ] `healthbridge-provider-source` (Azure AI Search, `healthbridge-provider-index`) — status: Active
-  - [ ] `mcp-prior-auth-source` (MCP Server, `ca-mcp-healthbridge` endpoint) — status: Active
-
-- [ ] **Retrieval settings are correct:**
-  - Hybrid search: ✅ Enabled
-  - Semantic ranking: ✅ Enabled
-  - Top-K: = **5**
-  - Minimum reranker score: = **0.5**
-
-### ⚠️ Agent (`healthbridge-assistant`)
-
-- [ ] **Agent exists and is deployed:**
-  Navigate to Foundry portal → **Build** → **Agents** → Look for `healthbridge-assistant`
-  Expected: Status = **Ready** (not grayed out, last deployed timestamp recent)
-
-- [ ] **Agent is connected to Knowledge Base:**
-  Open agent details → **Knowledge** section
-  Expected: `payor-knowledge-base` is listed and status is **Active**
-
-- [ ] **System prompt is present:**
-  Open agent details → **System prompt** field
-  Expected: Contains healthcare payor guardrails (e.g., "Do not provide medical advice", "Do not share bulk PHI")
-
-- [ ] **Playground opens and responds to a test prompt (< 5 seconds):**
-  Click **Playground** tab, type: `"What is my deductible under PPO Gold?"`
-  Expected: Agent responds with: "I can look up plan details. Please tell me your member ID or plan name, and I'll retrieve your deductible information from our benefits summary."
+| # | Item | Owner | Status |
+|---|------|-------|--------|
+| 2.1 | Foundry project managed identity has **Search Index Data Reader** on `srch-healthbridge-demo` | Data | ☐ |
+| 2.2 | Foundry project managed identity has **Search Service Contributor** on `srch-healthbridge-demo` | Data | ☐ |
+| 2.3 | Foundry project managed identity has **Storage Blob Data Reader** on `sthealthbridgedemo2agib7` | Data | ☐ |
+| 2.4 | Foundry project managed identity has **Cognitive Services OpenAI User** on `oai-healthbridge-demo` | Data | ☐ |
 
 ---
 
-## Part III: Data Completeness Checks
+## 3 · Data Sources & Connections
 
-### Sample Data Presence in MCP Server
-
-These checks confirm that live data in the MCP server is correct and complete for Act 1 & Act 2 of the demo.
-
-- [ ] **Member MBR-2024-002891 exists (Sarah Nguyen):**
-  ```bash
-  curl -s "https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/tools/lookup_member?memberId=MBR-2024-002891" | jq .
-  ```
-  Expected: Sarah L. Nguyen, HMO Silver plan, Status ACTIVE, Deductible: $1,500
-
-- [ ] **Claim CLM-2026-0061872 exists (knee replacement, PAID):**
-  ```bash
-  curl -s "https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/tools/lookup_claim?claimId=CLM-2026-0061872" | jq .
-  ```
-  Expected: Status PAID, Amount: $18,200 (allowed), PA number: PA-2026-087341
-
-- [ ] **Prior auth policy for physical therapy is retrievable:**
-  ```bash
-  curl -s "https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/tools/get_prior_auth_requirements?serviceCategory=Physical%20Therapy" | jq .
-  ```
-  Expected: PA required only after 20 visits per calendar year
-
-### Sample Data in Azure AI Search
-
-These checks confirm that formulary and provider data is indexed and searchable.
-
-- [ ] **Celecoxib is indexed in the formulary (required for Act 4):**
-  1. Go to Azure Portal → AI Search → `srch-healthbridge-demo` → `healthbridge-formulary-index`
-  2. Click **Search explorer**
-  3. Search query: `celecoxib` (hit ⏎)
-  4. Expected: Drug record with:
-     - Drug name: "Celecoxib"
-     - Tier: "Tier 1"
-     - Therapeutic class: "NSAID"
-     - Quantity limit: None (or standard daily)
-
-- [ ] **Dr. Patricia Chen is indexed in the provider directory (required for Act 5):**
-  1. Go to Azure Portal → AI Search → `srch-healthbridge-demo` → `healthbridge-provider-index`
-  2. Click **Search explorer**
-  3. Search query: `Dr. Patricia Chen` (hit ⏎)
-  4. Expected: Provider record with:
-     - Name: "Dr. Patricia M. Chen"
-     - Specialty: "Internal Medicine"
-     - Status: "ACTIVE_IN_NETWORK"
-     - Location: Chicago IL
-
-- [ ] **Physical therapy providers exist (required for Act 5 fallback):**
-  1. Search query: `physical therapy` (hit ⏎)
-  2. Expected: At least 1 result with therapist name and location
-
-### Sample Documents in Azure Blob Storage
-
-These checks confirm that benefits summaries and policy documents are present.
-
-- [ ] **At least one benefit summary is readable:**
-  1. Go to Azure Portal → Storage Accounts → `sthealthbridgedemo2agib7` → **Containers** → `healthcare-docs`
-  2. Expected files: `ppo-gold-benefit-summary.md`, `hmo-silver-benefit-summary.md`, `epo-gold-benefit-summary.md`
-  3. Download one and verify it contains:
-     - Plan name (e.g., "PPO Gold")
-     - Deductible amount
-     - Out-of-pocket maximum
-     - Copay information
+| # | Item | Owner | Status |
+|---|------|-------|--------|
+| 3.1 | `healthbridge-blob-connection` registered in Foundry → Connected ✅ | Data | ☐ |
+| 3.2 | `healthbridge-aisearch-connection` registered in Foundry → Connected ✅ | Data | ☐ |
+| 3.3 | `healthbridge-mcp-connection` registered in Foundry → Connected ✅ | Data | ☐ |
+| 3.4 | `healthbridge-fabric-connection` registered in Foundry → Connected (**BLOCKED** ⚠️) | Data | ⚠️ |
+| 3.5 | AI Search indexes `healthbridge-formulary-index` and `healthbridge-provider-index` created and populated | Data | ☐ |
+| 3.6 | Blob container `healthcare-docs` contains uploaded sample documents from `sample-data/` | Data | ☐ |
+| 3.7 | MCP server health endpoint returns HTTP 200 | Data | ☐ |
 
 ---
 
-## Part IV: Demo Flow Validation — 5 Acts with Test Prompts
+## 4 · Sample Data
 
-Run these prompts in sequence using the agent **Playground** in Foundry. If any prompt fails, log the error in the sign-off table under **Notes**.
-
-### Act 1 — Eligibility Check (MCP Server)
-**Expected data source:** Fabric Data Agent + MCP Server
-
-**Test prompt:**
-```
-Member MBR-2024-002891 is Sarah Nguyen. Is she currently eligible on our plan, and what is her deductible status?
-```
-
-**Expected response contains:**
-- ✅ Status: Active
-- ✅ Plan: HMO Silver
-- ✅ Deductible: $1,500 (or year-to-date status)
-- ✅ Citation: MCP Server or Fabric Data Agent
-
-**Test result:** [ ] Pass · [ ] Fail · [ ] Timeout  
-**Notes:** _______________
+| # | Item | Owner | Status |
+|---|------|-------|--------|
+| 4.1 | Member `MBR-2024-001234` (Marcus Hartwell) record is in sample data and queryable | Mouth | ☐ |
+| 4.2 | Provider Dr. Patricia Chen (`NPI-1234567890`) is in AI Search provider index | Mouth | ☐ |
+| 4.3 | Formulary entries include Ozempic (GLP-1) and Humira (adalimumab) with tier, PA, step therapy | Mouth | ☐ |
+| 4.4 | Prior auth record for lumbar MRI / CPT 22612 exists and is queryable via MCP | Mouth | ☐ |
+| 4.5 | PPO Gold benefit summary PDF / markdown is in `healthcare-docs` Blob container | Mouth | ☐ |
+| 4.6 | All cross-referenced member IDs, PA numbers, and claim IDs are consistent across data sources | Mouth | ☐ |
 
 ---
 
-### Act 2 — Claims & EOB Explanation (MCP Server)
-**Expected data source:** Fabric Data Agent + MCP
+## 5 · Knowledge Base & Agent
 
-**Test prompt:**
-```
-Sarah had a right knee replacement on April 28th. Claim CLM-2026-0061872 shows I owe $3,654. Can you explain the math?
-```
-
-**Expected response contains:**
-- ✅ Billed amount: $18,200
-- ✅ Deductible applied: $1,500
-- ✅ Coinsurance owed: $2,154 (30% of $7,180)
-- ✅ Prior auth number: PA-2026-087341
-- ✅ Citation: MCP Server or Fabric
-
-**Test result:** [ ] Pass · [ ] Fail · [ ] Timeout  
-**Notes:** _______________
+| # | Item | Owner | Status |
+|---|------|-------|--------|
+| 5.1 | Knowledge Base `payor-knowledge-base` created in Foundry with 3 active data sources (Blob, AI Search ×2, MCP) | Chunk | ☐ |
+| 5.2 | KB retrieval set to: Hybrid search, Semantic ranking ON, Top-K = 5, Min reranker score = 0.5, Query rewrite ON | Chunk | ☐ |
+| 5.3 | KB initial indexing complete (allow 5–15 min after save) — index status shows green | Chunk | ☐ |
+| 5.4 | Agent `healthbridge-assistant` created with GPT-4o base model | Chunk | ☐ |
+| 5.5 | Agent system prompt from `agent/system-prompt.md` is loaded | Chunk | ☐ |
+| 5.6 | Agent temperature set to `0.1` | Chunk | ☐ |
+| 5.7 | `payor-knowledge-base` linked to the agent under **Knowledge** | Chunk | ☐ |
+| 5.8 | MCP tools (`get_prior_auth_requirements`, `get_clinical_coverage_criteria`) enabled on agent | Chunk | ☐ |
+| 5.9 | Smoke test prompts from `docs/azure-setup.md` (Step 7) all return valid, cited responses | Chunk | ☐ |
 
 ---
 
-### Act 3 — Prior Authorization Requirements (MCP Server + AI Search)
-**Expected data source:** MCP Server + AI Search policies
+## 6 · Playground & Presenter Setup
 
-**Test prompt:**
-```
-Sarah's surgeon wants to start physical therapy 3 times per week. Does she need prior authorization?
-```
-
-**Expected response contains:**
-- ✅ PA not required for first 20 visits per year
-- ✅ PA required for visits 21+
-- ✅ Reference to therapy policy
-- ✅ Citation: Both MCP Server (for policy rule) and/or AI Search (for clinical policy)
-
-**Test result:** [ ] Pass · [ ] Fail · [ ] Timeout  
-**Notes:** _______________
+| # | Item | Owner | Status |
+|---|------|-------|--------|
+| 6.1 | Browser open to ai.azure.com, signed in, on `proj-healthbridge` | Presenter | ☐ |
+| 6.2 | `healthbridge-assistant` open in **Playground** tab | Presenter | ☐ |
+| 6.3 | **Citations** panel enabled (toggle in upper-right of Playground) | Presenter | ☐ |
+| 6.4 | **Trace** view available but closed (open on request during demo) | Presenter | ☐ |
+| 6.5 | Demo prompt sequence from `docs/demo-script.md` is at hand (printed or second screen) | Presenter | ☐ |
+| 6.6 | Screenshots captured for all 8 marked locations in `docs/demo-script.md` | Presenter | ☐ |
+| 6.7 | Fabric-dependent prompts (Prompt 4/5 per demo-flow.md) are flagged/removed from deck if Fabric is not live | Presenter | ☐ |
 
 ---
 
-### Act 4 — Formulary & Drug Tier (Azure AI Search)
-**Expected data source:** Azure AI Search formulary index
+## 7 · End-to-End Smoke Test
 
-**Test prompt:**
-```
-Sarah's doctor prescribed celecoxib for pain. What tier is it on, and what will her copay be under HMO Silver?
-```
+Run all of these in the Playground **before** the demo. Mark each ✅ or ❌.
 
-**Expected response contains:**
-- ✅ Drug name: Celecoxib
-- ✅ Tier: Tier 1
-- ✅ No PA required
-- ✅ HMO Silver copay: (check Blob benefit summary for exact amount)
-- ✅ Citation: AI Search formulary index
-
-**Test result:** [ ] Pass · [ ] Fail · [ ] Timeout  
-**Notes:** _______________
+| # | Prompt | Expected | Actual | Pass? |
+|---|--------|----------|--------|-------|
+| S1 | `Is Dr. Patricia Chen an in-network provider for my plan?` | Name, specialty, tier, location, accepting new patients; citation: AI Search providers | | ☐ |
+| S2 | `Is Ozempic covered on my formulary, and is prior authorization required?` | Tier 4 Specialty, PA required, step therapy noted; citation: AI Search formulary | | ☐ |
+| S3 | `What is the out-of-pocket maximum for the PPO Gold plan this year?` | Individual + family OOP figures; citation: Blob Storage PDF | | ☐ |
+| S4 | `Marcus has been referred for an MRI of his knee. Does he need prior authorization?` | PA required, CPT 73721, ordering provider submits; citations: MCP + Blob | | ☐ |
+| S5 | *(Skip if Fabric not live)* `Top five denial reason codes for PPO plan in orthopedics over last 12 months` | Claims analytics result; citation: Fabric Data Agent | | ⚠️ |
 
 ---
 
-### Act 5 — Provider Network Search (Azure AI Search)
-**Expected data source:** Azure AI Search provider directory
+## 8 · Sign-Off
 
-**Test prompt:**
-```
-Can you find me a physical therapist near Naperville, Illinois who is in-network and accepting new patients?
-```
+All owners sign off before demo day. Record date and initials.
 
-**Expected response contains:**
-- ✅ At least one provider name and location
-- ✅ Specialization: Physical Therapy / PT
-- ✅ Network status: In-network
-- ✅ Accepting new patients: Yes (if available in data)
-- ✅ Citation: AI Search provider index
+| Owner | Role | Items Covered | Signed Off | Date |
+|-------|------|---------------|------------|------|
+| Data | Data Engineer | Sections 1, 2, 3 | ☐ | |
+| Mouth | Domain Content | Section 4 | ☐ | |
+| Chunk | Agent Builder | Section 5 | ☐ | |
+| Mikey | Lead | All sections — final review | ☐ | |
+| Presenter | Demo Presenter | Sections 6, 7 | ☐ | |
 
-**Test result:** [ ] Pass · [ ] Fail · [ ] Timeout  
-**Notes:** _______________
+> **Demo is GO when:** Sections 1–5 are fully checked, all smoke tests in Section 7 pass (S1–S4 are required; S5 optional), and all four non-Presenter owners have signed off.
 
 ---
 
-## Part V: Fallback & Contingency Procedures
+## Known Gaps (open items at checklist creation)
 
-### Scenario 1: MCP Server Timeout (Act 1, 2, 3)
-
-**Symptom:** Prompt returns "Request timed out" or "MCP server unavailable" after 30 seconds.
-
-**Quick check:**
-```bash
-curl -v https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/health
-```
-
-**If health check passes:**
-- Issue is likely a specific tool call (e.g., `lookup_claim` is slow)
-- Try a simpler prompt: `"Is member MBR-2024-002891 eligible?"` (tests `lookup_member`)
-- If simpler prompt works, proceed with Acts 1-2 but note that Act 3 (prior auth) may be slower
-
-**If health check fails:**
-- Restart the Container App: `az containerapp restart --name ca-mcp-healthbridge --resource-group rg-knowledge-iq-demo`
-- Wait 60 seconds and retest health check
-- If still failing after 2 minutes: **Skip to Fallback Response A** (below)
-
-**Fallback Response A — Use Prerecorded Demo:**
-- If MCP is down, show a prerecorded video of Act 1-2-3 (should be prepared in advance)
-- Proceed live with Act 4 (formulary, AI Search) and Act 5 (provider directory)
-- Explain: "Real-time eligibility and claims queries would pull from your live systems. Here's what that looks like when your integration is running..."
+| Gap | Impact | Owner | Resolution |
+|-----|--------|-------|-----------|
+| Fabric Data Agent connection blocked — no workspace GUID | Prompts 4 & 5 (claims analytics) are unavailable | Data | Skip or add "coming soon" note in deck |
+| Screenshots not yet captured | Demo script has 8 placeholder screenshot slots | Presenter | Capture from running demo env before demo day |
 
 ---
 
-### Scenario 2: AI Search Returns Empty or Few Results (Act 4, 5)
-
-**Symptom:** Prompt to Act 4 returns "I couldn't find information about that drug" or Act 5 returns no providers.
-
-**Quick check:**
-1. Go to Azure Portal → AI Search → `srch-healthbridge-demo` → **Search explorer**
-2. Try manual search: `celecoxib` in formulary index, `physical therapy` in provider index
-
-**If manual search works but agent doesn't:**
-- Issue is likely query rewriting or retrieval settings
-- Try a more specific prompt: `"What tier is celecoxib on?"` instead of using full clinical scenario
-- If that works, the issue is context length or query rewriting — acceptable for demo (show source citations to prove retrieval worked)
-
-**If manual search returns empty:**
-- Indexes may not have been populated. Check: `az search index get-statistics --service-name srch-healthbridge-demo --index-name healthbridge-formulary-index`
-- If document count is 0, reindex: Follow `docs/azure-setup.md` Step 3d (upload sample data)
-- Time to reindex: 5–10 minutes. **Not recoverable during a live demo.**
-- **Fallback Response B:** Skip Act 4-5 and explain to audience: "The AI Search indexes contain your pharmacy policies and provider directories. In a real demo, we'd show live access to those here. For today's time constraint, let me show you the query architecture instead..." (show knowledge base connection diagram)
-
----
-
-### Scenario 3: Agent Is Unavailable or Returns Errors (Any Act)
-
-**Symptom:** Clicking the Playground returns "Agent is not available" or every prompt returns an error.
-
-**Quick check:**
-```bash
-az ml workspace show --name proj-healthbridge --resource-group rg-knowledge-iq-demo \
-  --query "provisioningState"
-```
-
-**If workspace is `Succeeded`:**
-- Try refreshing the Foundry portal (F5)
-- If still broken, the agent may need redeployment: Go to Foundry portal → **Build** → **Agents** → select `healthbridge-assistant` → click **Redeploy**
-- Wait 30 seconds for redeployment
-- Retry a test prompt
-
-**If workspace is not `Succeeded` or agent redeploy fails:**
-- The issue is likely a backend service failure (rare but possible during previews)
-- **Fallback Response C:** Use a prerecorded screen recording of all 5 acts (should be prepared in advance) and walk the audience through the workflow verbally, showing source citations and data flow diagrams
-
----
-
-### Scenario 4: Data Mismatch (Wrong Member / Claim Not Found)
-
-**Symptom:** Prompt says "I can't find member MBR-2024-002891" or claim amount doesn't match.
-
-**Quick check:**
-```bash
-curl -s "https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/tools/lookup_member?memberId=MBR-2024-002891" | jq .
-```
-
-If curl fails:
-- Sample data may have been cleared from the MCP server
-- Restart the Container App (see Scenario 1)
-- Reload sample data if needed: Check `data-sources/mcp-server/server.js` for data loading logic and verify files in `sample-data/`
-
-**Fallback Response D:** Data may have been cleared from the MCP server.
-- Restart the Container App immediately (see Scenario 1: `az containerapp restart --name ca-mcp-healthbridge --resource-group rg-knowledge-iq-demo`)
-- Reload sample data if needed
-- If data still won't load in time, proceed to Acts 4-5 (formulary, provider directory) and use prerecorded demo for Acts 1-3
-
----
-
-## Part VI: Sign-Off Table
-
-**Instructions:** 
-1. Complete all checks in Parts I–IV before the demo.
-2. For each major dependency, record the status, owner, and any notes.
-3. A ✅ in the **Status** column means the demo is ready to proceed. ⚠️ means proceed with caution (fallback available). ❌ means blocker — fix before going live.
-
-| Item | Category | Owner | Status | Last Verified | Notes |
-|---|---|---|---|---|---|
-| **INFRA: Azure Subscription Access** | Infrastructure | [Sales Engineer] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | |
-| **INFRA: MCP Server Health** | Infrastructure | [Data Engineer] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | **⚠️ HIGH RISK** — if down, fallback: prerecorded video for Acts 1-2-3 |
-| **INFRA: Azure OpenAI (gpt-4o, embeddings)** | Infrastructure | [Data Engineer] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | |
-| **INFRA: Azure AI Search (3 indexes)** | Infrastructure | [Data Engineer] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | Celecoxib + Dr. Patricia Chen must be present |
-| **INFRA: Azure Blob Storage** | Infrastructure | [Data Engineer] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | |
-| **FOUNDRY: Project exists & connections active** | Configuration | [Agent Builder] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | MCP, Blob, AI Search, Fabric (if used) |
-| **FOUNDRY: Knowledge Base ready** | Configuration | [Agent Builder] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | All 4 sources attached, retrieval settings correct |
-| **FOUNDRY: Agent deployed & playground responsive** | Configuration | [Agent Builder] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | Test: `"What is my deductible?"` should return guardrail response |
-| **DATA: MCP sample data (Sarah Nguyen, knee claim)** | Data | [Domain Content] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | MBR-2024-002891, CLM-2026-0061872 must be queryable |
-| **DATA: AI Search formulary (celecoxib present)** | Data | [Domain Content] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | Tier 1, no PA required |
-| **DATA: AI Search provider directory (Dr. Chen present)** | Data | [Domain Content] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | Dr. Patricia M. Chen, Internal Medicine, Chicago, In-Network |
-| **DATA: Blob benefits docs (HMO Silver, PPO Gold)** | Data | [Domain Content] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | Deductible and copay data must be readable |
-| **DEMO: Act 1 prompt validates** | Demo Flow | [Presenter] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | Eligibility + deductible |
-| **DEMO: Act 2 prompt validates** | Demo Flow | [Presenter] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | EOB explanation + prior auth number |
-| **DEMO: Act 3 prompt validates** | Demo Flow | [Presenter] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | PT prior auth rules |
-| **DEMO: Act 4 prompt validates** | Demo Flow | [Presenter] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | Celecoxib tier + copay |
-| **DEMO: Act 5 prompt validates** | Demo Flow | [Presenter] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | Provider directory search |
-| **BACKUP: Prerecorded video (Acts 1-2-3) ready** | Contingency | [Presenter] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | For MCP timeout scenario |
-| **BACKUP: Prerecorded video (full 5-act flow) ready** | Contingency | [Presenter] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | For agent downtime or cascading failures |
-| **AUDIENCE: Healthcare payor attendees informed of demo scope** | Pre-Demo | [Sales] | [ ] ✅ / [ ] ⚠️ / [ ] ❌ | | Clarify: synthetic data, no real PHI, 45-min flow |
-
----
-
-## Pre-Demo Checklist (Day-Of)
-
-**30 minutes before demo starts:**
-
-- [ ] Run all 5 Acts test prompts again (refresh state after overnight)
-- [ ] Verify MCP health check responds in < 2 seconds
-- [ ] Open Foundry agent playground in a separate browser tab (as backup)
-- [ ] Have the fallback videos queued and ready
-- [ ] Test internet connection and video/audio if screensharing
-- [ ] Close all other Azure portal tabs to avoid context-switching during demo
-- [ ] Verify audience can see your screen (share a test slide first)
-
-**During demo:**
-- [ ] Click **Show source citations** after the first prompt to establish the "traceable answers" narrative
-- [ ] Use the **Trace** view at least once to expose retrieval steps (optional, advanced audiences)
-- [ ] If a prompt is slow (> 5 sec), acknowledge it: "Real-time searches across four systems do take a moment. In production, you'd cache frequent queries and filter by access controls."
-
----
-
-## Contact & Escalation
-
-| Role | Responsibility | Escalation Email |
-|---|---|---|
-| **Data Engineer** | Azure resources, MCP server, AI Search indexes, Blob storage | data-engineer@example.com |
-| **Agent Builder (Chunk)** | Foundry project, Knowledge Base, Agent deployment, system prompts | chunk@example.com |
-| **Domain Content (Mouth)** | Sample data accuracy, healthcare payor domain realism, scripts | mouth@example.com |
-| **Sales Lead** | Audience prep, backup plan coordination, post-demo follow-up | sales@example.com |
-
----
-
-## Appendix: Data Reference
-
-### Member Used in Demo
-
-| Field | Value |
-|---|---|
-| Member ID | MBR-2024-002891 |
-| Name | Sarah L. Nguyen |
-| Plan | HMO Silver |
-| Status | ACTIVE |
-| Deductible | $1,500 |
-| Out-of-Pocket Max | $5,000 |
-| Primary Care Physician | Dr. Patricia M. Chen (NPI 1234567890) |
-
-### Claim Used in Demo
-
-| Field | Value |
-|---|---|
-| Claim ID | CLM-2026-0061872 |
-| Member | Sarah L. Nguyen (MBR-2024-002891) |
-| Service | Total knee replacement (CPT 27447) |
-| Date of Service | 2026-04-28 |
-| Status | PAID |
-| Billed Amount | $32,000 |
-| Allowed Amount | $18,200 |
-| Patient Responsibility | $3,654 ($1,500 deductible + $2,154 coinsurance @ 30%) |
-| Prior Auth | PA-2026-087341 |
-
-### Formulary Drug Used in Demo
-
-| Field | Value |
-|---|---|
-| Drug Name | Celecoxib |
-| Strength | 200 mg |
-| Tier | Tier 1 (Preferred Generic) |
-| Requires PA | No |
-| Quantity Limit | None (standard daily) |
-| Therapeutic Class | NSAID (non-steroidal anti-inflammatory) |
-| Notes | Common post-surgical pain management; no step therapy |
-
-### Provider Used in Demo (Provider Directory)
-
-| Field | Value |
-|---|---|
-| Provider Name | Dr. Patricia M. Chen |
-| NPI | 1234567890 |
-| Specialty | Internal Medicine |
-| Organization | HealthBridge Primary Care Associates |
-| City, State | Chicago, IL |
-| Network Status | ACTIVE_IN_NETWORK |
-| Accepting New Patients | Yes |
-
-### Institutions & Reference Numbers
-
-| Reference | Value |
-|---|---|
-| Plan Brand | HealthBridge Insurance Plan |
-| Service Area | Illinois |
-| Member Services Phone | 1-800-555-BLUE (1-800-555-2583) |
-| Portal | HealthBridge.example.com |
-| MCP Server | https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io |
-| Azure AI Search | https://srch-healthbridge-demo.search.windows.net |
-
----
-
-**Checklist version 1.0 | Created 2026-07-09 | For demo delivery to healthcare payor decision-makers**
+*Checklist version: 1.0 · Created: 2026-07-09 · Issue: #7*  
+*Sources: `docs/demo-flow.md`, `docs/demo-script.md`, `docs/azure-setup.md`, `docs/connection-status.md`*
