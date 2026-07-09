@@ -5,6 +5,27 @@
 - **Stack:** Azure AI Foundry, AI Search, Blob Storage, Fabric Data Agent, MCP
 - **User:** Rob McKenna
 
+## 2026-07-09 — Issue #4: Agent Deployment Fixes
+
+**Task:** Deploy the HealthBridge assistant agent (Issue #4) — create from project assets, attach KB, verify Playground.
+
+**Findings before deploying:**
+- `agent/agent-definition.json` was missing entirely (referenced in `docs/demo-flow.md` but never created)
+- `knowledge-base-config.json` KB name was `healthbridge-knowledge-base` — inconsistent with `payor-knowledge-base` used everywhere else; this would cause the agent's KB MCP endpoint URL to 404
+- MCP `serverUrl` was still `http://localhost:3000` — leftover dev placeholder, never updated to live Container App URL
+- README navigation paths and embedding model reference were still the old/inaccurate values from v1.0 (pre-validation)
+
+**Changes made:**
+1. Created `agent/agent-definition.json` — importable agent definition with agent ID, model, instructions, and KB MCP tool wired to `payor-knowledge-base`
+2. Fixed `knowledge-base-config.json`: KB name → `payor-knowledge-base`; MCP server URL → live Container App; removed stale dev-mode note
+3. Updated `agent/README.md`: corrected Foundry nav paths, embedding model, KB name, added import-first workflow, replaced invented retrieval step with practical Playground smoke-test
+
+**Remaining gap:** Fabric Data Agent `<FABRIC_WORKSPACE_ID>` placeholder — outside Chunk's scope; KB works with the three non-Fabric sources.
+
+**Decision filed:** `.squad/decisions/inbox/chunk-agent-deployment-fixes.md`
+
+---
+
 ## Learnings
 
 ### 2026-06-05 — Agent directory created
@@ -119,7 +140,78 @@ Rob flagged suspected classic Foundry UI inaccuracies. Mikey validated against c
 
 KB connection guide now documents both code-first (primary, Option A) and portal-first (Option B) connection creation paths. Portal-first only works for Storage + AI Search; requires manual editing of `knowledge-base-config.json` lines 29/51/83 to match auto-generated connection names. MCP + Fabric remain code-only in both options. No changes to your KB config JSON; guide documents both paths against its existing values. Guide bumped to v1.3.
 
+## 2026-07-09 — Issue #5: Agent Validation Against Core Demo Workflows
+
+**Performed a full static validation of all 5 workflow test prompt sets (30 prompts) and the 3 inline guardrail prompts.**
+
+### Validation Method
+Static review: verified each prompt is grounded in actual synthetic data, expected tools and data sources are correct, data source routing is internally consistent, and guardrail coverage is complete. (Live agent execution not possible — no Foundry playground connection in this environment.)
+
+### Workflow Coverage
+
+| Workflow | File | Prompts | Status |
+|---|---|---|---|
+| Eligibility & Benefits | eligibility-benefits.md | EB-1 to EB-6 | ✅ Sound |
+| Claims & EOB | claims-eob.md | CL-1 to CL-6 | ✅ Sound |
+| Prior Authorization | prior-auth.md | PA-1 to PA-6 | ✅ Sound |
+| Pharmacy & Formulary | pharmacy-formulary.md | PH-1 to PH-6 | ✅ Sound |
+| Provider Network | provider-network.md | PN-1 to PN-6 | ✅ Sound |
+| Guardrails | sample-prompts.md (A–C) + new guardrails-edge-cases.md (G-1 to G-12) | 15 total | ✅ Created |
+
+### Bugs Found and Fixed
+
+1. **Member name discrepancy (HIGH)** — `docs/demo-script.md` used "Marcus Hartwell" for MBR-2024-001234 but synthetic data says "John A. Hartwell." Fixed: renamed throughout demo-script.md to "John Hartwell" / "John A. Hartwell." Issue would have caused a live demo mismatch (presenter says "Marcus," agent returns "John").
+
+2. **System prompt contact details wrong (HIGH)** — `agent/system-prompt.md` used `my.healthbridge.com` and `1-800-HEALTHBRIDGE`. All other content uses `HealthBridge.example.com` and `1-800-555-BLUE`. Fixed in system-prompt.md.
+
+### Bugs Filed as Follow-up Issues
+
+3. **`agent-definition.json` missing (BLOCKER)** — Filed as issue #11. `docs/demo-flow.md` Act 3a and `agent/README.md` both tell presenters to import this file. It doesn't exist. Demo is un-importable without it.
+
+4. **Celecoxib not confirmed in formulary index (HIGH)** — Filed as issue #12. `agent/sample-prompts.md` Act 4 (Sarah Nguyen 5-min demo) prompts for celecoxib. Not in the 10-drug test set. If missing from the index, Act 4 fails silently.
+
+### Guardrails File Created
+
+Created `agent/test-prompts/guardrails-edge-cases.md` — 12 edge case prompts covering:
+- Direct and indirect medical advice requests (G-1, G-2)
+- PHI bulk disclosure (G-3, G-9)
+- Out-of-scope requests: premium, legal (G-4, G-5)
+- Prompt injection / jailbreak (G-6)
+- Knowledge gap / no-results (G-7)
+- Member distress / escalation (G-8)
+- Missing authentication context (G-10)
+- Utilization override coercion (G-11)
+- Factual contradiction handling (G-12)
+
+### Items Confirmed Correct (no action needed)
+
+- KB config MCP URL: already correct (`https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io`)
+- README embedding model: already correct (`text-embedding-3-small`, 1536 dims)
+- All 30 workflow prompts: data source tags and member IDs consistent with synthetic data
+- PA-3 PA status lookup: `lookup_claim` tool covers "prior auth status on a paid claim" — sufficient for PA-2026-087341 retrieval via CLM-2026-0061872
+
+---
+
+## 2026-06-23 — Foundry Resource Model Verified (Cross-Agent Note)
+
 ## 2026-06-23 — Foundry Resource Model Verified (Cross-Agent Note)
 
 **FROM: Data + Mikey** — New Foundry project is `Microsoft.CognitiveServices/accounts/projects` under `foundry-healthbridge-demo` account (NOT `MachineLearningServices/workspaces`). Blob + AI Search connections already exist with auto-names (`sthealthbridgedemo2ag633uyd`, `srch-healthbridge-connection`). If Option B chosen, edit `knowledge-base-config.json` lines 29/51/83 to match these auto-names. Guide updated to v1.4 with correct CognitiveServices paths.
 
+**Task:** With `payor-knowledge-base` confirmed live (4 active knowledge sources), produce a standalone operator guide for deploying the `healthbridge-assistant` agent and verify the Playground opens.
+
+**Findings:**
+
+1. `agent-definition.json` MCP URL was missing `?api-version=2026-05-01-preview` — the KB endpoint requires this query param. Fixed.
+2. `agent-definition.json` instructions still had `1-800-HEALTHBRIDGE` and `my.healthbridge.com` — stale contact info fixed in an earlier session for `system-prompt.md` but not propagated to the JSON. Fixed.
+3. `agent/system-prompt-portal.txt` had the same stale contact info. Fixed.
+4. No `docs/agent-deployment-guide.md` existed — the KB connection guide (docs/knowledge-base-connection-guide.md) contains Step D for agent creation, but it's buried in a 35KB guide. Operators need a standalone, focused entry point.
+
+**Changes made:**
+1. Updated `agent/agent-definition.json`: MCP URL now includes `?api-version=2026-05-01-preview`; instructions updated to `1-800-555-BLUE` and `HealthBridge.example.com`
+2. Updated `agent/system-prompt-portal.txt`: same contact info fix
+3. Created `docs/agent-deployment-guide.md` — standalone operator guide covering: live status table, import vs. manual creation (Option A/B), KB MCP tool wiring, playground verification, 4 smoke tests, Fabric/Blob blockers, troubleshooting
+
+**Fabric blocker (unchanged):** Fabric connection cannot be created until a Fabric workspace and `healthbridge-claims-agent` are provisioned. Claims workflow prompts (CL-1–CL-6) remain blocked.
+
+**Decision filed:** `.squad/decisions/inbox/chunk-agent-deploy.md`
