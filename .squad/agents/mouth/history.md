@@ -67,6 +67,35 @@ Created `docs/demo-readiness-checklist.md` — a day-of-demo sign-off sheet cove
 
 ## Learnings
 
+### 2026-07-09 — Demo Readiness Checklist Creation (Task #7 by Rob McKenna)
+
+Created `docs/demo-readiness-checklist.md` — a comprehensive operational guide for verifying all demo dependencies before a live presentation to healthcare payor decision-makers.
+
+**Key realization:** A demo readiness checklist is not just a binary pass/fail list — it's a **risk mitigation document**. The checklist identifies high-risk items (MCP timeout, AI Search empty), provides quick troubleshooting commands, and defines **fallback procedures** for each failure scenario. This is critical for field sales, where a demo failure costs pipeline credibility.
+
+**Checklist structure:**
+1. **Pre-demo infrastructure checks** (6 sections) — Azure OpenAI, AI Search, Blob, MCP, resource group verification with CLI commands
+2. **Foundry configuration checks** (3 sections) — connections, knowledge base, agent status with portal navigation steps
+3. **Data completeness checks** (3 sections) — MCP sample data, AI Search index document counts, Blob storage documents with exact verification queries
+4. **Demo flow validation** (5 sections) — one test prompt per Act with expected response keywords, pass/fail/timeout tracking
+5. **Fallback & contingency procedures** (4 scenarios) — MCP timeout, AI Search empty, agent unavailable, data mismatch with step-by-step recovery or fallback demo videos
+6. **Sign-off table** — matrix of 19 items (infrastructure, configuration, data, demo flow, backups) with owner, status, verification date, notes columns
+7. **Pre-demo day-of checklist** (30 min, 15 min, during demo)
+8. **Contact & escalation** — email list for each role
+9. **Data reference appendix** — exact member ID, claim ID, drug, provider used in demo
+
+**Domain accuracy embedded:**
+- All member, claim, and provider IDs match the live sample data (MBR-2024-002891, CLM-2026-0061872, Dr. Patricia Chen, celecoxib)
+- Prior auth scenario (PT > 20 visits) grounded in actual policy from sample data
+- EOB math verified ($1,500 ded + 30% coinsurance = $3,654) against HMO Silver benefit tier
+- Fallback procedures acknowledge payor-specific risks: "Data must be current as of demo date" and "Fabric Data Agent connection may not be ready"
+
+**Audience:** Field sales / presenter doing live demo to healthcare payor CIO + medical director + head of member services.
+
+**High-risk items flagged:** MCP Server timeout (mitigation: prerecorded Acts 1-2-3), AI Search empty (mitigation: skip to architecture explanation), Agent downtime (mitigation: full video fallback), Data mismatch (mitigation: use alternate member/claim).
+
+---
+
 - Healthcare payor domain uses ICD-10-CM diagnosis codes, CPT procedure codes, NPI identifiers for providers, and structured member IDs (e.g., MBR-YYYY-NNNNNN).
 - Claims data must link member IDs to both member records and provider NPIs for consistency — critical for demo queries that span multiple Knowledge Base data sources.
 - Prior auth numbers (PA-YYYY-NNNNNN) should appear in both claim records and member records for cross-reference realism.
