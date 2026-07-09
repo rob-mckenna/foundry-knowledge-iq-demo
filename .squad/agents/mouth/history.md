@@ -27,6 +27,11 @@
 - Illinois as service area with HMO tiers (Silver/Gold/Platinum) is realistic
 - "Explain my EOB" is the highest-value prompt category for payor audiences
 - Demo readiness checklist must include fallback procedures for each failure scenario (not just pass/fail)
+- **Demo script = narrative journey, not just prompts** — "Sarah Nguyen Story" (post-op member) is emotionally relatable and showcases all data sources
+- Presenter script tone must be consultative + payor-literate (use "member", "coordinator", "EOB", not "knowledge chunk")
+- 5-minute live demo + 2–3 minute close + Q&A is the right cadence for healthcare payor CIO audience
+- Each demo Act should reference a real call driver (15 min manual work → 3 min instant answer)
+- Fallback procedures for demo script are as critical as readiness checklist (MCP timeout, AI Search empty, agent unavailable)
 
 ## Cross-Team Dependencies
 
