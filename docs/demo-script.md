@@ -30,7 +30,7 @@
    - [ ] Clear previous messages (start with fresh playground)
 
 4. **Internalize the member story:**
-   > **Sarah Nguyen** (MBR-2024-002891, HMO Silver) — just had knee replacement surgery (April 28th). Claim: $18,200 allowed, she owes $3,654 ($1,500 ded + $2,154 coinsurance @ 30%). Questions: (1) Am I still eligible? (2) Why do I owe $3,654? (3) Do I need approval for PT? (4) What will celecoxib cost? (5) Where can I find a PT? Her PCP: Dr. Patricia M. Chen (in-network). **This narrative links all 5 Acts and all 4 data sources.**
+   > **Sarah Nguyen** (MBR-2024-002891, HMO Silver) — just had knee replacement surgery (April 28th). Claim: $18,200 allowed, she owes $6,510 ($1,500 ded + $5,010 coinsurance @ 30%). Questions: (1) Am I still eligible? (2) Why do I owe $6,510? (3) Do I need approval for PT? (4) What will celecoxib cost? (5) Where can I find a PT? Her PCP: Dr. Patricia M. Chen (in-network). **This narrative links all 5 Acts and all 4 data sources.**
 
 ---
 
@@ -109,7 +109,7 @@ Agent should return:
 
 ```
 I had my right knee replacement on April 28th. I got an EOB in the mail 
-but I don't understand the numbers. It says I owe $3,654 — is that right?
+but I don't understand the numbers. It says I owe $6,510 — is that right?
 ```
 
 ### What You Say While Waiting
@@ -123,13 +123,13 @@ Agent should return:
 - ✅ **Billed Amount:** $32,000 (or similar)
 - ✅ **Allowed Amount:** $18,200
 - ✅ **Deductible:** $1,500 (fully applied)
-- ✅ **Coinsurance:** 30% of remaining = $2,154
-- ✅ **Total Patient Responsibility:** $3,654
+- ✅ **Coinsurance:** 30% of remaining = $5,010
+- ✅ **Total Patient Responsibility:** $6,510
 - ✅ **Citation:** Fabric Data Agent (claim CLM-2026-0061872)
 
 ### What You Say When Response Appears
 
-> "Okay, so the hospital billed $32,000, but the allowed amount is $18,200. Out of that, Sarah's HMO Silver plan covers 70% after the deductible. So: $1,500 deductible, then 30% of the remaining $16,700 — that's $2,154. Total she owes: $3,654. The math is right."
+> "Okay, so the hospital billed $32,000, but the allowed amount is $18,200. Out of that, Sarah's HMO Silver plan covers 70% after the deductible. So: $1,500 deductible, then 30% of the remaining $16,700 — that's $5,010. Total she owes: $6,510. The math is right."
 >
 > "More importantly, the agent just turned a 12-minute call into a 60-second text. Your coordinator can send this to Sarah instantly, with the full math. She sees it, understands it, and moves on. Your hold time drops. Your member satisfaction goes up."
 
@@ -198,16 +198,16 @@ What tier is it on the formulary, and what will I pay?
 
 Agent should return:
 - ✅ **Drug:** Celecoxib
-- ✅ **Tier:** Tier 1 (Preferred Generic)
+- ✅ **Tier:** Tier 2
 - ✅ **Prior Auth:** Not required
-- ✅ **Copay:** (check HMO Silver benefit doc, typically $10–$20)
+- ✅ **Copay:** $45 retail per 30-day supply / $110 mail order per 90-day supply
 - ✅ **Quantity Limit:** None or standard daily limit
 - ✅ **Note:** Deductible already met, so copay only applies
 - ✅ **Citation:** AI Search formulary index
 
 ### What You Say When Response Appears
 
-> "Tier 1. No PA. Copay only — because Sarah's deductible is already met from the surgery. Instant answer. Your pharmacy call volume drops again."
+> "Tier 2 — that's $45 retail per 30-day supply, or $110 if she does mail order for 90 days, which is way cheaper for a long-term medication post-surgery. No PA required. Copay applies since her deductible is already met from the surgery. Instant answer. Your pharmacy call volume drops again."
 
 ### Transition Cue
 
@@ -389,12 +389,12 @@ Click the **Trace** icon on any previous response.
 | **DOS** | 2026-04-28 | Fabric Data Agent |
 | **Billed** | $32,000 | Fabric Data Agent |
 | **Allowed** | $18,200 | Fabric Data Agent |
-| **Patient Resp** | $3,654 | Fabric Data Agent (calculated) |
+| **Patient Resp** | $6,510 | Fabric Data Agent (calculated) |
 | **Prior Auth** | PA-2026-087341 | Claim record |
 | **PT Policy** | No PA ≤ 20 visits; PA > 20 visits | MCP Server / policy doc |
 | **Drug** | Celecoxib | AI Search formulary |
-| **Tier** | Tier 1 (Preferred Generic) | AI Search formulary |
-| **Copay** | $10–$20 (varies by tier; ~$10 for Tier 1) | Blob benefit doc |
+| **Tier** | Tier 2 | AI Search formulary |
+| **Copay** | $45 retail per 30-day / $110 mail per 90-day | Blob benefit doc |
 | **PT Provider Name** | Midwest Physical & Occupational Therapy LLC | AI Search provider index |
 | **PT Location** | Naperville, IL (ZIP 60540) | AI Search provider index |
 | **PT Network Status** | ACTIVE_IN_NETWORK | AI Search provider index |
