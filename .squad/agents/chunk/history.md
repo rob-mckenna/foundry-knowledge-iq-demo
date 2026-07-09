@@ -119,6 +119,21 @@ Rob flagged suspected classic Foundry UI inaccuracies. Mikey validated against c
 
 KB connection guide now documents both code-first (primary, Option A) and portal-first (Option B) connection creation paths. Portal-first only works for Storage + AI Search; requires manual editing of `knowledge-base-config.json` lines 29/51/83 to match auto-generated connection names. MCP + Fabric remain code-only in both options. No changes to your KB config JSON; guide documents both paths against its existing values. Guide bumped to v1.3.
 
+## 2026-07-09 — Guardrail & Edge-Case Test Prompts (Issue #9)
+
+- Created `agent/test-prompts/guardrails-edge-cases.md` — 17 structured prompts (GRD-1 through GRD-17) across six risk categories: medical advice refusal, jailbreak/prompt injection, PHI & data privacy, out-of-scope deflection, ambiguous/unanswerable queries, and member distress/escalation.
+- Included a pre-demo checklist of 6 must-pass prompts for validation before any live session.
+- Decision filed at `.squad/decisions/inbox/chunk-guardrail-prompts.md`.
+
+**Key risk areas identified:**
+1. **GRD-15 (KB miss)** — highest demo risk; hallucinated policy content is the hardest failure to recover from on stage
+2. **GRD-4 (role override)** — most likely to be triggered by curious audience members in an open demo
+3. **GRD-16 (urgent denial / member distress)** — highest empathy risk; a procedural response here damages payor audience credibility
+
+**Design decision:** Kept guardrails in a separate file from functional test prompts (prior-auth, eligibility-benefits, etc.) so safety validation can be handed to a reviewer independently of functional testing.
+
+---
+
 ## 2026-06-23 — Foundry Resource Model Verified (Cross-Agent Note)
 
 **FROM: Data + Mikey** — New Foundry project is `Microsoft.CognitiveServices/accounts/projects` under `foundry-healthbridge-demo` account (NOT `MachineLearningServices/workspaces`). Blob + AI Search connections already exist with auto-names (`sthealthbridgedemo2ag633uyd`, `srch-healthbridge-connection`). If Option B chosen, edit `knowledge-base-config.json` lines 29/51/83 to match these auto-names. Guide updated to v1.4 with correct CognitiveServices paths.
