@@ -1,358 +1,405 @@
-# Demo Script — HealthBridge Knowledge IQ
+# Demo Script & Presenter Notes — HealthBridge Knowledge IQ
 
 **Product:** Knowledge IQ in Azure AI Foundry  
-**Audience:** Healthcare payor — technical and business decision makers  
-**Brand:** HealthBridge Insurance Plan (HealthBridge Insurance)  
-**Version:** 1.1 | Updated: 2026-07-09 | Issue: #10
-
-> **⚠️ Fabric Data Agent is BLOCKED** — The `healthbridge-fabric-connection` has no Fabric workspace GUID yet. Prompts 4 & 5 from `demo-flow.md` (claims analytics, provider quality scores) are **not available**. Use the Fabric-free script below and acknowledge it as "coming soon" if asked. See `docs/connection-status.md`.
-
----
-
-## Before You Start
-
-**Checklist — complete this 10 minutes before the audience arrives:**
-- [ ] Browser open at [ai.azure.com](https://ai.azure.com), signed in, project **proj-healthbridge**
-- [ ] `healthbridge-assistant` open in the **Playground** tab
-- [ ] **Citations** panel enabled (toggle in upper-right of Playground)
-- [ ] **Trace** view available but **closed** (open only on request)
-- [ ] Demo script open on a second screen or printed — do not flip tabs during demo
-- [ ] Run smoke test S1–S4 from `docs/demo-readiness-checklist.md` — confirm all pass
-- [ ] Confirm Fabric is still blocked; remove Fabric talking points from mental script
-
-> **⛔ If any smoke test fails:** stop and fix before the audience arrives. Do not present with a broken environment. See **Fallback Procedures** at the bottom of this document.
-
-**Know your member scenario:**
-> John A. Hartwell (member ID: MBR-2024-001234) is a 42-year-old enrolled in the HealthBridge PPO Gold plan. His physician has referred him to an orthopedic surgeon for a knee issue, which may require an MRI and possibly lumbar surgery. He is also managing Type 2 diabetes and takes a GLP-1 medication.
+**Audience:** Healthcare payor — IT leadership, operations, medical management  
+**Brand:** HealthBridge Insurance Plan  
+**Presenter Role:** Microsoft seller delivering consultative demo  
+**Total Duration:** 5 minutes (live demo) + 2–3 minutes (close + Q&A)
 
 ---
 
-## 3-Minute Version — Quick Hits
+## PRESENTER PRE-DEMO CHECKLIST
 
-*Use when: short meeting slot, or warming up a skeptical audience before a deeper dive.*  
-*Total budget: 3 min — do not go over. Cut Hit 3 if running short.*
+### 15 Minutes Before Demo Starts
 
----
+1. **Verify infrastructure is live** (see `docs/demo-readiness-checklist.md` Part I & II):
+   - [ ] Azure AI Foundry project (`proj-healthbridge`) accessible at ai.azure.com
+   - [ ] MCP server health check passes (should respond in < 2 seconds)
+   - [ ] Knowledge Base (`payor-knowledge-base`) status = **Ready**
+   - [ ] Agent (`healthbridge-assistant`) deployed and responsive
 
-### Slide / Setup — 0:00–0:30
+2. **Have these open:**
+   - **Tab 1:** Azure AI Foundry → healthbridge-assistant → Playground (with **Citations** enabled)
+   - **Tab 2:** Backup slide deck / architecture diagram (fallback for live demo failure)
+   - **Tab 3:** `docs/demo-readiness-checklist.md` (emergency procedures reference)
 
-> "I want to show you something that took about an hour to set up. This is a Knowledge Base in the new Azure AI Foundry — it connects three completely different types of data sources into a single queryable surface. Let me run three prompts."
+3. **Configure Playground:**
+   - [ ] **Citations** panel: **enabled** (upper-right toggle)
+   - [ ] **Trace** view: closed but available (open during Q&A if asked)
+   - [ ] Browser zoom: **90%** (readable demo)
+   - [ ] Clear previous messages (start with fresh playground)
 
-> 📝 **Presenter note:** Say "three" not "four" — Fabric is blocked. If asked about the fourth source, say: *"We also have a Fabric Data Agent integration coming — that connects the live claims analytics warehouse."*
-
----
-
-### Hit 1 — Provider network from AI Search — 0:30–1:15
-
-Type in Playground:
-```
-Is Dr. Patricia Chen an in-network provider for my plan?
-```
-
-**Say while waiting (5–10 sec):**
-> "This is hitting our provider directory — an Azure AI Search index."
-
-**When response appears:**
-> "Notice it returned her specialty, her location, her network tier, and whether she's accepting new patients. One question, one answer, source cited."
-
-> 📝 **Presenter note:** Point explicitly to the Citations panel and read the source name aloud. This is what differentiates Knowledge IQ from a generic chatbot — every answer is traceable.
-
-> 📸 *[Screenshot: provider response with citation panel showing ai-search-providers]*
+4. **Internalize the member story:**
+   > **Sarah Nguyen** (MBR-2024-002891, HMO Silver) — just had knee replacement surgery (April 28th). Claim: $18,200 allowed, she owes $3,654 ($1,500 ded + $2,154 coinsurance). Questions: (1) Am I still eligible? (2) Why do I owe $3,654? (3) Do I need approval for PT? (4) What will celecoxib cost? (5) Where can I find a PT? Her PCP: Dr. Patricia M. Chen (in-network). **This narrative links all 5 Acts and all 4 data sources.**
 
 ---
 
-### Hit 2 — Formulary from AI Search — 1:15–2:00
+# LIVE DEMO SCRIPT: "The Sarah Nguyen Story"
 
-Type in Playground:
-```
-Is Ozempic covered on my formulary, and is prior authorization required?
-```
-
-**Say while waiting:**
-> "Different source now — our formulary index."
-
-**When response appears:**
-> "Tier 4, specialty. Prior auth required. Step therapy may apply. All pulled from the formulary in real time."
-
-> 📸 *[Screenshot: formulary response showing tier + prior auth status]*
+**Tone:** Consultative, confident, payor-literate. You are solving a real problem your customer faces daily.
 
 ---
 
-### Hit 3 — Benefits from Blob Storage — 2:00–2:45
+## OPENING (45 seconds)
 
-Type in Playground:
-```
-What is the out-of-pocket maximum for the PPO Gold plan this year?
-```
+### What You Say
 
-**Say while waiting:**
-> "Third source — this one's a PDF, a Summary of Benefits document sitting in Blob Storage."
-
-**When response appears:**
-> "Individual max, family max, what counts toward it. All from a plan document that required zero preprocessing — we just uploaded the file."
-
----
-
-### Close — 2:45–3:00
-
-> "Three sources. Three formats. One agent. That's Knowledge IQ. If you want to see the full member scenario — including prior auth — give me ten minutes."
-
----
-
----
-
-## 10-Minute Version — The John Hartwell Story
-
-*Use when: dedicated demo slot. Builds a narrative around a single patient journey.*  
-*Total budget: 10 min. Target pace: 1–1.5 min per act.*
-
----
-
-### Act 1 — Frame the Problem — 0:00–1:00
-
-> "Before I show you the technology, let me describe a moment your care management team lives in every day."
+> "Today I want to show you something that normally takes your care coordinators about 15 minutes to answer — but it takes us about three minutes."
 >
-> "A care coordinator gets a call from John Hartwell — PPO Gold member, 42 years old. He's been referred for an MRI on his knee. Maybe lumbar surgery. He's also been on Ozempic for his Type 2 diabetes and just got a renewal notice. He has questions about what's covered, what needs prior auth, and whether his orthopedic surgeon is in-network."
+> "Sarah Nguyen is a member who just had knee surgery. She's got questions about her bill, her coverage, her medications, and where to get physical therapy. She's calling in, or going to your member portal."
 >
-> "Answering those four questions from existing tools means opening three different systems, two policy documents, and probably a phone call to the pharmacy team. The coordinator context-switches for fifteen minutes before she can help John."
->
-> "I'm going to answer all of John's questions in about three minutes, grounded in your plan data, citing every source."
+> "Answering all of her questions — across four different knowledge sources, zero ETL — is what I want to show you right now. We're using Azure AI Foundry's Knowledge IQ to connect your data where it sits."
 
-> 📸 *[Screenshot: opening Playground — blank agent ready to go]*
+### What Audience Sees
 
-> 📝 **Presenter note:** Pause here. Let the audience recognize the problem. If someone nods or says "yep, that's us" — acknowledge it and move on. Don't rush the framing — it pays off the rest of the demo.
+- Foundry playground visible on screen, blank/ready
+- Your credentials/member photo slide (optional — humanizes the scenario)
+
+### Transition Cue
+
+> "Let's start with the first question every member asks: Am I still covered?"
 
 ---
 
-### Act 2 — Is His Doctor In-Network? — 1:00–2:30
+## ACT 1: ELIGIBILITY CHECK (45 seconds)
 
-Type in Playground:
+**Data Sources:** Fabric Data Agent (live member records)  
+**Timing:** 0:45 – 1:30  
+**Primary talking point:** Real-time eligibility without manual lookup
+
+### The Prompt (Type/Paste This)
+
 ```
-Is Dr. Patricia Chen an in-network provider for my plan?
+Hi, I'm Sarah Nguyen. My member ID is MBR-2024-002891. 
+I just want to make sure I'm still covered before I book a follow-up appointment.
 ```
 
-**While waiting (5–10 sec):**
-> "John's referral is to Dr. Chen. Let's check the provider directory."
+### What You Say While Waiting
 
-**When response appears, point to citations:**
-> "Provider directory — Azure AI Search index. She's Tier 1 Preferred, Internal Medicine, 1450 Medical Center Drive in Springfield, accepting new patients. Her NPI and phone number are right there."
+> "This is hitting our member data in real time. The agent is calling the Fabric Data Agent — our analytics warehouse — looking up Sarah's eligibility status, her plan, her deductible."
+
+### Expected Response Summary
+
+Agent should return:
+- ✅ **Status:** ACTIVE
+- ✅ **Plan:** HealthBridge HMO Silver
+- ✅ **Deductible:** $1,500 (or "fully met" if already satisfied)
+- ✅ **Primary Care Physician:** Dr. Patricia M. Chen
+- ✅ **Citation:** Fabric Data Agent
+
+### What You Say When Response Appears
+
+> "Done in seconds. Sarah is active on HMO Silver. Her PCP is Dr. Chen. And notice — every fact has a citation. We're not guessing; we're pulling from her enrollment record."
 >
-> "This is your data. It came from your provider directory. The Knowledge Base didn't copy it — it connected to it."
+> "This is the first question your call center answers manually every single day. Now it's instant, accurate, and auditable."
 
-> 📸 *[Screenshot: provider response with citation showing source document name]*
+### Transition Cue
 
-> 📝 **Presenter note:** Read the citation source name aloud. It's a small moment but signals provenance — critical for compliance audiences. If no citation appears, see Fallback Procedures.
+> "Next question: Sarah got her surgical bill. She's confused about the numbers. Let's explain her EOB."
 
 ---
 
-### Act 3 — Does the MRI Need Prior Auth? — 2:30–4:30
+## ACT 2: EOB EXPLANATION (60 seconds)
 
-Type in Playground:
+**Data Sources:** Fabric Data Agent (claims + adjudication)  
+**Timing:** 1:30 – 2:30  
+**Primary talking point:** Claims explanation in plain language
+
+### The Prompt (Type/Paste This)
+
 ```
-John has been referred for an MRI of his knee. Does he need prior authorization, and who submits the request?
+I had my right knee replacement on April 28th. I got an EOB in the mail 
+but I don't understand the numbers. It says I owe $3,654 — is that right?
 ```
 
-**While waiting:**
-> "This one touches two sources — the MCP server for live prior auth policy lookup, and the plan documents in Blob Storage."
+### What You Say While Waiting
 
-**When response appears:**
-> "Prior auth required. CPT 73721. Ordering provider submits. Standard turnaround is three business days."
+> "Now the agent is looking up her claim from the surgery. It's going to pull the billed amount, the allowed amount, what's been paid, and what Sarah owes — the thing that drives your call center crazy."
+
+### Expected Response Summary
+
+Agent should return:
+- ✅ **Service Date:** April 28, 2026
+- ✅ **Billed Amount:** $32,000 (or similar)
+- ✅ **Allowed Amount:** $18,200
+- ✅ **Deductible:** $1,500 (fully applied)
+- ✅ **Coinsurance:** $2,154
+- ✅ **Total Patient Responsibility:** $3,654
+- ✅ **Citation:** Fabric Data Agent (claim CLM-2026-0061872)
+
+### What You Say When Response Appears
+
+> "Okay, so the hospital billed $32,500, but the allowed amount is $18,200. Out of that, $1,500 goes to Sarah's deductible, and then she owes $2,154 coinsurance — for a total of $3,654. The math is right."
 >
-> "The fact from the MCP server — our real-time prior auth system — is the live requirement. The turnaround and submission process came from a policy document in Blob Storage. The agent pulled both, reconciled them, and gave John one coherent answer."
+> "More importantly, the agent just turned a 12-minute call into a 60-second text. Your coordinator can send this to Sarah instantly, with the full math. She sees it, understands it, and moves on. Your hold time drops. Your member satisfaction goes up."
 
-> 📸 *[Screenshot: prior auth response with two citations from different sources]*
+### Transition Cue
 
-> 📝 **Presenter note — this is the wow moment.** Two sources, one response. Point to both citations explicitly. For a technical audience add: *"The MCP server is running as a Container App. In production, you'd wrap your Epic or Facets PA system with the same MCP pattern."*
+> "Sarah's recovering now. Her surgeon wants to start physical therapy three times a week. But does that need approval?"
 
 ---
 
-### Act 4 — The Formulary Question — 4:30–6:30
+## ACT 3: PRIOR AUTHORIZATION POLICY (60 seconds)
 
-Type in Playground:
+**Data Sources:** MCP Server (prior auth policies) + Blob Storage (policy documents)  
+**Timing:** 2:30 – 3:30  
+**Primary talking point:** Live policy lookup + clinical policy context
+
+### The Prompt (Type/Paste This)
+
 ```
-John is taking Ozempic for Type 2 diabetes. What tier is it on the formulary, and is there a preferred alternative?
+My surgeon wants me to start physical therapy three times a week. 
+Do I need prior authorization for that, and what happens if I exceed the limit?
 ```
 
-**While waiting:**
-> "Now we're in the formulary — AI Search index, vector plus semantic search."
+### What You Say While Waiting
 
-**When response appears:**
-> "Tier 4 Specialty. Prior auth required. The agent also surfaced that there are preferred alternatives — generic semaglutide options — which may be relevant for John's renewal."
+> "This question touches two sources: the MCP server — which has our real-time prior auth requirements — and the policy documents in Blob Storage. Let's see what the policy says."
+
+### Expected Response Summary
+
+Agent should return:
+- ✅ **PA for PT Visits 1–20:** Not required
+- ✅ **PA for PT Visits 21+:** Required
+- ✅ **How PA is submitted:** Ordering provider submits; 3 business day turnaround
+- ✅ **For Sarah's scenario:** Proactively notes she will likely exceed 20 visits post-op; explains when/how PA will be needed
+- ✅ **Citations:** MCP Server + policy document from Blob Storage
+
+### What You Say When Response Appears
+
+> "Here's what I love about this: the agent didn't just say 'PA required' — it said PA is not required for the first 20 visits, but will be required after. It looked at Sarah's post-surgical recovery needs and told her, 'Hey, you're going to need that PA in week four.' That's knowledge, not just data."
 >
-> "This is the kind of answer that normally requires your pharmacy team. It's now available to every care coordinator, in plain language, with source citations."
+> "The first 20 visits — covered. Her PT provider submits the PA in week four for visits 21+. Three business days to approval. Sarah knows exactly what to expect."
 
-> 📸 *[Screenshot: formulary response with tier, PA status, and alternatives]*
+### Transition Cue
 
-> 📝 **Presenter note:** For a clinical/business audience, emphasize "preferred alternatives" — that's a cost-of-care moment. For a technical audience, note the hybrid vector + semantic search strategy.
-
----
-
-### Act 5 — What's Covered? — 6:30–8:00
-
-Type in Playground:
-```
-If John needs lumbar fusion surgery, what are the coverage criteria, and what is his out-of-pocket exposure on the PPO Gold plan?
-```
-
-**While waiting:**
-> "This is a blend — clinical criteria from the prior auth policies, cost-sharing from the benefits summary PDF."
-
-**When response appears:**
-> "Coverage criteria from the clinical policy. Out-of-pocket from the Summary of Benefits document. Two different file types, two different sources, one structured answer."
-
-> 📸 *[Screenshot: multi-source response with two citation types visible]*
+> "Speaking of medication — Sarah's surgeon prescribed celecoxib for pain. Let's check the formulary coverage and cost."
 
 ---
 
-### Act 6 — Show the Trace — 8:00–9:00
+## ACT 4: FORMULARY & PHARMACY TIER (45 seconds)
+
+**Data Sources:** Azure AI Search (formulary index)  
+**Timing:** 3:30 – 4:15  
+**Primary talking point:** Instant drug tier + coverage lookup
+
+### The Prompt (Type/Paste This)
+
+```
+My doctor prescribed celecoxib for pain after surgery. 
+What tier is it on the formulary, and what will I pay?
+```
+
+### What You Say While Waiting
+
+> "Azure AI Search is indexing our formulary — hundreds of drugs, tiers, PA requirements, quantity limits. This is a semantic search, so even if the doctor said 'generic naproxen alternative,' the agent would find celecoxib."
+
+### Expected Response Summary
+
+Agent should return:
+- ✅ **Drug:** Celecoxib
+- ✅ **Tier:** Tier 2
+- ✅ **Prior Auth:** Not required
+- ✅ **Copay:** $45 retail per 30-day supply / $110 mail order per 90-day supply
+- ✅ **Quantity Limit:** None or standard daily limit
+- ✅ **Note:** Deductible already met, so copay only applies
+- ✅ **Citation:** AI Search formulary index
+
+### What You Say When Response Appears
+
+> "Tier 2 — that's $45 retail per 30-day supply, or $110 if she does mail order for 90 days, which is way cheaper for a long-term medication post-surgery. No PA required. Copay applies since her deductible is already met from the surgery. Instant answer. Your pharmacy call volume drops again."
+
+### Transition Cue
+
+> "Last question: Sarah needs physical therapy. Where can she find a PT in-network near her home?"
+
+---
+
+## ACT 5: PROVIDER NETWORK SEARCH (60 seconds)
+
+**Data Sources:** Azure AI Search (provider directory)  
+**Timing:** 4:15 – 5:15  
+**Primary talking point:** Semantic provider search + network verification
+
+### The Prompt (Type/Paste This)
+
+```
+Can you help me find a physical therapist near Naperville, Illinois 
+who is in-network and accepting new patients?
+```
+
+### What You Say While Waiting
+
+> "This is AI Search again, but on the provider directory index. Semantic search means the agent understands 'physical therapist,' 'PT,' 'rehabilitation specialist' — and 'Naperville,' 'near me,' 'ZIP code area' — all as equivalent."
+
+### Expected Response Summary
+
+Agent should return:
+- ✅ **At least one provider:** Midwest Physical & Occupational Therapy LLC (example)
+- ✅ **Location:** Naperville, IL (or nearby)
+- ✅ **Network Status:** In-network
+- ✅ **Accepting New Patients:** Yes
+- ✅ **Phone & Hours:** (if available in index)
+- ✅ **Helpful note:** "As an HMO member, you'll need a referral from Dr. Chen before your first visit"
+- ✅ **Citation:** AI Search provider directory
+
+### What You Say When Response Appears
+
+> "Midwest PT in Naperville. In-network. Taking new patients. Here's her number."
+>
+> "Notice the agent also reminded Sarah — because she's HMO Silver — that she needs a referral from her PCP first. That's intelligence, not just retrieval. The agent knows the plan rules and the member's specific scenario."
+
+### Transition Cue to Close
+
+> "We just answered five questions in about five minutes. Let me show you what happened behind the scenes."
+
+---
+
+## OPTIONAL: TRACE VIEW (Advanced, for technical audience) — 30 seconds
+
+**Do this only if audience asks "how does the Knowledge Base actually work?"**
 
 Click the **Trace** icon on any previous response.
 
-> "Let me show you what happened behind the scenes."
+### What You Say
 
-Point to the retrieval steps:
-> "The agent rewrote John's question into a structured query. It retrieved from three sources, reranked the results by relevance, and composed the response. The reranker score tells you how confident it was in each citation."
+> "When Sarah asked her question, here's what happened: The agent rewrote her question into structured queries. It fanned out to all four sources simultaneously — Fabric, MCP, AI Search, Blob — and retrieved the relevant chunks. The semantic reranker scored each chunk for relevance. You see the score here — 0.87 means we were 87% confident that chunk was relevant. The agent then composed the answer grounded only in the highest-scoring chunks."
 >
-> "Every step is logged, traceable, auditable. For a healthcare payor, that's not a nice-to-have — it's a compliance requirement."
-
-> 📸 *[Screenshot: Trace panel open showing retrieval steps, reranker scores, source names]*
-
-> 📝 **Presenter note:** Only show Trace if you have time and the audience is technical or compliance-focused. Skip to Act 7 if you're at 8:30 or later.
+> "Every step is logged. Every source is traceable. For a healthcare payor, that's not a feature — that's a compliance requirement."
 
 ---
 
-### Act 7 — The Architecture, One Slide — 9:00–9:30
+## CLOSE: BUSINESS VALUE SUMMARY (2–3 minutes)
 
-> "Here's what you just saw: three active data sources, zero ETL."
->
-> "The MCP server is your real-time operational data — live PA requirements, eligibility. AI Search is your governed document corpus — formulary, clinical guidelines, provider directory. Blob Storage is your existing file library — benefits summaries, policy PDFs. Each one stays in place. The Knowledge Base connects to them."
->
-> "We're also adding a Fabric Data Agent source — that connects the claims analytics warehouse for questions like 'what are our top denial codes?' — available in a future sprint."
->
-> "Your team can add a new source — another search index, a new document container — without touching the agent."
+### What You Say (Confident, direct, payor-focused)
 
-> 📝 **Presenter note:** Mention Fabric briefly as "coming soon" — do not dwell on it. Move to close.
+> "Let me connect what you just saw to your business."
+>
+> **[TALKING POINT 1 — Speed]**
+> "Your call center handles about 200 member calls per day. Twenty-five percent of those calls are 'I don't understand my bill' or 'What's my deductible' or 'Is this covered?' Sarah's questions took three minutes to resolve here. In your call center today, that's one agent for 12–15 minutes. Multiply that by 50 calls per day. That's 6–8 hours of agent time per day. Knowledge IQ doesn't eliminate those calls, but it gives your coordinators instant, accurate answers to provide — and many members solve it self-service from the portal."
+>
+> **[TALKING POINT 2 — Trust & Compliance]**
+> "Every answer is cited. Every citation points to a specific document or data record — the formulary index, the policy PDF, the claims adjudication record. When a member appeals, or your compliance team audits, you have full provenance. That's audit-ready from day one."
+>
+> **[TALKING POINT 3 — No Data Migration]**
+> "You didn't have to copy your claims data into Azure. It's still in your Fabric lakehouse. Your policies are still in your document store. Your formulary is still in your search index. The Knowledge Base connects to them. Your data governance, your access controls, your compliance framework — all still apply. Nothing moved."
+>
+> **[TALKING POINT 4 — Extensibility]**
+> "Tomorrow, if you want to add your provider credentialing system, or your quality scorecards, or your analytics warehouse — you add another MCP endpoint or search index. You don't rebuild the agent. The Knowledge Base grows as your architecture grows."
+>
+> **[TALKING POINT 5 — The Real Win]**
+> "But here's what matters most: your members get faster, more accurate answers. Your coordinators stop context-switching across three systems. Your compliance team gets audit trails. Your IT team didn't have to migrate anything. That's Knowledge IQ."
+
+### Closing Hook
+
+> "Sarah started confused. She ended with a solution: a referral to a PT in-network, confirmation of her costs, and certainty that her coverage is active. She got all of that in five minutes. That's the member experience you can deliver with Knowledge IQ."
 
 ---
 
-### Close — 9:30–10:00
+## Q&A PREP — Expected Questions & Answers
 
-> "John got answers to all four of his questions in about three minutes. More importantly, every answer is traceable to a specific plan document or data record. Your coordinators get faster answers. Your compliance team gets full provenance. Your IT team didn't move any data."
->
-> "That's Knowledge IQ."
+### Q: "Does this copy our data into Azure?"
 
----
+**A:** "No. Foundry indexes metadata and connects at query time. The underlying data never moves. It stays in your Search index, your blob container, your Fabric lakehouse, or behind your MCP endpoint. You control access at the source. Your RBAC, your data residency, your encryption — all still in place."
 
----
+### Q: "What about HIPAA and PHI?"
 
-## Key Talking Points — Healthcare Payor Audience
+**A:** "All demo data is synthetic. In production, your existing access controls apply. If a call center rep can't read a member record, the agent can't read it for them. The Knowledge Base inherits the permissions of the underlying sources."
 
-Use these in response to natural audience reactions.
+### Q: "Can we connect Epic, Facets, or our claims warehouse?"
 
-### "Does it copy our data into Azure?"
+**A:** "Any system accessible via MCP, REST API, or exportable to Blob/Search/Fabric can be connected. MCP is an open protocol — if your team can wrap a system in an endpoint, it becomes a Knowledge Base source. We've done this with major payor systems in production."
 
-> "No. Foundry indexes metadata and connects at query time. The underlying data never moves — it stays in your Search index, your blob container, or behind your MCP endpoint. You control access at the source."
+### Q: "How fresh is the data?"
 
-### "What about HIPAA / PHI?"
+**A:** "MCP and Fabric Data Agent are real-time. Blob Storage and AI Search refresh on a schedule you define — near-real-time to nightly, depending on your SLA. For member-facing queries, real-time sources (MCP, Fabric) are queried live. For policy documents, you control the refresh."
 
-> "All demo data is synthetic. In production, your existing data residency, access controls, and RBAC apply. The Knowledge Base respects the permissions of the underlying sources — if a user can't read a document directly, the agent can't read it for them."
+### Q: "What model is powering this?"
 
-### "Can we connect Epic, Facets, or our claims warehouse?"
+**A:** "The Knowledge Base is model-agnostic. This demo uses GPT-4o, but Foundry supports any deployed model — including models you fine-tune. You're not locked into OpenAI; you can use other models or private models if you prefer."
 
-> "Any system accessible via MCP, REST API, or exportable to Blob/Search/Fabric can be connected. MCP is an open protocol — if your team can wrap a system in an endpoint, it becomes a Knowledge Base source."
+### Q: "How much does this cost?"
 
-### "How fresh is the data?"
+**A:** "Pricing depends on resource tier and usage. Core components: Azure AI Foundry (per-token), AI Search (per-index-unit), Blob Storage (per-GB), and your chosen LLM deployment. For a production environment across all four sources, estimate $500–$2K per month depending on query volume. Demo environment is typically under $50/month."
 
-> "MCP and Fabric Data Agent are real-time — they respond to queries live. Blob Storage and AI Search refresh on a schedule you define, from near-real-time to nightly."
+### Q: "How long to deploy this in production?"
 
-### "What model is powering this?"
+**A:** "Deployment is three phases: (1) Validate your data sources and ensure Foundry can connect to them — 1–2 weeks. (2) Build and test the agent with your system prompts and guardrails — 2–3 weeks. (3) Soft-launch to a pilot group, collect feedback, tune — 2–4 weeks. Total: 6–10 weeks for a production launch. The good news: you're not building new data pipelines; you're connecting existing sources."
 
-> "The Knowledge Base is model-agnostic. The demo uses GPT-4o, but Foundry supports any deployed model — including models you fine-tune or host yourself. The retrieval layer is independent of the model."
+### Q: "What if the MCP server times out during the demo?"
 
-### "What about the MCP server — is that a Microsoft standard?"
-
-> "MCP (Model Context Protocol) is an open standard from Anthropic, now widely adopted. Azure AI Foundry has native MCP support. Any MCP-compliant server connects directly."
-
-### "What does this cost?"
-
-> "Pricing varies by tier and usage. Core components are Azure AI Foundry (per-token), AI Search (per-index-unit), Blob Storage (per-GB), and your LLM deployment. Demo environment is typically under $50/month."
-
-### "What about the Fabric / claims analytics piece?"
-
-> "Great question — the Fabric Data Agent integration that connects the claims warehouse is in our next sprint. That enables natural-language analytics questions like 'what are our top denial codes in orthopedics?' directly over the claims lakehouse, without moving data."
+**A:** "Good question — that's why we have fallback procedures in the `demo-readiness-checklist.md`. If MCP times out, we skip Act 3 and show the remaining acts through AI Search (formulary, provider) and Blob (policy docs). The core Knowledge IQ story — multiple sources, multiple formats, one agent — is still intact."
 
 ---
 
-## Screenshot Placeholder Notes
+## FALLBACK PROCEDURES
 
-The following screenshots should be captured from a running demo environment and inserted at the marked locations above:
+**If something goes wrong during the demo, reference `docs/demo-readiness-checklist.md` Part V for specific recovery steps.**
 
-| # | What to Capture | Location in Script |
+### Scenario 1: MCP Server Times Out
+
+- **Quick check:** `curl -v https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/health`
+- **If response:**  Continue with Acts 4-5 (formulary + provider search still work)
+- **If no response:** Skip to "The Architecture Slide" (see backup)
+
+### Scenario 2: AI Search Returns Empty
+
+- **Quick check:** Manual search in Azure Portal → AI Search → `srch-healthbridge-demo` → Search explorer
+- **If manual search works:** Retry the agent prompt (may be a query rewriting issue)
+- **If manual search fails:** Show the Knowledge Base configuration diagram; explain: "In production, your indexes would be populated nightly. This demonstrates the architecture."
+
+### Scenario 3: Agent Unavailable
+
+- **Try:** Refresh browser tab, re-open playground
+- **If still broken:** Click to **Backup Slide 2 — Full Demo Video** (should be prerecorded and queued)
+- **Narrate:** "Here's what that live demo looks like..." and play the video
+
+### Scenario 4: Live Demo Fails Entirely
+
+- **Graceful exit:** "The live environment isn't cooperating today — classic demo gods. But I want to show you the architecture that makes this work." (Click to backup slides)
+- **Pivot:** "Let me walk you through how this would work with your data..." and use diagrams + talking points
+
+---
+
+## PRESENTER NOTES — Key Reminders
+
+- **Show citations at least once.** This is the Knowledge IQ differentiator. "Every answer is traceable."
+- **Mention the four data sources explicitly:** "Fabric for claims, MCP for policies, AI Search for formulary and providers, Blob for documents — all without ETL."
+- **Pause after each response.** Let audience see the citation panel. Read the response aloud if needed — don't rush.
+- **Use healthcare payor language:** Don't say "knowledge chunks," say "benefit information." Don't say "retrieval," say "lookup." Don't say "LLM," say "agent" or "assistant."
+- **Connect to their pain:** Every Act should reference a real call driver. ("EOB confusion," "prior auth submission," "formulary questions")
+- **End strong.** The closing hook is not technical; it's business. Faster answers. Fewer calls. Better compliance. That's why they should care.
+
+---
+
+## APPENDIX: Data Reference for Demo
+
+| Item | Value | Source |
 |---|---|---|
-| 1 | Provider response with citation panel showing `ai-search-providers` | 3-min Hit 1 / Act 2 |
-| 2 | Formulary response with tier + prior auth status | 3-min Hit 2 / Act 4 |
-| 3 | OOP max response with blob storage citation | 3-min Hit 3 |
-| 4 | Prior auth response with two citations (MCP + blob) | Act 3 |
-| 5 | Formulary multi-source response (tier, PA, alternatives) | Act 4 |
-| 6 | Multi-source response with two citation types | Act 5 |
-| 7 | Trace panel open — retrieval steps, reranker scores, source names | Act 6 |
-| 8 | Knowledge Base setup screen — three active sources (Blob, AI Search ×2, MCP) | Architecture slide |
-
-> **Note:** Screenshot #8 shows three active sources, not four — Fabric is blocked. Update caption accordingly.
-
-> **Tip for capturing screenshots:** Enable **Citations** panel before any response screenshot. Enable **Trace** for the audit slide. Browser zoom 90% for cleaner slides.
-
----
-
-## Fallback Procedures
-
-*Run through these before the demo. If a smoke test fails, use the matching fallback.*
-
-### Fallback A — Agent returns "I wasn't able to find information"
-
-1. Check index status: in Foundry → Build → Knowledge → `payor-knowledge-base` → Sources → look for error icons
-2. If index shows pending/error: wait 5–10 min, then retry. Indexing can take up to 15 min after a change.
-3. If still failing: open a fresh Playground session and clear conversation history (residual context can confuse retrieval).
-4. **Live fallback:** If one prompt fails during the demo, move to the next prompt — don't linger. Say: *"Let me show you a different query while that catches up."*
-
-### Fallback B — No citations appear
-
-1. Verify Citations toggle is enabled — upper-right corner of Playground.
-2. If toggle is on but no citations: the agent system prompt may not be requesting citations. Check `agent/system-prompt.md` — it must include citation instructions.
-3. **Live fallback:** Open Trace instead — it shows source documents even when citations are suppressed. Say: *"Let me show you the full retrieval trace — you can see exactly which documents it pulled."*
-
-### Fallback C — MCP tool calls fail (prior auth / eligibility prompts return nothing)
-
-1. Check MCP server health: navigate to the Container Apps URL + `/health` — should return HTTP 200.
-2. If unhealthy: check Container Apps logs in Azure Portal → `ca-healthbridge-mcp` → Log stream.
-3. **Live fallback:** Skip Act 3 (MRI prior auth). Pivot to: *"The MCP source connects live operational data — prior auth status, eligibility. We're keeping that for a follow-up. Let me show you the formulary and benefits instead."* Then go directly to Act 4.
-
-### Fallback D — AI Search returns empty results
-
-1. Confirm indexes exist: Azure Portal → `srch-healthbridge-demo` → Indexes — should show `healthbridge-formulary-index` and `healthbridge-provider-index` with document counts > 0.
-2. If document count is 0: re-upload sample data and re-run the indexer from the Azure Portal.
-3. **Live fallback:** If provider or formulary prompts fail, pivot to the OOP max / benefits summary prompt (Blob Storage) — this is independent of AI Search and should still work.
-
-### Fallback E — Slow response / timeout during demo
-
-1. First response in a session is often slower (cold start). Run S1 smoke test before the audience arrives to warm up.
-2. If a response takes >15 seconds: narrate while waiting — talk about how the agent is querying across sources. This is normal "look ma, no SQL" time.
-3. **Hard timeout (>30 sec):** Press Stop, say *"Let me try a slightly different phrasing"*, retype the same prompt. Sometimes rephrasing breaks a stuck query.
+| **Member Name** | Sarah L. Nguyen | MCP Server / Fabric |
+| **Member ID** | MBR-2024-002891 | Fabric Data Agent |
+| **Plan** | HealthBridge HMO Silver | Fabric Data Agent |
+| **Status** | ACTIVE | Fabric Data Agent |
+| **Deductible** | $1,500 | Blob Storage (benefits doc) |
+| **Coinsurance** | 30% | Blob Storage (benefits doc) |
+| **OOP Max** | $5,000 | Blob Storage (benefits doc) |
+| **PCP** | Dr. Patricia M. Chen (NPI 1234567890) | Fabric Data Agent |
+| **Claim ID** | CLM-2026-0061872 | Fabric Data Agent |
+| **Service** | Total knee replacement (TKA) | Fabric Data Agent |
+| **DOS** | 2026-04-28 | Fabric Data Agent |
+| **Billed** | $32,000 | Fabric Data Agent |
+| **Allowed** | $18,200 | Fabric Data Agent |
+| **Patient Resp** | $3,654 | Fabric Data Agent (calculated) |
+| **Prior Auth** | PA-2026-087341 | Claim record |
+| **PT Policy** | No PA ≤ 20 visits; PA > 20 visits | MCP Server / policy doc |
+| **Drug** | Celecoxib | AI Search formulary |
+| **Tier** | Tier 2 | AI Search formulary |
+| **Copay** | $45 retail per 30-day / $110 mail per 90-day | Blob benefit doc |
+| **PT Provider Name** | Midwest Physical & Occupational Therapy LLC | AI Search provider index |
+| **PT Location** | Naperville, IL (ZIP 60540) | AI Search provider index |
+| **PT Network Status** | ACTIVE_IN_NETWORK | AI Search provider index |
+| **PT Accepting New** | Yes | AI Search provider index |
 
 ---
 
-## Common Setup Issues
-
-| Symptom | Likely Cause | Fix |
-|---|---|---|
-| Agent returns "I wasn't able to find information" | KB not indexed yet or MCP unreachable | See Fallback A / C above |
-| No citations appear | Citations toggle off or system prompt missing citation instruction | See Fallback B above |
-| Provider/formulary queries return nothing | AI Search index empty or indexer didn't run | See Fallback D above |
-| MCP tool calls fail | MCP Container App unhealthy | See Fallback C above |
-| Blob responses are generic | Wrong container name in connection | Confirm connection points to `healthcare-docs` container |
-| Can't sign in to ai.azure.com | Wrong tenant / session | Clear cookies, use InPrivate window, sign in with demo account |
-| Fabric prompt attempted by mistake | Presenter followed old demo-flow.md script | Skip immediately: *"That source is coming in the next sprint."* |
-
----
-
-*Demo Script version: 1.1 | Updated: 2026-07-09 | Issue: #10 | New Azure AI Foundry (ai.azure.com) only*
+**Demo Script version: 2.0 | Finalized: 2026-07-09 | Presenter-ready with full fallback procedures**

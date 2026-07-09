@@ -1,10 +1,32 @@
-# Chunk — History
+# Chunk — History (Summarized 2026-07-09)
 
 ## Project Context
 - **Project:** foundry-knowledge-iq-demo — Demo of Knowledge IQ in Azure AI Foundry for a healthcare payor
 - **Stack:** Azure AI Foundry, AI Search, Blob Storage, Fabric Data Agent, MCP
 - **User:** Rob McKenna
 
+## Current Status (2026-07-09)
+
+**Completed Work:**
+- ✅ System prompt + KB config + 30 test prompts (5 workflows × 6 prompts each)
+- ✅ Demo narrative (5-act Sarah Nguyen story arc)
+- ✅ Agent deployment guide + agent-definition.json (PR #16)
+- ✅ Guardrail coverage (17 edge-case prompts with pass/fail criteria)
+- ✅ 30 prompts validated; 2 bugs fixed (member name, brand contact); 2 issues filed (#11, #12)
+
+**Blockers:**
+- ⏳ Issue #12: Chunk must add test prompt PH-7 to pharmacy-formulary.md (Data resolved the index issue)
+- ⏳ Fabric workspace not provisioned → Fabric data agent connection blocked
+
+**Next:** Add PH-7 prompt; verify agent in Foundry Playground.
+
+## Key Technical Decisions
+
+- **Agent name:** `healthbridge-assistant` with 5 capability areas (benefits, claims, prior auth, pharmacy, providers)
+- **Test prompt strategy:** 30 structured test cases anchored to real synthetic data (member IDs, claim IDs, provider NPIs); each includes expected data sources and response characteristics
+- **Demo narrative:** 5-act story (member post-surgical journey through eligibility → claims → pharmacy → provider lookup) outperforms category-by-category demos
+- **Guardrail coverage:** 17 edge-case prompts covering medical advice refusal, jailbreak/injection, PHI privacy, out-of-scope deflection, unanswerable queries, member distress
+- **MCP tool routing:** 7 tools documented in system prompt with "when to use" guidance
 ## 2026-07-09 — Issue #4: Agent Deployment Fixes
 
 **Task:** Deploy the HealthBridge assistant agent (Issue #4) — create from project assets, attach KB, verify Playground.
@@ -28,40 +50,35 @@
 
 ## Learnings
 
-### 2026-06-05 — Agent directory created
+1. **Healthcare payor demos:** "Explain my EOB" is the highest-value prompt category; always include member-specific context to show the agent isn't returning generic policy text
+2. **Test prompt completeness:** Guardrail prompts must have 3 parts: (1) adversarial input, (2) expected behavior, (3) explicit pass/fail criteria — these make prompts usable as regression tests, not just examples
+3. **Prompt grounding:** All test prompts must reference actual synthetic data (real member IDs, claim amounts, drug names) so the agent has retrievable ground truth for every scenario
+4. **System prompt:** Must include tool routing guidance + guardrail boundaries; implicit guardrails are insufficient for healthcare domain
 
-- Created `agent/system-prompt.md`: defines the agent as "HealthBridge Assistant" with five capability areas (benefits, claims, prior auth, pharmacy, providers), professional/empathetic tone, and explicit guardrails (no medical advice, no PHI disclosure, escalate to Member Services)
-- Created `agent/knowledge-base-config.json`: five data sources — Blob Storage (plan docs), two AI Search indexes (formulary, providers), Fabric Data Agent (claims/eligibility), MCP server (prior auth policies); hybrid search with semantic ranking, Top-K=5, text-embedding-3-large
-- Created `agent/sample-prompts.md`: 15 prompts across 5 categories + 3 guardrail validation prompts; each includes expected behavior and data source tags to make agent testing reproducible
-- Updated `agent/README.md`: step-by-step Foundry setup (KB creation, agent creation, retrieval config), suggested 9-prompt demo flow ordered for narrative arc, troubleshooting table
-- Key decisions: agent named `healthbridge-assistant`; fictional brand "HealthBridge Insurance" used throughout synthetic content; `<FABRIC_WORKSPACE_ID>` left as placeholder per scope (data infra not in Chunk's boundary)
-- No decisions.md items surfaced; all architectural choices are consistent with existing project conventions
+## Cross-Team Dependencies
 
-### 2026-06-05 — Test prompts, demo script, system prompt tools, KB config
+- **Data:** 7-tool MCP server live; 3 AI Search indexes live; all endpoints verified
+- **Mouth:** 48 sample healthcare payor data files created; all brand standardized to "HealthBridge Insurance Plan"
+- **Mikey:** KB connection guide v1.4 validated; Foundry resource model verified; routing automation fixed
+- **Alignment:** KB config references all data sources by exact name; agent config aligned with deployed infrastructure
 
-**Test prompt strategy (30 prompts across 5 workflow files):**
-- Each file follows the pattern: prompt text → expected data sources → expected response characteristics. This makes prompts reproducible as structured test cases, not just example questions.
-- Prompts are anchored to actual synthetic data (real member IDs, claim IDs, provider NPIs, drug names from CP-2026-FRM-001) so the agent has retrievable ground truth for every scenario.
-- Coverage breakdown: 6 prompts each for eligibility/benefits, claims/EOB, prior-auth, pharmacy/formulary, and provider-network.
-- Each prompt explicitly lists MCP tool calls expected (e.g., `lookup_member`, `check_formulary`) alongside KB data source tags — makes it easy to verify tool routing in Foundry tracing.
+## Files Created/Modified
 
-**Prompt patterns that work well for healthcare payor demos:**
-- "Verification first" prompts (eligibility, PA status) ground the demo in live data — they show real-time retrieval, not static docs.
-- "Explain my EOB" prompts are the highest-value category for payor audiences — this is the #1 call driver in healthcare.
-- Story arc prompts (Act 1→5 in sample-prompts.md) outperform category-by-category demos for executive audiences; narrative creates emotional connection.
-- Always include a member-specific context in claims/eligibility prompts; the agent must demonstrate it's not just returning generic policy text.
+- `agent/system-prompt.md` — HealthBridge Assistant definition + 7 MCP tools + guardrails + contact info
+- `agent/knowledge-base-config.json` — 5 data sources (Blob, AI Search ×2, MCP, Fabric placeholder)
+- `agent/agent-definition.json` — importable agent with KB MCP tool wired to payor-knowledge-base
+- `agent/test-prompts/*.md` — 30 prompts across 5 workflows + 17 guardrail edge-cases
+- `docs/agent-deployment-guide.md` — standalone operator guide for agent deployment
+- `agent/README.md` — Foundry setup steps + troubleshooting
 
-**Demo script (sample-prompts.md v2.0):**
-- Rewrote around Sarah Nguyen's post-knee-replacement journey — spans all 4 data sources in 5 acts, ~5 minutes.
-- Each act includes a "Talking point" for the presenter — what to emphasize for a payor audience.
-- Added Quick Reference table mapping each act to data source + MCP tool.
+## Round 2 Updates (2026-07-09)
 
-**System prompt update:**
-- Added "## Available Tools" section with a table of all 7 MCP tools, descriptions, and "when to use" guidance.
-- Added a tool-chaining guidance note for multi-step queries (e.g., `lookup_member` → `check_formulary` → `get_clinical_coverage_criteria`).
+**Completed:**
+- ✅ Added celecoxib test prompt PH-7 to agent/test-prompts/pharmacy-formulary.md (Issue #9)
+- ✅ Added pass/fail criteria to all 12 guardrail prompts v1.1 (Issue #12)
+- ✅ Changes staged in PR #16
 
-**Brand discrepancy noted:**
-- System prompt (written in session 1) uses "HealthBridge Insurance" brand. All sample data from Mouth uses "HealthBridge Insurance Plan." Test prompts use HealthBridge (matching actual data). System prompt brand realignment is a separate task — filed in decisions inbox.
+**Status:** Ready for agent validation in Foundry Playground
 
 ## Cross-Team Updates (2026-06-05)
 

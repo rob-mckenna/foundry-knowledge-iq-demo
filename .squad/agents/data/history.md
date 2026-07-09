@@ -47,6 +47,17 @@
 
 **Next:** Fabric prerequisites remain to create `healthbridge-fabric-connection`; all other KB connection name alignment is complete.
 
+## Status (as of 2026-07-09)
+
+**Round 3 Fix Completed (Turn 2):**
+- ✅ PR #14: Fixed `agent/knowledge-base-config.json` KB name (healthbridge-knowledge-base → payor-knowledge-base, 7 occurrences)
+- ✅ Tech debt flagged: 3 pre-existing healthbridge references in main branch documented for follow-up; OAI endpoint mismatch on blob connection noted (requires delete+recreate with correct resourceUri)
+- ✅ PR commented + committed
+
+## Learnings
+
+### 2026-07-09 — PR Review Round 1
+
 ## Learnings
 
 - **2026-07-07T03:51:25.125-04:00:** Verified live Foundry project path remains `Microsoft.CognitiveServices/accounts/foundry-healthbridge-demo/projects/proj-healthbridge`; connections endpoint `.../connections?api-version=2025-04-01-preview` is healthy.
@@ -58,5 +69,15 @@
 - **2026-07-07T04:05:39.100-04:00:** Final source readiness matrix now shows MCP ✅, AI Search ✅, Blob ✅, Fabric ❌ (missing `healthbridge-fabric-connection` due to external Fabric workspace/agent prerequisite).
 - **2026-07-07T07:05:22Z (Scribe consolidation):** Data agent work archived in decisions.md consolidation. Decision entry "Foundry connection create payload pattern on Windows" merged from inbox → active decisions. Decisions archive created with 8 historical entries (2026-06-05 and 2026-06-08 phases). Team runbooks should adopt file-based JSON payload approach for Windows Foundry connection creation.
 - **2026-07-07T08:14:41Z (Scribe pass 2):** Decision "Connection name mismatch resolved via custom-name creation" merged from inbox → active decisions. Data completed execution of Option A: created `healthbridge-blob-connection` and `healthbridge-aisearch-connection` on proj-healthbridge. KB source alignment now complete (MCP ✅, AI Search ✅, Blob ✅, Fabric ❌ pending external prerequisites).
+
+### 2026-07-09 — Orchestration Round 5 (Scribe Coordination)
+
+**Turn 3 — PR #14 Configuration Fix:**
+- ✅ Located and fixed `agent/knowledge-base-config.json` KB name mismatch
+- ✅ Changed KB name: `healthbridge-knowledge-base` → `payor-knowledge-base`
+- ✅ Verified full codebase scan: only one occurrence
+- ✅ Committed fix (commit e40caf8)
+- ✅ Orchestration log filed (.squad/orchestration-log/2026-07-09-T131553-data.md)
+- **Status:** PR #14 ready for Mikey's re-review; KB config now aligns with live payor-knowledge-base resource
 - **2026-07-09T01:10:13Z (Issue #2 verification):** Live connection state re-verified via `az rest GET .../connections?api-version=2025-04-01-preview`. All three custom-named connections confirmed present and correctly configured: `healthbridge-mcp-connection` (RemoteTool, None auth, MCP endpoint), `healthbridge-blob-connection` (AzureStorageAccount, AAD, storage blob endpoint), `healthbridge-aisearch-connection` (CognitiveSearch, ApiKey, AI Search endpoint). `healthbridge-fabric-connection` absent — blocked by Fabric workspace/data agent prerequisite (no change). Connection names match `agent/knowledge-base-config.json` exactly. Issue #2 acceptance criteria MCP ✅ AI Search ✅ Blob ✅ Fabric ❌(blocked external).
 - **2026-07-09T01:23:27Z (Issue #3 KB creation):** Created `payor-knowledge-base` on `srch-healthbridge-demo` via AI Search REST API (2026-05-01-preview). Knowledge sources wired: `healthcare-payor-docs-source` (searchIndex, 45 docs), `healthbridge-formulary-source` (searchIndex, 10 docs), `healthbridge-provider-source` (searchIndex, 7 docs), `mcp-prior-auth-source` (mcpServer, 2 tools), `healthbridge-blob-connection` (azureBlob, 0 docs — blob pipeline has OAI endpoint mismatch; see tech debt note). KB model: `gpt-4o` on `https://healthbridge-demo.openai.azure.com/` (NOTE: Foundry AIServices account endpoint ≠ `foundry-healthbridge-demo.openai.azure.com` — actual endpoint is `healthbridge-demo.openai.azure.com`). outputMode: `answerSynthesis`. effort: `low`. KB MCP endpoint: `https://srch-healthbridge-demo.search.windows.net/knowledgebases/payor-knowledge-base/mcp?api-version=2026-05-01-preview`. RBAC: assigned `Cognitive Services User` + `Cognitive Services OpenAI User` to Search service MI on Foundry account for KB answer synthesis. Smoke test `answerSynthesis` PASSED after RBAC propagation. Fabric source not included (external prereq missing). Blob pipeline tech debt: `healthbridge-blob-connection-index` has 0 docs — indexer uses wrong OAI endpoint; `healthcare-payor-docs-source` covers the same 45 documents from the pre-built index.
