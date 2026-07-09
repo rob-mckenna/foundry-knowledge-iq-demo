@@ -310,7 +310,7 @@ The following screenshots should be captured from a running demo environment and
 
 ### Fallback A — Agent returns "I wasn't able to find information"
 
-1. Check index status: in Foundry → Build → Knowledge → `healthbridge-knowledge-base` → Sources → look for error icons
+1. Check index status: in Foundry → Build → Knowledge → `payor-knowledge-base` → Sources → look for error icons
 2. If index shows pending/error: wait 5–10 min, then retry. Indexing can take up to 15 min after a change.
 3. If still failing: open a fresh Playground session and clear conversation history (residual context can confuse retrieval).
 4. **Live fallback:** If one prompt fails during the demo, move to the next prompt — don't linger. Say: *"Let me show you a different query while that catches up."*

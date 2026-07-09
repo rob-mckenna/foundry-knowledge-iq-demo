@@ -64,13 +64,13 @@
 
 | # | Item | Owner | Status |
 |---|------|-------|--------|
-| 5.1 | Knowledge Base `healthbridge-knowledge-base` created in Foundry with 3 active data sources (Blob, AI Search ×2, MCP) | Chunk | ☐ |
+| 5.1 | Knowledge Base `payor-knowledge-base` created in Foundry with 3 active data sources (Blob, AI Search ×2, MCP) | Chunk | ☐ |
 | 5.2 | KB retrieval set to: Hybrid search, Semantic ranking ON, Top-K = 5, Min reranker score = 0.5, Query rewrite ON | Chunk | ☐ |
 | 5.3 | KB initial indexing complete (allow 5–15 min after save) — index status shows green | Chunk | ☐ |
 | 5.4 | Agent `healthbridge-assistant` created with GPT-4o base model | Chunk | ☐ |
 | 5.5 | Agent system prompt from `agent/system-prompt.md` is loaded | Chunk | ☐ |
 | 5.6 | Agent temperature set to `0.1` | Chunk | ☐ |
-| 5.7 | `healthbridge-knowledge-base` linked to the agent under **Knowledge** | Chunk | ☐ |
+| 5.7 | `payor-knowledge-base` linked to the agent under **Knowledge** | Chunk | ☐ |
 | 5.8 | MCP tools (`get_prior_auth_requirements`, `get_clinical_coverage_criteria`) enabled on agent | Chunk | ☐ |
 | 5.9 | Smoke test prompts from `docs/azure-setup.md` (Step 7) all return valid, cited responses | Chunk | ☐ |
 
