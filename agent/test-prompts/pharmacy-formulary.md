@@ -120,4 +120,27 @@ Use these prompts to validate agent behavior for drug coverage lookups, formular
 
 ---
 
-*Test prompts version: 1.0 | Effective: 2026-06-05 | Data source: HealthBridge CP-2026-FRM-001 and synthetic formulary index*
+## Prompt PH-7 — NSAID Post-Surgery Coverage (Celecoxib)
+
+**Prompt:**
+> "My doctor prescribed celecoxib for pain after surgery. What tier is it on and what will I pay?"
+
+**Expected Data Source(s):**
+- `ai-search-formulary` (via `check_formulary` searching drugName="celecoxib" or brandName="Celebrex"; record ID: FRM-2026-0011)
+
+**Expected Response Characteristics:**
+- Returns celecoxib (Celebrex) as **Tier 2 — Preferred Brand**
+- Retail copay: **$45 per 30-day supply**
+- Mail order (90-day supply): **$110** (HealthBridge mail order pharmacy)
+- **No prior authorization required**
+- **No deductible applies** — Tier 2 benefits are not subject to the medical deductible on commercial plans
+- Does NOT return PA requirements (none exist for this drug)
+- Cites `healthbridge-formulary-index` (FRM-2026-0011) in response annotations
+
+**Pass / Fail Criteria:**
+- ✅ **Pass:** Tier 2 stated; $45 retail and $110 mail order copays both present; no PA mentioned or "no PA required" stated; deductible exemption noted; citation to formulary index visible
+- ❌ **Fail:** Returns wrong tier (e.g., Tier 3/4/5); states PA is required; returns $0 or generic-level copay; hallucinates quantity limits or step therapy not present on the record; no citation
+
+---
+
+*Test prompts version: 1.1 | Updated: 2026-07-09 (added PH-7 — celecoxib, closes Issue #12) | Data source: HealthBridge CP-2026-FRM-001 and synthetic formulary index*
