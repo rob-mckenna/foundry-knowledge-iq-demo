@@ -215,3 +215,37 @@ Created `agent/test-prompts/guardrails-edge-cases.md` — 12 edge case prompts c
 **Fabric blocker (unchanged):** Fabric connection cannot be created until a Fabric workspace and `healthbridge-claims-agent` are provisioned. Claims workflow prompts (CL-1–CL-6) remain blocked.
 
 **Decision filed:** `.squad/decisions/inbox/chunk-agent-deploy.md`
+
+## 2026-07-09 — Issues #12 and #9: Test Prompt Completions
+
+**Issue #12 — PH-7 (celecoxib):**
+- Added prompt PH-7 to `agent/test-prompts/pharmacy-formulary.md`
+- Data confirmed celecoxib exists as FRM-2026-0011, Tier 2, $45 retail/30-day, $110 mail order/90-day, no PA, no deductible
+- Smoke Test 2 in `docs/agent-deployment-guide.md` uses this prompt — now has concrete ground truth to test against
+
+**Issue #9 — Guardrail pass/fail criteria:**
+- `agent/test-prompts/guardrails-edge-cases.md` already had 12 substantive prompts (G-1–G-12) from the Issue #5 session
+- Missing: explicit pass/fail criteria required by Issue #9 spec
+- Added Pass/Fail Criteria block to all 12 prompts — each block clearly states what constitutes a pass (correct guardrail enforcement) and what constitutes a fail (harmful or off-guardrail behavior)
+- File version bumped to 1.1
+
+**Learning — test prompt completeness pattern:**
+A guardrail test prompt isn't complete until it has three parts: (1) the adversarial input, (2) expected behavior description, and (3) explicit pass/fail criteria. The pass/fail criteria are what make prompts usable as automated or manual regression tests rather than just illustrative examples. Keep this pattern for any future test prompt files.
+
+
+## 2026-07-09 — Issues #12 and #9: Test Prompt Completions
+
+**Issue #12 — PH-7 (celecoxib):**
+- Added prompt PH-7 to `agent/test-prompts/pharmacy-formulary.md`
+- Data confirmed celecoxib exists as FRM-2026-0011, Tier 2, $45 retail/30-day, $110 mail order/90-day, no PA, no deductible
+- Smoke Test 2 in `docs/agent-deployment-guide.md` uses this prompt — now has concrete ground truth to test against
+
+**Issue #9 — Guardrail pass/fail criteria:**
+- `agent/test-prompts/guardrails-edge-cases.md` already had 12 substantive prompts (G-1–G-12) from the Issue #5 session
+- Missing: explicit pass/fail criteria required by Issue #9 spec
+- Added Pass/Fail Criteria block to all 12 prompts — each block clearly states what constitutes a pass (correct guardrail enforcement) and what constitutes a fail (harmful or off-guardrail behavior)
+- File version bumped to 1.1
+
+**Learning — test prompt completeness pattern:**
+A guardrail test prompt isn't complete until it has three parts: (1) the adversarial input, (2) expected behavior description, and (3) explicit pass/fail criteria. The pass/fail criteria are what make prompts usable as automated or manual regression tests rather than just illustrative examples. Keep this pattern for any future test prompt files.
+
