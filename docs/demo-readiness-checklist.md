@@ -9,7 +9,7 @@
 
 ## Overview
 
-This checklist verifies that all infrastructure, configurations, data, and workflows are ready for a live demo of Knowledge IQ in Azure AI Foundry. The demo is ~45 minutes and requires all four data sources to be live, with sample data verified to be correct and complete.
+This checklist verifies that all infrastructure, configurations, data, and workflows are ready for a live demo of Knowledge IQ in Azure AI Foundry. The demo is ~5 minutes and requires all four data sources to be live, with sample data verified to be correct and complete.
 
 **High-risk items** (marked ⚠️) can block the demo if not ready. Fallback procedures are provided below.
 
@@ -69,9 +69,9 @@ This checklist verifies that all infrastructure, configurations, data, and workf
 
 - [ ] **Sample data loaded in MCP:** Verify at least 5 sample members are present
   ```bash
-  curl -s "https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/tools/lookup_member?memberId=MBR-2024-001234" | jq .
+  curl -s "https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/tools/lookup_member?memberId=MBR-2024-002891" | jq .
   ```
-  Expected: Member record for John A. Hartwell with plan HMO Silver and status ACTIVE
+  Expected: Member record for Sarah Nguyen with plan HMO Silver and status ACTIVE
 
 ### Azure AI Search Service
 
@@ -359,7 +359,7 @@ curl -v https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapp
 
 **If health check passes:**
 - Issue is likely a specific tool call (e.g., `lookup_claim` is slow)
-- Try a simpler prompt: `"Is member MBR-2024-001234 eligible?"` (tests `lookup_member`)
+- Try a simpler prompt: `"Is member MBR-2024-002891 eligible?"` (tests `lookup_member`)
 - If simpler prompt works, proceed with Acts 1-2 but note that Act 3 (prior auth) may be slower
 
 **If health check fails:**
@@ -431,10 +431,10 @@ If curl fails:
 - Restart the Container App (see Scenario 1)
 - Reload sample data if needed: Check `data-sources/mcp-server/server.js` for data loading logic and verify files in `sample-data/`
 
-**Fallback Response D:** Use a different member/claim that's known to work. The demo story is flexible:
-- Use MBR-2024-001234 (John Hartwell) instead of Sarah Nguyen
-- Use CLM-2026-0054321 (office visit) instead of knee surgery
-- The data structure and Knowledge Base architecture remain the same
+**Fallback Response D:** Data may have been cleared from the MCP server.
+- Restart the Container App immediately (see Scenario 1: `az containerapp restart --name ca-mcp-healthbridge --resource-group rg-knowledge-iq-demo`)
+- Reload sample data if needed
+- If data still won't load in time, proceed to Acts 4-5 (formulary, provider directory) and use prerecorded demo for Acts 1-3
 
 ---
 
