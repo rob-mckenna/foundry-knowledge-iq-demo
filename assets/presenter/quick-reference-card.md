@@ -1,6 +1,6 @@
 # Presenter Quick-Reference Card — HealthBridge Knowledge IQ
 
-**Demo:** Knowledge IQ in Azure AI Foundry | **Member:** Marcus Hartwell · MBR-2024-001234 · PPO Gold
+**Demo:** Knowledge IQ in Azure AI Foundry | **Member:** Sarah Nguyen · MBR-2024-002891 · HMO Silver
 
 ---
 
@@ -41,11 +41,11 @@ What is the out-of-pocket maximum for the PPO Gold plan this year?
 
 ---
 
-## 10-Minute Version — The Marcus Hartwell Story
+## 10-Minute Version — The Sarah Nguyen Story
 
 ### Member Context (say at top)
-> "Marcus Hartwell, 42, PPO Gold. Referred for a knee MRI, possibly lumbar surgery.
-> Also on Ozempic for Type 2 diabetes. Four questions, three minutes."
+> "Sarah Nguyen, post-knee surgery. Just had TKA on April 28th. Confused about her bill.
+> Questions about PT approval, medication cost, finding a PT provider. Four questions, five minutes."
 
 ---
 
@@ -54,45 +54,45 @@ What is the out-of-pocket maximum for the PPO Gold plan this year?
 Is Dr. Patricia Chen an in-network provider for my plan?
 ```
 > Say while waiting: "Hitting the provider directory — AI Search."
-> Callout: Tier 1 Preferred, 1450 Medical Center Drive, accepting new patients, NPI.
+> Callout: Tier 1 Preferred, Internal Medicine, Chicago IL, accepting new patients, NPI.
 > 📸 Screenshot 1
 
 ---
 
-**Act 3 — Does the MRI need prior auth?** *(MCP + Blob)*
+**Act 3 — Does PT need prior auth?** *(MCP + Blob)*
 ```
-Marcus has been referred for an MRI of his knee.
-Does he need prior authorization, and who submits the request?
+My surgeon wants me to start physical therapy three times a week.
+Does she need prior authorization?
 ```
-> Say while waiting: "Two sources — MCP server (live PA system) + policy PDF in Blob."
-> Callout: PA required, CPT 73721, ordering provider submits, two citation badges.
+> Say while waiting: "Two sources — MCP server (live PA policy) + policy PDF in Blob."
+> Callout: PA not required first 20 visits, required after; two citation badges.
 > 📸 Screenshot 4
 
 ---
 
-**Act 4 — Ozempic formulary** *(AI Search)*
+**Act 4 — Celecoxib formulary** *(AI Search)*
 ```
-Marcus is taking Ozempic for Type 2 diabetes.
-What tier is it on the formulary, and is there a preferred alternative?
+My doctor prescribed celecoxib for pain after surgery.
+What tier is it on the formulary?
 ```
 > Say while waiting: "Formulary index — vector + semantic search."
-> Callout: Tier 4, PA required, preferred alternatives listed.
+> Callout: Tier 1, no PA, copay only.
 > 📸 Screenshot 5
 
 ---
 
-**Act 5 — Lumbar surgery coverage + OOP** *(AI Search + Blob)*
+**Act 5 — Find PT provider** *(AI Search)*
 ```
-If Marcus needs lumbar fusion surgery, what are the coverage criteria,
-and what is his out-of-pocket exposure on the PPO Gold plan?
+Can you help me find a physical therapist near Naperville who's in-network
+and accepting new patients?
 ```
-> Callout: Clinical criteria (AI Search) + OOP from benefits PDF (Blob), two citation types.
+> Callout: Midwest PT, Naperville IL, in-network, accepting, plus HMO referral requirement from Dr. Chen.
 > 📸 Screenshot 6
 
 ---
 
 **Act 6 — Show the Trace** *(click Trace icon on any prior response)*
-> Open Trace on the lumbar surgery response.
+> Open Trace on the PT provider response.
 > Point to: query rewrite → retrieval from multiple sources → reranker scores → source names.
 > Say: "Every step is logged and auditable. That's a compliance requirement."
 > 📸 Screenshot 7
@@ -101,13 +101,14 @@ and what is his out-of-pocket exposure on the PPO Gold plan?
 
 **Act 7 — Architecture wrap-up**
 > Navigate to KB → Data sources tab. Show all four sources connected and green.
-> Say: "Four sources. Zero ETL. Your team can add a fifth tomorrow without touching the agent."
+> Say: "Four sources. Zero ETL. Sarah got all her questions answered, her coordinator didn't context-switch across systems."
 > 📸 Screenshot 8
 
 ---
 
 **Close:**
-> "Marcus got answers to all four questions in about three minutes.
+> "Sarah started confused about a \$3,654 bill and ended it with a PT referral, confirmed prescription cost,
+> and a plan for recovery—all without holding for a rep.
 > Every answer is traceable to a source. Your coordinators are faster.
 > Your compliance team has provenance. Your IT team moved no data.
 > That's Knowledge IQ."
