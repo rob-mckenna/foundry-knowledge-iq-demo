@@ -102,7 +102,7 @@
 |-------|-------|
 | **File name** | `08-knowledge-base-sources.png` |
 | **Demo location** | Architecture slide (Act 7 / closing) |
-| **How to capture** | Navigate to **Knowledge IQ → payor-knowledge-base → Data sources tab** |
+| **How to capture** | Navigate to **Knowledge IQ → healthbridge-knowledge-base → Data sources tab** |
 | **What to capture** | The data sources list showing all four connections: Blob Storage, AI Search ×2 (formulary + provider), MCP Server; status indicators green |
 | **Key elements visible** | All four source tiles/rows visible, connection names legible, status shows connected/indexed |
 

@@ -26,13 +26,13 @@ Is Dr. Patricia Chen an in-network provider for my plan?
 > Callout: Tier 1, specialty, NPI, accepting new patients, citation visible.
 
 ```
-Is Ozempic covered on my formulary, and is prior authorization required?
+My doctor prescribed celecoxib for pain after surgery. What tier is it on the formulary?
 ```
 > Say: "Formulary — different AI Search index."
-> Callout: Tier 4 Specialty, PA required, step therapy.
+> Callout: Tier 2, $45 retail per 30-day supply, $110 mail order per 90-day supply, no PA required.
 
 ```
-What is the out-of-pocket maximum for the PPO Gold plan this year?
+What is the out-of-pocket maximum for the HMO Silver plan this year?
 ```
 > Say: "PDF in Blob Storage — zero preprocessing."
 > Callout: Individual + family OOP, citation points to PDF.
@@ -45,7 +45,7 @@ What is the out-of-pocket maximum for the PPO Gold plan this year?
 
 ### Member Context (say at top)
 > "Sarah Nguyen, post-knee surgery. Just had TKA on April 28th. Confused about her bill.
-> Questions about PT approval, medication cost, finding a PT provider. Four questions, five minutes."
+> Questions about PT approval, medication cost, finding a PT provider. Five questions, five minutes."
 
 ---
 
@@ -76,7 +76,7 @@ My doctor prescribed celecoxib for pain after surgery.
 What tier is it on the formulary?
 ```
 > Say while waiting: "Formulary index — vector + semantic search."
-> Callout: Tier 1, no PA, copay only.
+> Callout: Tier 2, $45 retail per 30-day supply, $110 mail order per 90-day supply, no PA required.
 > 📸 Screenshot 5
 
 ---
@@ -101,7 +101,7 @@ and accepting new patients?
 
 **Act 7 — Architecture wrap-up**
 > Navigate to KB → Data sources tab. Show all four sources connected and green.
-> Say: "Four sources. Zero ETL. Sarah got all her questions answered, her coordinator didn't context-switch across systems."
+> Say: "Four sources. Zero ETL. Sarah got all her questions answered in five minutes."
 > 📸 Screenshot 8
 
 ---
