@@ -342,7 +342,7 @@ Create these four connections with exactly these names (they are referenced by `
 ### 6b — Create the Knowledge Base
 
 1. In Foundry, navigate to **Knowledge bases** → **+ New Knowledge Base**
-2. **Name:** `healthbridge-knowledge-base`
+2. **Name:** `payor-knowledge-base`
 3. Click **+ Add data source** for each of the following:
 
 | Data Source Label | Type | Connection | Index / Container / Agent |
@@ -373,7 +373,7 @@ Create these four connections with exactly these names (they are referenced by `
 3. **Base model:** `gpt-4o` (deploy via **Deployments** if not already available)
 4. Paste the contents of `agent/system-prompt.md` into the **System prompt** field
    - Alternatively, use `agent/system-prompt-portal.txt` for the pre-formatted plain-text version
-5. Under **Knowledge**, click **+ Add knowledge source** → select `healthbridge-knowledge-base`
+5. Under **Knowledge**, click **+ Add knowledge source** → select `payor-knowledge-base`
 6. Configure tool access:
    - ✅ Knowledge Base retrieval
    - ✅ MCP tools (`lookup_member`, `lookup_claim`, `check_benefits`)
@@ -431,7 +431,7 @@ az group delete \
 ```
 
 Then manually delete from the Foundry portal:
-- Knowledge Base `healthbridge-knowledge-base`
+- Knowledge Base `payor-knowledge-base`
 - Agent `healthbridge-assistant`
 - All four data source connections
 
