@@ -63,3 +63,30 @@ All 3 PRs now in review queue awaiting Mikey's re-review post-fix.
 - ✅ Changes staged in PR #17
 
 **Status:** Demo script ready for presenter review and live Foundry validation
+
+## Round 4 Updates (2026-07-09)
+
+**Turn 4 — Content Fixes for PRs #13 and #17:**
+
+### PR #13 Narrative Update
+- ✅ Updated `assets/presenter/quick-reference-card.md` persona from Marcus Hartwell to Sarah Nguyen
+- ✅ Purged all Marcus Hartwell references (MBR-2024-001234, PPO Gold plan)
+- ✅ Aligned quick-reference to Sarah Nguyen narrative (MBR-2024-002891, HMO Silver, knee replacement)
+- ✅ Committed; PR #13 now ready for Mikey re-review
+
+### PR #17 Critical Fixes
+- ✅ Fixed Act 2 EOB math error: removed erroneous "30% of $16,700 = $2,154" narration
+  - Fact: actual coinsurance is $2,154 (correct dollar amount), but percentage explanation (~12.9%) was wrong
+  - Fix: kept correct dollar amounts ($1,500 deductible + $2,154 coinsurance) per CLM-2026-0061872 sample data
+- ✅ Updated celecoxib reference table:
+  - Changed Tier 1 → Tier 2
+  - Changed copay "$10–$20 (~$10 for Tier 1)" → "$45 retail / $110 mail order" (Tier 2)
+  - Aligned to FRM-2026-0011 sample data + PR #16 PH-7 test prompt
+- ✅ Committed; PR #17 now ready for Mikey re-review
+
+**All Demo Content Aligned:**
+- ✅ Both PRs now use consistent Sarah Nguyen narrative
+- ✅ Sample data alignment verified (member IDs, EOB amounts, formulary tiers)
+- ✅ Healthcare payor factual accuracy confirmed (cost-share math, prior auth logic, formulary structure)
+- ✅ Orchestration log filed (.squad/orchestration-log/2026-07-09-T131553-mouth.md)
+- **Status:** PRs #13 and #17 ready for Mikey's turn 5 re-review; all content internally consistent

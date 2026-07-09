@@ -66,3 +66,13 @@
 - **2026-07-07T04:05:39.100-04:00:** Final source readiness matrix now shows MCP ✅, AI Search ✅, Blob ✅, Fabric ❌ (missing `healthbridge-fabric-connection` due to external Fabric workspace/agent prerequisite).
 - **2026-07-07T07:05:22Z (Scribe consolidation):** Data agent work archived in decisions.md consolidation. Decision entry "Foundry connection create payload pattern on Windows" merged from inbox → active decisions. Decisions archive created with 8 historical entries (2026-06-05 and 2026-06-08 phases). Team runbooks should adopt file-based JSON payload approach for Windows Foundry connection creation.
 - **2026-07-07T08:14:41Z (Scribe pass 2):** Decision "Connection name mismatch resolved via custom-name creation" merged from inbox → active decisions. Data completed execution of Option A: created `healthbridge-blob-connection` and `healthbridge-aisearch-connection` on proj-healthbridge. KB source alignment now complete (MCP ✅, AI Search ✅, Blob ✅, Fabric ❌ pending external prerequisites).
+
+### 2026-07-09 — Orchestration Round 5 (Scribe Coordination)
+
+**Turn 3 — PR #14 Configuration Fix:**
+- ✅ Located and fixed `agent/knowledge-base-config.json` KB name mismatch
+- ✅ Changed KB name: `healthbridge-knowledge-base` → `payor-knowledge-base`
+- ✅ Verified full codebase scan: only one occurrence
+- ✅ Committed fix (commit e40caf8)
+- ✅ Orchestration log filed (.squad/orchestration-log/2026-07-09-T131553-data.md)
+- **Status:** PR #14 ready for Mikey's re-review; KB config now aligns with live payor-knowledge-base resource
