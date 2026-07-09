@@ -224,7 +224,7 @@ In the Foundry portal ([ai.azure.com](https://ai.azure.com) → **proj-healthbri
 ### 5b — Create the Knowledge Base
 
 1. In Foundry, navigate to **Knowledge bases** → **+ New Knowledge Base**
-2. Name: `healthbridge-knowledge-base`
+2. Name: `payor-knowledge-base`
 3. Add each data source using **+ Add data source**:
 
    | Data Source | Type | Connection | Index / Container / Agent |
@@ -249,7 +249,7 @@ The full Knowledge Base definition is in `agent/knowledge-base-config.json` for 
 2. Set **Name**: `healthbridge-assistant`
 3. Set **Base model**: `gpt-4o` (deploy one if not already available — see your Foundry **Deployments** page)
 4. Paste the contents of `agent/system-prompt.md` into the **System prompt** field
-5. Under **Knowledge**, click **+ Add knowledge source** → select `healthbridge-knowledge-base`
+5. Under **Knowledge**, click **+ Add knowledge source** → select `payor-knowledge-base`
 6. Configure tool access:
    - ✅ Knowledge Base retrieval
    - ✅ MCP tools (`get_prior_auth_requirements`, `get_clinical_coverage_criteria`)
