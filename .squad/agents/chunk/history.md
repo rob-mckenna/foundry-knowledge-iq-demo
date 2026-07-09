@@ -51,3 +51,12 @@
 - `docs/agent-deployment-guide.md` — standalone operator guide for agent deployment
 - `agent/README.md` — Foundry setup steps + troubleshooting
 
+## Round 2 Updates (2026-07-09)
+
+**Completed:**
+- ✅ Added celecoxib test prompt PH-7 to agent/test-prompts/pharmacy-formulary.md (Issue #9)
+- ✅ Added pass/fail criteria to all 12 guardrail prompts v1.1 (Issue #12)
+- ✅ Changes staged in PR #16
+
+**Status:** Ready for agent validation in Foundry Playground
+

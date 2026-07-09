@@ -48,3 +48,13 @@
 - sample-data/ — 48 healthcare payor files (consistent IDs, IL HMO focus)
 - docs/demo-script.md — 5-act narrative with talking points
 
+
+## Round 2 Updates (2026-07-09)
+
+**Completed:**
+- ✅ Created docs/demo-script.md with "The Sarah Nguyen Story" (Issue #10)
+- ✅ Implemented 5-Act timed demo structure with talking points
+- ✅ Added fallback procedures and speaker guidance
+- ✅ Changes staged in PR #17
+
+**Status:** Demo script ready for presenter review and live Foundry validation
