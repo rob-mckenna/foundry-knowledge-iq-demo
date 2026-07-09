@@ -5,6 +5,28 @@
 - **Stack:** Azure AI Foundry, AI Search, Blob Storage, Fabric Data Agent, MCP
 - **User:** Rob McKenna
 
+## Work Log
+
+### 2026-07-09 — Demo Readiness Checklist (Issue #7)
+
+Created `docs/demo-readiness-checklist.md` — a day-of-demo sign-off sheet covering all core prerequisites for the HealthBridge Knowledge IQ demo.
+
+**Checklist structure (8 sections):**
+- Section 1: Azure Infrastructure (7 items) — owner: Data
+- Section 2: RBAC & Managed Identity (4 items) — owner: Data
+- Section 3: Data Sources & Connections (7 items, Fabric flagged ⚠️) — owner: Data
+- Section 4: Sample Data (6 items) — owner: Mouth
+- Section 5: Knowledge Base & Agent (9 items) — owner: Chunk
+- Section 6: Playground & Presenter Setup (7 items) — owner: Presenter
+- Section 7: End-to-End Smoke Tests (5 prompts, S5 optional pending Fabric)
+- Section 8: Sign-Off table (Data, Mouth, Chunk, Mikey, Presenter)
+
+**Key decision:** Fabric Data Agent treated as conditional — S5 and Prompts 4/5 marked optional. Demo is GO with S1–S4 passing and three active sources (MCP, Blob, AI Search). Filed decision to inbox: `mouth-7-fabric-conditional-skip.md`.
+
+**Sources used:** `docs/demo-flow.md`, `docs/demo-script.md`, `docs/azure-setup.md`, `docs/connection-status.md`
+
+---
+
 ## Learnings
 
 - Healthcare payor domain uses ICD-10-CM diagnosis codes, CPT procedure codes, NPI identifiers for providers, and structured member IDs (e.g., MBR-YYYY-NNNNNN).
