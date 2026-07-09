@@ -45,3 +45,29 @@
 4. **Document Both Paths** (2026-06-21) — Option A (code) and Option B (portal) with reconciliation
 5. **Foundry Resource Model** (2026-06-22) — CognitiveServices/accounts/projects, not MLServices; guide v1.4 corrected all paths/RBAC
 
+### 2026-07-09 — PR Review Round 1 (Turn 3)
+
+Completed comprehensive review of all 5 open PRs (#13–#17):
+- **PR #16 approved** — agent deployment, all guardrails verified, celecoxib Tier 2 reference validated against FRM-2026-0011
+- **PRs #13, #14, #15, #17 requested changes** — blocking issues identified:
+  - PR #13: persona (Marcus Hartwell → Sarah Nguyen), narrative consistency
+  - PR #14: KB name (healthbridge → payor in config, 7 occurrences)
+  - PR #15: demo duration (45 min → 5 min), member ID (MBR-2024-001234 → MBR-2024-002891)
+  - PR #17: EOB math error ($1,500 + 30% × $16,700 ≠ $2,154; recommend removing erroneous %-based narration), celecoxib reference table (Tier 1 → Tier 2, copay $10–$20 → $45/$110)
+- **Cross-PR dependencies documented:** PR #14 is prerequisite for #16/#17; recommend merge order
+- **Detailed feedback:** Full decision record filed (decisions.md) with verification citations for all celecoxib/EOB claims
+
+## Learnings
+
+### 2026-07-09 — PR Review Round 1
+
+Reviewed all 5 open PRs (#13–#17). Key findings:
+
+- **PR #13 (demo script v1.1):** Not superseded by #17 — has unique presenter assets (quick-reference card) but uses Marcus Hartwell narrative. Must be updated to Sarah Nguyen before merge. PR #13 and #17 both target Issue #10; coordinate merge order.
+- **PR #14 (KB wiring):** KB created correctly (payor-knowledge-base, text-embedding-3-small/1536 dims, correct index names, managed identity). Blocking issue: `agent/knowledge-base-config.json` has wrong KB name (`healthbridge-knowledge-base` vs `payor-knowledge-base`). Blob knowledge source has 0 docs (OAI endpoint mismatch during creation) — documented as tech debt, covered by AI Search interim.
+- **PR #15 (readiness checklist):** Good structure but demo duration wrong (says 45 min, should be 5 min) and MCP verification uses Marcus Hartwell member ID instead of Sarah Nguyen (MBR-2024-002891).
+- **PR #16 (agent deploy):** APPROVED. All guardrail categories verified (jailbreak, medical advice direct+indirect, PHI bulk+cross-member, hallucination). PH-7 celecoxib data verified against actual sample data — Tier 2, $45/$110, no PA, FRM-2026-0011. MCP URL api-version fix confirmed. Minor: tierDescription "Non-Preferred Generic" in data vs "Preferred Brand" in test description (pass criteria still met).
+- **PR #17 (finalized demo script):** Two critical facts wrong — (1) EOB math: "30% of $16,700 = $2,154" is wrong (correct is ~12.9%); actual claim data has $2,154 coinsurance which is correct but the percentage explanation is not; (2) Reference table lists celecoxib as Tier 1, ~$10 copay, contradicting Act 4 of same script and actual data (Tier 2, $45).
+- **Lesson:** Always verify EOB math against actual sample data files before finalizing demo scripts. Healthcare payor audiences will immediately notice incorrect cost-share calculations.
+- **Recommended merge order:** #14 → #16 → #15 → #17 → #13 (fix required on each before merge except #16).
+

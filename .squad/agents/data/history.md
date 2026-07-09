@@ -46,7 +46,16 @@
 
 **Next:** Fabric prerequisites remain to create `healthbridge-fabric-connection`; all other KB connection name alignment is complete.
 
+## Status (as of 2026-07-09)
+
+**Round 3 Fix Completed (Turn 2):**
+- ✅ PR #14: Fixed `agent/knowledge-base-config.json` KB name (healthbridge-knowledge-base → payor-knowledge-base, 7 occurrences)
+- ✅ Tech debt flagged: 3 pre-existing healthbridge references in main branch documented for follow-up; OAI endpoint mismatch on blob connection noted (requires delete+recreate with correct resourceUri)
+- ✅ PR commented + committed
+
 ## Learnings
+
+### 2026-07-09 — PR Review Round 1
 
 - **2026-07-07T03:51:25.125-04:00:** Verified live Foundry project path remains `Microsoft.CognitiveServices/accounts/foundry-healthbridge-demo/projects/proj-healthbridge`; connections endpoint `.../connections?api-version=2025-04-01-preview` is healthy.
 - **2026-07-07T03:51:25.125-04:00:** Created `healthbridge-mcp-connection` (category `RemoteTool`, auth `None`, target `https://ca-mcp-healthbridge.lemoncoast-f3f8df5d.eastus.azurecontainerapps.io/mcp`) after confirming MCP `/health` returned 200.

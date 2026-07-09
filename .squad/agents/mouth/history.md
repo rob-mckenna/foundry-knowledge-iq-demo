@@ -14,11 +14,16 @@
 - ✅ Demo script finalized for 3 active sources (Fabric documented as "coming soon")
 - ✅ All brand standardized to "HealthBridge Insurance Plan"
 
-**Blockers:**
-- ⏳ Screenshots require live Foundry environment (not yet captured)
-- ⏳ Presenter approval pending
+## Current Status (as of 2026-07-09)
 
-**Next:** Capture 8 demo screenshots; obtain sign-off.
+**Round 3 Fixes Completed (Turn 3):**
+- ✅ PR #13: Updated quick-reference-card.md persona to Sarah Nguyen (MBR-2024-002891), committed + commented
+- ✅ PR #15: Fixed demo duration (45 min → 5 min), updated member ID in MCP verification command, committed + commented
+- ✅ PR #17: Fixed EOB math in Act 2 (removed erroneous 30% narration, kept correct copay), updated celecoxib reference table (Tier 2, $45/$110), committed + commented
+
+All 3 PRs now in review queue awaiting Mikey's re-review post-fix.
+
+
 
 ## Key Learnings
 
