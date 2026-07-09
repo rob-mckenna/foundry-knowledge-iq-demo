@@ -62,6 +62,7 @@ All three active connection names match `agent/knowledge-base-config.json` exact
 | outputMode | `answerSynthesis` |
 | retrievalReasoningEffort | `low` |
 | Model | `gpt-4o` on `foundry-healthbridge-demo.openai.azure.com` |
+| Model endpoint (correct) | `https://healthbridge-demo.openai.azure.com/` *(Foundry AIServices account OpenAI endpoint)* |
 | Model auth | Managed identity (system-assigned) |
 
 ### RBAC Assigned for KB Answer Synthesis
@@ -71,7 +72,16 @@ All three active connection names match `agent/knowledge-base-config.json` exact
 | Cognitive Services User | Search service MI (`srch-healthbridge-demo`) | `foundry-healthbridge-demo` | ✅ Assigned |
 | Cognitive Services OpenAI User | Search service MI (`srch-healthbridge-demo`) | `foundry-healthbridge-demo` | ✅ Assigned |
 
-### Tech Debt: Blob Pipeline OAI Endpoint Mismatch
+### Smoke Test Result (2026-07-09)
+
+| Test | Source | Status |
+|---|---|---|
+| Formulary tier query — `answerSynthesis` | `healthbridge-formulary-source` | ✅ PASSED |
+| Direct search index query | `healthbridge-formulary-index` | ✅ PASSED |
+| Extractive retrieve (GA API) | `healthbridge-formulary-source` | ✅ PASSED |
+| MCP server health | `ca-mcp-healthbridge` | ✅ PASSED (`status=ok`) |
+
+> Note: `answerSynthesis` passed after RBAC propagation (~15 min) for `Cognitive Services User` and `Cognitive Services OpenAI User` roles on `foundry-healthbridge-demo`.
 
 The `healthbridge-blob-connection` knowledge source (azureBlob kind) was previously created with an incorrect embedding model endpoint (`https://healthbridge-demo.openai.azure.com` vs the correct `https://foundry-healthbridge-demo.openai.azure.com`). Its auto-generated index (`healthbridge-blob-connection-index`) is empty as a result.
 
